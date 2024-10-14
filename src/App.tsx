@@ -1,12 +1,10 @@
 import './App.css';
-
+import background_mixed from '../public/mixed1920_1080.png'
 
 function App() {
   return (
-    <div className="App">
-      <h1 className="text-3xl font-bold underline">
-      Hello world!
-      </h1>
+    <div className="bg-regural-dark-green">
+      
     </div>
   );
 }
