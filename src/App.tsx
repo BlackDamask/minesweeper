@@ -9,11 +9,14 @@ const theme = extendTheme({
   styles: {
     global: () => ({
       body: {
-        bg: "#1e9907",
+        bg: "#1a1a1a",
       },
     }),
   },
 });
+
+document.title = "Minesweeper Battle";
+
 
 function App() {
   return (
