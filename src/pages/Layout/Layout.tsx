@@ -1,6 +1,7 @@
 import { Card, CardHeader, CardBody, CardFooter, Stack, Image, Heading, Text, Divider, ButtonGroup, Button } from '@chakra-ui/react';
 import '../../index.css';
 import Header from '../../components/Header';
+import { Link } from 'react-router-dom';
 
 export default function Layout() {
   return (
@@ -11,20 +12,22 @@ export default function Layout() {
       {/* Content centered in the remaining space */}
       <div className='flex-grow flex flex-col justify-center items-center'>
         <div className='flex flex-col lg:flex-row space-y-24 lg:space-y-0 lg:space-x-12 xl:space-x-44 2xl:space-x-64 justify-center items-center'>
-          <Card maxW='sm' backgroundColor={'#1e9907'}>
-            <CardHeader className='font-customFont text-center text-4xl'>
-              Single player
-            </CardHeader>
-            <CardBody className='bg-regural-dark-green'>
-              <Image
-                className='self-center h-60'
-                src='./singleplayer.png'
-                alt='Single player'
-                borderRadius='lg'
-              />
-            </CardBody>
-            <CardFooter />
-          </Card>
+          <Link to="/single">
+            <Card maxW='sm' backgroundColor={'#1e9907'} >
+              <CardHeader className='font-customFont text-center text-4xl'>
+                Single player
+              </CardHeader>
+              <CardBody className='bg-regural-dark-green'>
+                <Image
+                  className='self-center h-60'
+                  src='./singleplayer.png'
+                  alt='Single player'
+                  borderRadius='lg'
+                />
+              </CardBody>
+              <CardFooter />
+            </Card>
+          </Link>
 
           <Card maxW='sm' backgroundColor={'#1e9907'}>
             <CardHeader className='font-customFont text-center text-4xl'>
@@ -45,3 +48,4 @@ export default function Layout() {
     </main>
   );
 }
+ 
