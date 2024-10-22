@@ -1,6 +1,7 @@
 interface Tile {
     color: string;
     hasBomb: boolean;
+    nearbyBombs: number | null;
 }
 
 export class GameData {
@@ -16,7 +17,7 @@ export class GameData {
     private Generate(difficulty: number): void {
         let numberOfTiles = 5 + difficulty * 5;
         
-        // Set number of bombs based on difficulty
+        // Number of bombs based on difficulty
         switch (difficulty) {
             case 1:
                 this.numberOfBombs = 10;
@@ -33,6 +34,7 @@ export class GameData {
         }
 
         this.gameField = [];
+        // Generating empty gamefield
         for (let i = 0; i < numberOfTiles; i++) {
             let row: Tile[] = [];
             for (let j = 0; j < numberOfTiles; j++) {
@@ -54,25 +56,62 @@ export class GameData {
                      }
                 }
                 row.push({
-                    color: color,   // Default color for a tile
-                    hasBomb: false   // No bomb by default
+                    color: color,   
+                    hasBomb: false,
+                    nearbyBombs: null
                 });
             }
             this.gameField.push(row);
         }
 
-        // Randomly place bombs
+        // Placing bombs
         let bombsPlaced = 0;
         while (bombsPlaced < this.numberOfBombs) {
-            // Generate random coordinates for bomb placement
             let randomRow = Math.floor(Math.random() * numberOfTiles);
             let randomCol = Math.floor(Math.random() * numberOfTiles);
 
-            // Check if the tile already has a bomb
             if (!this.gameField[randomRow][randomCol].hasBomb) {
-                // Place a bomb if the tile doesn't already have one
                 this.gameField[randomRow][randomCol].hasBomb = true;
                 bombsPlaced++;
+            }
+        }
+
+        // Placing nearby bombs count
+        for (let i = 0; i < numberOfTiles; i++) {
+            for (let j = 0; j < numberOfTiles; j++) {
+                let nearbyBombs = 0;
+                if(this.gameField[i][j].hasBomb){
+                    break;
+                }
+                else if(i==0){
+                    if(j==0){
+                        if(this.gameField[0][1].hasBomb){
+                            nearbyBombs++;
+                        }
+                        else if(this.gameField[1][0].hasBomb){
+                            nearbyBombs++;
+                        }
+                        else if(this.gameField[1][1].hasBomb){
+                            nearbyBombs++;
+                        }
+                    }
+                    else if(j == numberOfTiles-1){
+                        if(this.gameField[0][numberOfTiles-2].hasBomb){
+                            nearbyBombs++;
+                        }
+                        else if(this.gameField[1][numberOfTiles-1].hasBomb){
+                            nearbyBombs++;
+                        }
+                        else if(this.gameField[1][numberOfTiles-2].hasBomb){
+                            nearbyBombs++;
+                        }
+                    }
+                    else{
+                        if(this.gameField[0][j].hasBomb){
+                            
+                        }
+                    }
+                }
             }
         }
         

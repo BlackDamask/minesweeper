@@ -10,10 +10,10 @@ export default function Game() {
                         
                         <div
                             key={colIndex}
-                            className="h-10 w-10 "
+                            className="h-14 w-14 "
                             style={{ backgroundColor: t.color === 'light-tile' ? '#28cc0a' : '#39ff13' }} // Temporary inline styles for testing
                         >
-                            {/* You can render bomb information or more details here */}
+                            
                         </div>
                     ))}
                 </div>
