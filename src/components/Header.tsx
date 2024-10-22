@@ -13,7 +13,7 @@ export default function Header() {
             alt='Return'
             borderRadius='lg'
           />
-          <h1 className='text-5xl text-white font-customFont'>Minesweeper Battle</h1>
+          <h1 className='text-5xl text-white font-customFont'>Minesweeper Battle 123456</h1>
 
         </div>
         <div className='flex items-center space-x-5 mr-3'> 

@@ -1,3 +1,5 @@
+import { CONNREFUSED } from "dns";
+
 interface Tile {
     color: string;
     hasBomb: boolean;
@@ -80,38 +82,33 @@ export class GameData {
         for (let i = 0; i < numberOfTiles; i++) {
             for (let j = 0; j < numberOfTiles; j++) {
                 let nearbyBombs = 0;
-                if(this.gameField[i][j].hasBomb){
-                    break;
+                
+                // Skip if the current tile has a bomb
+                if (this.gameField[i][j].hasBomb) {
+                    continue;
                 }
-                else if(i==0){
-                    if(j==0){
-                        if(this.gameField[0][1].hasBomb){
-                            nearbyBombs++;
-                        }
-                        else if(this.gameField[1][0].hasBomb){
-                            nearbyBombs++;
-                        }
-                        else if(this.gameField[1][1].hasBomb){
-                            nearbyBombs++;
-                        }
-                    }
-                    else if(j == numberOfTiles-1){
-                        if(this.gameField[0][numberOfTiles-2].hasBomb){
-                            nearbyBombs++;
-                        }
-                        else if(this.gameField[1][numberOfTiles-1].hasBomb){
-                            nearbyBombs++;
-                        }
-                        else if(this.gameField[1][numberOfTiles-2].hasBomb){
-                            nearbyBombs++;
-                        }
-                    }
-                    else{
-                        if(this.gameField[0][j].hasBomb){
-                            
+        
+                // Iterate over neighboring cells
+                for (let x = -1; x <= 1; x++) {
+                    for (let y = -1; y <= 1; y++) {
+                        // Skip the current cell itself
+                        if (x === 0 && y === 0) continue;
+        
+                        // Calculate neighbor's coordinates
+                        const newRow = i + x;
+                        const newCol = j + y;
+        
+                        // Check if the neighbor is within grid bounds
+                        if (newRow >= 0 && newRow < numberOfTiles && newCol >= 0 && newCol < numberOfTiles) {
+                            if (this.gameField[newRow][newCol].hasBomb) {
+                                nearbyBombs++;
+                            }
                         }
                     }
                 }
+        
+                // Assign the nearby bomb count to the current tile
+                this.gameField[i][j].nearbyBombs = nearbyBombs;
             }
         }
         
