@@ -4,7 +4,7 @@ export default function SinglePlayer(){
     return(
         <div>
             <Header/>
-            <main className='flex justify-center'>
+            <main className='flex justify-center '>
                 <Game/>
             </main>
         </div>
