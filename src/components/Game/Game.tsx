@@ -1,8 +1,8 @@
-import { useState, ReactElement } from "react";
+import { useState, ReactElement, useEffect } from "react";
 import { GameData } from "./data";
+import { ReactComponent as FlagIcon } from './flag.svg';
 
-// Define a color map for bomb count text colors
-const colorMap: { [key: number]: string } = {
+const textColorMap: { [key: number]: string } = {
     1: 'text-blue-700',
     2: 'text-fuchsia-700',
     3: 'text-red-700',
@@ -13,50 +13,55 @@ const colorMap: { [key: number]: string } = {
     8: 'text-zinc-600',
 };
 
-// Define valid tile color types
 type TileColor = 'light-tile' | 'dark-tile';
 
-// Define a tile color map for default and clicked colors
 const tileColorMap: { [key in TileColor]: { default: string; clicked: string } } = {
     'light-tile': {
-        default: '#28cc0a',  // light gray for default
-        clicked: '#d3d3d3',  // light green for clicked
+        default: '#28cc0a',  
+        clicked: '#d3d3d3',  
     },
     'dark-tile': {
-        default: '#39ff13',  // dark gray for default
-        clicked: '#a9a9a9',  // bright green for clicked
+        default: '#39ff13',  
+        clicked: '#a9a9a9',  
     },
 };
 
-// Function to show bomb count with appropriate color
-var showBombCount = (bombCount: number | null): ReactElement => {
+const showBombCount = (bombCount: number | null): ReactElement => {
     if (bombCount === null || bombCount === 0) {
-        return <p></p>;
+        return <p></p>; 
     }
 
-    const colorClass = colorMap[bombCount] || '';
-    return <p className={`${colorClass}`}>{bombCount}</p>;
+    const colorClass = textColorMap[bombCount] || '';
+    return <p className={colorClass}>{bombCount}</p>;
 };
 
 export default function Game({ gameData }: { gameData: GameData }) {
-    // Track revealed state for each tile
-    const [revealedTiles, setRevealedTiles] = useState<boolean[][]>(
-        gameData.gameField.map(row => row.map(() => false)) // Initialize all tiles as not revealed
-    );
+    const [currentGameData, setCurrentGameData] = useState<GameData>(gameData);
 
-    // Handle click to reveal the tile
+    useEffect(() => {
+        setCurrentGameData(gameData); 
+    }, [gameData]);
+
     const handleClick = (rowIndex: number, colIndex: number) => {
-        const newRevealedTiles = [...revealedTiles];
-        newRevealedTiles[rowIndex][colIndex] = true;
-        setRevealedTiles(newRevealedTiles);
+        if (!currentGameData.gameField[rowIndex][colIndex].isFlagged) {
+            currentGameData.setRevealedTile(rowIndex, colIndex);
+            setCurrentGameData(Object.assign(Object.create(Object.getPrototypeOf(currentGameData)), currentGameData));
+
+        }
+    };
+
+    const handleRightClick = (e: React.MouseEvent, rowIndex: number, colIndex: number) => {
+        e.preventDefault();
+        currentGameData.setFlaggedTile(rowIndex, colIndex);
+        setCurrentGameData(Object.assign(Object.create(Object.getPrototypeOf(currentGameData)), currentGameData));
+
     };
 
     return (
-        <div className="bg-green-950 h-fit w-fit p-5 ">
-            {gameData.gameField.map((row, rowIndex) => (
+        <div className="bg-green-950 h-fit w-fit p-5">
+            {currentGameData.gameField.map((row, rowIndex) => (
                 <div className="flex" key={rowIndex}>
                     {row.map((tile, colIndex) => {
-                        // Assert that tile.color is one of the valid TileColor values
                         const tileColor = tile.color as TileColor;
 
                         return (
@@ -64,14 +69,22 @@ export default function Game({ gameData }: { gameData: GameData }) {
                                 key={colIndex}
                                 className="flex items-center justify-center text-5xl h-14 w-14 font-customFont cursor-pointer"
                                 style={{
-                                    backgroundColor: revealedTiles[rowIndex][colIndex]
+                                    backgroundColor: currentGameData.gameField[rowIndex][colIndex].isRevealed
                                         ? tileColorMap[tileColor].clicked // Color after click
                                         : tileColorMap[tileColor].default // Default color before click
                                 }}
-                                onClick={() => handleClick(rowIndex, colIndex)} // Handle tile click
+                                onClick={() => handleClick(rowIndex, colIndex)} // Left click
+                                onContextMenu={(e) => handleRightClick(e, rowIndex, colIndex)} // Right click
                             >
-                                {/* Show bomb count only if the tile has been clicked */}
-                                {revealedTiles[rowIndex][colIndex] ? showBombCount(tile.nearbyBombs) : null}
+                                {currentGameData.gameField[rowIndex][colIndex].isRevealed &&
+                                !currentGameData.gameField[rowIndex][colIndex].isFlagged
+                                    ? showBombCount(tile.nearbyBombs)
+                                    : null}
+
+                                {currentGameData.gameField[rowIndex][colIndex].isFlagged &&
+                                !currentGameData.gameField[rowIndex][colIndex].isRevealed && (
+                                    <FlagIcon width="0.90em" height="0.90em" />
+                                )}
                             </div>
                         );
                     })}
@@ -80,5 +93,6 @@ export default function Game({ gameData }: { gameData: GameData }) {
         </div>
     );
 }
+
 
 

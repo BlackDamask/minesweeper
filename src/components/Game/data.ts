@@ -4,6 +4,8 @@ interface Tile {
     color: string;
     hasBomb: boolean;
     nearbyBombs: number | null;
+    isRevealed: boolean;
+    isFlagged: boolean;
 }
 
 export class GameData {
@@ -14,6 +16,13 @@ export class GameData {
     constructor(difficulty: number) {
         this.difficulty = difficulty;
         this.Generate(difficulty);
+    }
+
+    public setRevealedTile(rowIndex: number,colIndex: number) : void{
+        this.gameField[colIndex][rowIndex].isRevealed = true;
+    }
+    public setFlaggedTile(rowIndex: number,colIndex: number) : void{
+        this.gameField[colIndex][rowIndex].isFlagged = true;
     }
 
     private Generate(difficulty: number): void {
@@ -60,7 +69,9 @@ export class GameData {
                 row.push({
                     color: color,   
                     hasBomb: false,
-                    nearbyBombs: null
+                    nearbyBombs: null,
+                    isFlagged: false,
+                    isRevealed: false
                 });
             }
             this.gameField.push(row);
@@ -83,18 +94,15 @@ export class GameData {
             for (let j = 0; j < numberOfTiles; j++) {
                 let nearbyBombs = 0;
                 
-                // Skip if the current tile has a bomb
                 if (this.gameField[i][j].hasBomb) {
                     continue;
                 }
         
-                // Iterate over neighboring cells
                 for (let x = -1; x <= 1; x++) {
                     for (let y = -1; y <= 1; y++) {
                         // Skip the current cell itself
                         if (x === 0 && y === 0) continue;
         
-                        // Calculate neighbor's coordinates
                         const newRow = i + x;
                         const newCol = j + y;
         
@@ -106,8 +114,7 @@ export class GameData {
                         }
                     }
                 }
-        
-                // Assign the nearby bomb count to the current tile
+    
                 this.gameField[i][j].nearbyBombs = nearbyBombs;
             }
         }

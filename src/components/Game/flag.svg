@@ -1,0 +1,52 @@
+<svg
+   width="16.0px"
+   height="16.0px"
+   viewBox="0 0 16.0 16.0"
+   version="1.1"
+   id="SVGRoot"
+   xmlns="http://www.w3.org/2000/svg">
+  <g id="layer1">
+    <rect
+       style="fill:#502d16;stroke-width:0.655517"
+       width="0.65552241"
+       height="11.799311"
+       x="4.3444777"
+       y="4" />
+    <rect
+       style="fill:#28170b;stroke-width:0.655517"
+       width="0.65551722"
+       height="11.799311"
+       x="3.6889691"
+       y="4" />
+    <rect
+       style="fill:#28170b;stroke-width:0.655517"
+       width="0.65551722"
+       height="3.2775867"
+       x="3.6889691"
+       y="0.72240067" />
+    <rect
+       style="fill:#502d16;stroke-width:0.655517"
+       width="0.65551722"
+       height="3.2775867"
+       x="4.3444777"
+       y="0.72240067" />
+    <rect
+       style="fill:#ff0000;stroke-width:0.655517"
+       width="2.6220641"
+       height="5.2441506"
+       x="5.0000052"
+       y="0.72240067" />
+    <rect
+       style="fill:#dc0000;fill-opacity:1;stroke-width:0.655517"
+       width="2.6220617"
+       height="5.2441235"
+       x="7.6220765"
+       y="0.066910982" />
+    <rect
+       style="fill:#ff0000;stroke-width:0.655517"
+       width="1.966561"
+       height="5.2441506"
+       x="10.244129"
+       y="0.72240067" />
+  </g>
+</svg>
