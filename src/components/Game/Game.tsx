@@ -13,16 +13,18 @@ const textColorMap: { [key: number]: string } = {
     8: 'text-zinc-600',
 };
 
-type TileColor = 'light-tile' | 'dark-tile';
+type TileColor = 'light-tile' | 'dark-tile' ;
 
-const tileColorMap: { [key in TileColor]: { default: string; clicked: string } } = {
+const tileColorMap: { [key in TileColor]: { default: string; clicked: string; withBomb: string } } = {
     'light-tile': {
         default: '#28cc0a',  
-        clicked: '#d3d3d3',  
+        clicked: '#fdd08a', 
+        withBomb: '#ff0000', 
     },
     'dark-tile': {
         default: '#39ff13',  
-        clicked: '#a9a9a9',  
+        clicked: '#caa66e', 
+        withBomb: '#ff0000', 
     },
 };
 
@@ -70,7 +72,7 @@ export default function Game({ gameData }: { gameData: GameData }) {
                                 className="flex items-center justify-center text-5xl h-14 w-14 font-customFont cursor-pointer"
                                 style={{
                                     backgroundColor: currentGameData.gameField[rowIndex][colIndex].isRevealed
-                                        ? tileColorMap[tileColor].clicked // Color after click
+                                        ? currentGameData.gameField[rowIndex][colIndex].hasBomb ? tileColorMap[tileColor].withBomb : tileColorMap[tileColor].clicked // Color after click
                                         : tileColorMap[tileColor].default // Default color before click
                                 }}
                                 onClick={() => handleClick(rowIndex, colIndex)} // Left click

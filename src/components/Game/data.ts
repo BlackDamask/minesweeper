@@ -1,4 +1,5 @@
 import { CONNREFUSED } from "dns";
+import { Reorder } from "framer-motion";
 
 interface Tile {
     color: string;
@@ -12,24 +13,93 @@ export class GameData {
     private difficulty: number;
     public gameField: Tile[][] = [[]];
     private numberOfBombs: number = 0;
+    private numberOfTiles: number = 0; 
+    private isFirstClick: boolean = true;
 
     constructor(difficulty: number) {
         this.difficulty = difficulty;
-        this.Generate(difficulty);
+        this.Generate();
     }
 
-    public setRevealedTile(rowIndex: number,colIndex: number) : void{
+    public setRevealedTile(colIndex: number, rowIndex: number): void {
+        if (this.isFirstClick) {
+            this.PlaceBombs(colIndex, rowIndex);
+            this.isFirstClick = false;
+        }
+
+        // If the tile is already revealed or flagged, return early
+        if (this.gameField[colIndex][rowIndex].isRevealed || this.gameField[colIndex][rowIndex].isFlagged) {
+            return;
+        }
+
+        // Reveal the tile
         this.gameField[colIndex][rowIndex].isRevealed = true;
-    }
-    public setFlaggedTile(rowIndex: number,colIndex: number) : void{
-        this.gameField[colIndex][rowIndex].isFlagged = true;
+        this.checkEmptyTiles(colIndex, rowIndex);
     }
 
-    private Generate(difficulty: number): void {
-        let numberOfTiles = 5 + difficulty * 5;
+    public checkEmptyTiles(colIndex: number, rowIndex: number): void {
+        if (this.gameField[colIndex][rowIndex].nearbyBombs === 0) {
+            for (let x = -1; x <= 1; x++) {
+                for (let y = -1; y <= 1; y++) {
+                    if (x === 0 && y === 0) continue;
+
+                    const newRow = colIndex + x;
+                    const newCol = rowIndex + y;
+
+                    if (newRow >= 0 && newRow < this.gameField.length && newCol >= 0 && newCol < this.gameField.length) {
+                        if (!this.gameField[newRow][newCol].isRevealed && !this.gameField[newRow][newCol].hasBomb) {
+                            this.setRevealedTile(newRow, newCol);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public setFlaggedTile(colIndex: number, rowIndex: number): void {
+        if (!this.gameField[colIndex][rowIndex].isRevealed) {
+            this.gameField[colIndex][rowIndex].isFlagged = !this.gameField[colIndex][rowIndex].isFlagged;
+        }
+    }
+
+    private Generate(): void {
+        // Adjust `numberOfTiles` and `numberOfBombs` based on difficulty
+        this.numberOfTiles = 5 + this.difficulty * 5;
         
-        // Number of bombs based on difficulty
-        switch (difficulty) {
+        this.gameField = [];
+        for (let i = 0; i < this.numberOfTiles; i++) {
+            const row: Tile[] = [];
+            for (let j = 0; j < this.numberOfTiles; j++) {
+                const color = (i + j) % 2 === 0 ? 'light-tile' : 'dark-tile';
+                row.push({
+                    color: color,   
+                    hasBomb: false,
+                    nearbyBombs: null,
+                    isFlagged: false,
+                    isRevealed: false
+                });
+            }
+            this.gameField.push(row);
+        }
+    }
+
+    public PlaceBombs(colIndex: number, rowIndex: number): void {
+        const exclusionZone = new Set<string>();
+    
+        // Exclude initial tile and its neighbors from bomb placement
+        for (let x = -1; x <= 1; x++) {
+            for (let y = -1; y <= 1; y++) {
+                const newRow = colIndex + x;
+                const newCol = rowIndex + y;
+    
+                if (newRow >= 0 && newRow < this.numberOfTiles && newCol >= 0 && newCol < this.numberOfTiles) {
+                    exclusionZone.add(`${newRow},${newCol}`);
+                }
+            }
+        }
+
+        // Set number of bombs based on difficulty
+        switch (this.difficulty) {
             case 1:
                 this.numberOfBombs = 10;
                 break;
@@ -44,80 +114,43 @@ export class GameData {
                 break;
         }
 
-        this.gameField = [];
-        // Generating empty gamefield
-        for (let i = 0; i < numberOfTiles; i++) {
-            let row: Tile[] = [];
-            for (let j = 0; j < numberOfTiles; j++) {
-                let color: string;
-                if((i+1)%2 == 0){
-                 if((j+1)%2 == 0){
-                    color = 'light-tile';
-                 }
-                 else{
-                    color = 'dark-tile';
-                 }   
-                }
-                else{
-                    if((j+1)%2 == 0){
-                        color = 'dark-tile';
-                     }
-                     else{
-                        color = 'light-tile';
-                     }
-                }
-                row.push({
-                    color: color,   
-                    hasBomb: false,
-                    nearbyBombs: null,
-                    isFlagged: false,
-                    isRevealed: false
-                });
-            }
-            this.gameField.push(row);
-        }
-
-        // Placing bombs
+        // Place bombs avoiding the initial clicked tile
         let bombsPlaced = 0;
         while (bombsPlaced < this.numberOfBombs) {
-            let randomRow = Math.floor(Math.random() * numberOfTiles);
-            let randomCol = Math.floor(Math.random() * numberOfTiles);
+            const randomRow = Math.floor(Math.random() * this.numberOfTiles);
+            const randomCol = Math.floor(Math.random() * this.numberOfTiles);
 
-            if (!this.gameField[randomRow][randomCol].hasBomb) {
+            if (
+                (randomRow !== colIndex || randomCol !== rowIndex) &&
+                !this.gameField[randomRow][randomCol].hasBomb && !exclusionZone.has(`${randomRow},${randomCol}`)
+            ) {
                 this.gameField[randomRow][randomCol].hasBomb = true;
                 bombsPlaced++;
             }
         }
 
-        // Placing nearby bombs count
-        for (let i = 0; i < numberOfTiles; i++) {
-            for (let j = 0; j < numberOfTiles; j++) {
+        // Calculate nearby bombs for each tile
+        for (let i = 0; i < this.numberOfTiles; i++) {
+            for (let j = 0; j < this.numberOfTiles; j++) {
                 let nearbyBombs = 0;
-                
-                if (this.gameField[i][j].hasBomb) {
-                    continue;
-                }
-        
+                if (this.gameField[i][j].hasBomb) continue;
+
                 for (let x = -1; x <= 1; x++) {
                     for (let y = -1; y <= 1; y++) {
-                        // Skip the current cell itself
                         if (x === 0 && y === 0) continue;
-        
+
                         const newRow = i + x;
                         const newCol = j + y;
-        
-                        // Check if the neighbor is within grid bounds
-                        if (newRow >= 0 && newRow < numberOfTiles && newCol >= 0 && newCol < numberOfTiles) {
+
+                        if (newRow >= 0 && newRow < this.numberOfTiles && newCol >= 0 && newCol < this.numberOfTiles) {
                             if (this.gameField[newRow][newCol].hasBomb) {
                                 nearbyBombs++;
                             }
                         }
                     }
                 }
-    
                 this.gameField[i][j].nearbyBombs = nearbyBombs;
             }
         }
-        
     }
 }
