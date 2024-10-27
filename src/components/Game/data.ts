@@ -10,11 +10,15 @@ interface Tile {
 }
 
 export class GameData {
-    private difficulty: number;
     public gameField: Tile[][] = [[]];
+    public isGameOver: boolean = false;
+    public isWin: boolean = true;
+    private difficulty: number;
     private numberOfBombs: number = 0;
     private numberOfTiles: number = 0; 
+    private numberOfRevealedTiles: number = 0;
     private isFirstClick: boolean = true;
+    
 
     constructor(difficulty: number) {
         this.difficulty = difficulty;
@@ -27,14 +31,34 @@ export class GameData {
             this.isFirstClick = false;
         }
 
-        // If the tile is already revealed or flagged, return early
-        if (this.gameField[colIndex][rowIndex].isRevealed || this.gameField[colIndex][rowIndex].isFlagged) {
+        if (this.gameField[colIndex][rowIndex].isRevealed ||
+            this.gameField[colIndex][rowIndex].isFlagged ||
+            this.isGameOver) {
             return;
         }
 
-        // Reveal the tile
+        //Checkfor gameEnd
+        if( this.gameField[colIndex][rowIndex].hasBomb){
+            this.isWin = false;
+            this.isGameOver = true;
+        }
+
+        
+
         this.gameField[colIndex][rowIndex].isRevealed = true;
+        this.numberOfRevealedTiles++;
+
+        if(this.numberOfRevealedTiles === (this.numberOfTiles - this.numberOfBombs)){
+            this.isGameOver = true;
+        }
+
         this.checkEmptyTiles(colIndex, rowIndex);
+    }
+
+    public setFlaggedTile(colIndex: number, rowIndex: number): void {
+        if (!this.gameField[colIndex][rowIndex].isRevealed) {
+            this.gameField[colIndex][rowIndex].isFlagged = !this.gameField[colIndex][rowIndex].isFlagged;
+        }
     }
 
     public checkEmptyTiles(colIndex: number, rowIndex: number): void {
@@ -53,12 +77,6 @@ export class GameData {
                     }
                 }
             }
-        }
-    }
-
-    public setFlaggedTile(colIndex: number, rowIndex: number): void {
-        if (!this.gameField[colIndex][rowIndex].isRevealed) {
-            this.gameField[colIndex][rowIndex].isFlagged = !this.gameField[colIndex][rowIndex].isFlagged;
         }
     }
 
@@ -83,7 +101,7 @@ export class GameData {
         }
     }
 
-    public PlaceBombs(colIndex: number, rowIndex: number): void {
+    private PlaceBombs(colIndex: number, rowIndex: number): void {
         const exclusionZone = new Set<string>();
     
         // Exclude initial tile and its neighbors from bomb placement

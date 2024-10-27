@@ -1,5 +1,5 @@
 import { Image, Divider, Avatar, AvatarBadge } from '@chakra-ui/react';
-import { ReactComponent as SettingsIcon } from './settings.svg';
+import { ReactComponent as SettingsIcon } from './settings.svg';  
 
 export default function Header() {
   return (
@@ -9,7 +9,7 @@ export default function Header() {
       <div className='flex items-center space-x-5'>
           <Image
             className='self-left h-24 m-2'
-            src='./logo192.png'
+            src='./logo512.png'
             alt='Return'
             borderRadius='lg'
           />

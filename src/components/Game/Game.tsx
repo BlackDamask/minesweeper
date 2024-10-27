@@ -19,12 +19,12 @@ const tileColorMap: { [key in TileColor]: { default: string; clicked: string; wi
     'light-tile': {
         default: '#28cc0a',  
         clicked: '#fdd08a', 
-        withBomb: '#ff0000', 
+        withBomb: '#bb8c44', 
     },
     'dark-tile': {
         default: '#39ff13',  
         clicked: '#caa66e', 
-        withBomb: '#ff0000', 
+        withBomb: '#bb8c44', 
     },
 };
 
@@ -39,10 +39,6 @@ const showBombCount = (bombCount: number | null): ReactElement => {
 
 export default function Game({ gameData }: { gameData: GameData }) {
     const [currentGameData, setCurrentGameData] = useState<GameData>(gameData);
-
-    useEffect(() => {
-        setCurrentGameData(gameData); 
-    }, [gameData]);
 
     const handleClick = (rowIndex: number, colIndex: number) => {
         if (!currentGameData.gameField[rowIndex][colIndex].isFlagged) {
@@ -87,6 +83,13 @@ export default function Game({ gameData }: { gameData: GameData }) {
                                 !currentGameData.gameField[rowIndex][colIndex].isRevealed && (
                                     <FlagIcon width="0.90em" height="0.90em" />
                                 )}
+                                {currentGameData.gameField[rowIndex][colIndex].hasBomb && 
+                                currentGameData.gameField[rowIndex][colIndex].isRevealed && (
+                                    <img
+                                    className='h-3/4 m-2'
+                                    src='./logo192.png'
+                                    />
+                                    )}
                             </div>
                         );
                     })}
