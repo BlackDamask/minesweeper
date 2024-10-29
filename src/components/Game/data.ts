@@ -48,7 +48,8 @@ export class GameData {
         this.gameField[colIndex][rowIndex].isRevealed = true;
         this.numberOfRevealedTiles++;
 
-        if(this.numberOfRevealedTiles === (this.numberOfTiles - this.numberOfBombs)){
+        console.log(this.numberOfRevealedTiles + " " + ((this.numberOfTiles * this.numberOfTiles) - this.numberOfBombs));
+        if(this.numberOfRevealedTiles === (this.numberOfTiles * this.numberOfTiles) - this.numberOfBombs){
             this.isGameOver = true;
         }
 
@@ -56,7 +57,7 @@ export class GameData {
     }
 
     public setFlaggedTile(colIndex: number, rowIndex: number): void {
-        if (!this.gameField[colIndex][rowIndex].isRevealed) {
+        if (!this.gameField[colIndex][rowIndex].isRevealed && !this.isGameOver) {
             this.gameField[colIndex][rowIndex].isFlagged = !this.gameField[colIndex][rowIndex].isFlagged;
         }
     }

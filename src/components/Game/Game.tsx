@@ -1,6 +1,7 @@
 import { useState, ReactElement, useEffect } from "react";
-import { GameData } from "./data";
+import { GameData } from './data';
 import { ReactComponent as FlagIcon } from './flag.svg';
+import { Button, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, useDisclosure } from "@chakra-ui/react";
 
 const textColorMap: { [key: number]: string } = {
     1: 'text-blue-700',
@@ -39,6 +40,15 @@ const showBombCount = (bombCount: number | null): ReactElement => {
 
 export default function Game({ gameData }: { gameData: GameData }) {
     const [currentGameData, setCurrentGameData] = useState<GameData>(gameData);
+
+    //open/close modal
+    const { isOpen, onOpen, onClose } = useDisclosure();
+
+    useEffect(() => {
+        if (currentGameData.isGameOver) {
+            onOpen();
+        }
+    }, [currentGameData.isGameOver, onOpen]);
 
     const handleClick = (rowIndex: number, colIndex: number) => {
         if (!currentGameData.gameField[rowIndex][colIndex].isFlagged) {
@@ -95,6 +105,27 @@ export default function Game({ gameData }: { gameData: GameData }) {
                     })}
                 </div>
             ))}
+            
+            <Modal  isOpen={isOpen} onClose={onClose} isCentered size = "md" >
+                <ModalOverlay bg='none'
+                    backdropFilter='auto'
+                    backdropInvert='70%'
+                    backdropBlur='2px'/>
+                <ModalContent backgroundColor='#ff'>
+                <ModalHeader textAlign={'center'}>You won</ModalHeader>
+                <ModalBody pb={6} >
+                    Your time: 
+
+                </ModalBody>
+
+                <ModalFooter >
+                    <Button colorScheme='blue' mr={5} onClick={() => {setCurrentGameData (new GameData(1)); onClose();}}>
+                        Retry
+                    </Button>
+                    <Button onClick={onClose}>Show field</Button>
+                </ModalFooter>
+                </ModalContent>
+            </Modal>
         </div>
     );
 }
