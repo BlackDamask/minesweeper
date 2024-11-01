@@ -14,24 +14,24 @@ const textColorMap: { [key: number]: string } = {
     8: 'text-zinc-600',
 };
 
-type TileColor = 'light-tile' | 'dark-tile' ;
+type TileColor = 'light-tile' | 'dark-tile';
 
 const tileColorMap: { [key in TileColor]: { default: string; clicked: string; withBomb: string } } = {
     'light-tile': {
-        default: '#28cc0a',  
-        clicked: '#fdd08a', 
-        withBomb: '#bb8c44', 
+        default: '#28cc0a',
+        clicked: '#fdd08a',
+        withBomb: '#bb8c44',
     },
     'dark-tile': {
-        default: '#39ff13',  
-        clicked: '#caa66e', 
-        withBomb: '#bb8c44', 
+        default: '#39ff13',
+        clicked: '#caa66e',
+        withBomb: '#bb8c44',
     },
 };
 
 const showBombCount = (bombCount: number | null): ReactElement => {
     if (bombCount === null || bombCount === 0) {
-        return <p></p>; 
+        return <p></p>;
     }
 
     const colorClass = textColorMap[bombCount] || '';
@@ -41,7 +41,7 @@ const showBombCount = (bombCount: number | null): ReactElement => {
 export default function Game({ gameData }: { gameData: GameData }) {
     const [currentGameData, setCurrentGameData] = useState<GameData>(gameData);
 
-    //open/close modal
+    // Open/close modal
     const { isOpen, onOpen, onClose } = useDisclosure();
 
     useEffect(() => {
@@ -54,7 +54,6 @@ export default function Game({ gameData }: { gameData: GameData }) {
         if (!currentGameData.gameField[rowIndex][colIndex].isFlagged) {
             currentGameData.setRevealedTile(rowIndex, colIndex);
             setCurrentGameData(Object.assign(Object.create(Object.getPrototypeOf(currentGameData)), currentGameData));
-
         }
     };
 
@@ -62,11 +61,47 @@ export default function Game({ gameData }: { gameData: GameData }) {
         e.preventDefault();
         currentGameData.setFlaggedTile(rowIndex, colIndex);
         setCurrentGameData(Object.assign(Object.create(Object.getPrototypeOf(currentGameData)), currentGameData));
+    };
 
+    const showModalContent = (isWon: boolean): ReactElement => {
+        if (isWon) {
+            return (
+                <ModalContent backgroundColor="#28cc0a">
+                    <ModalHeader textAlign="center" fontSize="3xl" textColor={'#052e16'}  className="font-customFont">You won</ModalHeader>
+                    <ModalBody pb={6} fontSize="2xl" textColor={'#052e16'}  className="font-customFont">
+                        Your time:
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button colorScheme="green" borderColor="#000000" backgroundColor="#052e16" mr={5} onClick={() => { setCurrentGameData(new GameData(1)); onClose(); }}>
+                            Retry
+                        </Button>
+                        <Button colorScheme="gray" onClick={onClose}>Show field</Button>
+                    </ModalFooter>
+                </ModalContent>
+            );
+        } else {
+            return (
+                <ModalContent backgroundColor="#08396B">
+                    <ModalHeader textAlign="center" fontSize="3xl" textColor={'#ceffff'}  className="font-customFont">
+                        Game Over
+                    </ModalHeader>
+                    <ModalBody pb={6} fontSize="2xl" textColor={'#ceffff'}  className="font-customFont">
+                        Your time:
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button colorScheme="gray" borderColor="#000000" textColor={'#000000'} backgroundColor="#ceffff" mr={5} onClick={() => { setCurrentGameData(new GameData(1)); onClose(); }}>
+                            Retry
+                        </Button>
+                        <Button colorScheme="blue" backgroundColor={'#032448'} onClick={onClose}>Show field</Button>
+                    </ModalFooter>
+                </ModalContent>
+            );
+        }
     };
 
     return (
-        <div className="bg-green-950 h-fit w-fit p-5">
+        <>
+            
             {currentGameData.gameField.map((row, rowIndex) => (
                 <div className="flex" key={rowIndex}>
                     {row.map((tile, colIndex) => {
@@ -106,27 +141,16 @@ export default function Game({ gameData }: { gameData: GameData }) {
                 </div>
             ))}
             
-            <Modal  isOpen={isOpen} onClose={onClose} isCentered size = "md" >
-                <ModalOverlay bg='none'
-                    backdropFilter='auto'
-                    backdropInvert='70%'
-                    backdropBlur='2px'/>
-                <ModalContent backgroundColor='#ff'>
-                <ModalHeader textAlign={'center'}>You won</ModalHeader>
-                <ModalBody pb={6} >
-                    Your time: 
-
-                </ModalBody>
-
-                <ModalFooter >
-                    <Button colorScheme='blue' mr={5} onClick={() => {setCurrentGameData (new GameData(1)); onClose();}}>
-                        Retry
-                    </Button>
-                    <Button onClick={onClose}>Show field</Button>
-                </ModalFooter>
-                </ModalContent>
+            <Modal isOpen={isOpen} onClose={onClose} isCentered size="md">
+                <ModalOverlay
+                    bg="none"
+                    backdropFilter="auto"
+                    backdropInvert="70%"
+                    backdropBlur="2px"
+                />
+                {showModalContent(currentGameData.isWin)}
             </Modal>
-        </div>
+        </>
     );
 }
 
