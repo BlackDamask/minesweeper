@@ -22,6 +22,7 @@ export class GameData {
 
     constructor(difficulty: number) {
         this.difficulty = difficulty;
+        
         this.Generate();
     }
 
@@ -48,7 +49,7 @@ export class GameData {
         this.gameField[colIndex][rowIndex].isRevealed = true;
         this.numberOfRevealedTiles++;
 
-        console.log(this.numberOfRevealedTiles + " " + ((this.numberOfTiles * this.numberOfTiles) - this.numberOfBombs));
+        
         if(this.numberOfRevealedTiles === (this.numberOfTiles * this.numberOfTiles) - this.numberOfBombs){
             this.isGameOver = true;
         }
@@ -116,9 +117,9 @@ export class GameData {
                 }
             }
         }
-
+        console.log(this.difficulty);
         // Set number of bombs based on difficulty
-        switch (this.difficulty) {
+        switch (Number(this.difficulty)) {
             case 1:
                 this.numberOfBombs = 10;
                 break;
@@ -129,10 +130,11 @@ export class GameData {
                 this.numberOfBombs = 100;
                 break;
             default:
+                console.warn(`Unknown difficulty level: ${this.difficulty}. Defaulting to 10 bombs.`);
                 this.numberOfBombs = 10;
                 break;
         }
-
+        console.log(this.numberOfBombs+"bombs");
         // Place bombs avoiding the initial clicked tile
         let bombsPlaced = 0;
         while (bombsPlaced < this.numberOfBombs) {

@@ -38,8 +38,7 @@ const showBombCount = (bombCount: number | null): ReactElement => {
     return <p className={colorClass}>{bombCount}</p>;
 };
 
-export default function Game({ gameData }: { gameData: GameData }) {
-    const [currentGameData, setCurrentGameData] = useState<GameData>(gameData);
+export default function Game({ currentGameData, setCurrentGameData, selectedOption }: { currentGameData: GameData, setCurrentGameData:  React.Dispatch<React.SetStateAction<GameData>>, selectedOption: number}) {
 
     // Open/close modal
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -72,7 +71,7 @@ export default function Game({ gameData }: { gameData: GameData }) {
                         Your time:
                     </ModalBody>
                     <ModalFooter>
-                        <Button colorScheme="green" borderColor="#000000" backgroundColor="#052e16" mr={5} onClick={() => { setCurrentGameData(new GameData(1)); onClose(); }}>
+                        <Button colorScheme="green" borderColor="#000000" backgroundColor="#052e16" mr={5} onClick={() => { setCurrentGameData(new GameData(selectedOption)); onClose(); }}>
                             Retry
                         </Button>
                         <Button colorScheme="gray" onClick={onClose}>Show field</Button>
@@ -89,7 +88,7 @@ export default function Game({ gameData }: { gameData: GameData }) {
                         Your time:
                     </ModalBody>
                     <ModalFooter>
-                        <Button colorScheme="gray" borderColor="#000000" textColor={'#000000'} backgroundColor="#ceffff" mr={5} onClick={() => { setCurrentGameData(new GameData(1)); onClose(); }}>
+                        <Button colorScheme="gray" borderColor="#000000" textColor={'#000000'} backgroundColor="#ceffff" mr={5} onClick={() => { setCurrentGameData(new GameData(selectedOption)); onClose(); }}>
                             Retry
                         </Button>
                         <Button colorScheme="blue" backgroundColor={'#032448'} onClick={onClose}>Show field</Button>

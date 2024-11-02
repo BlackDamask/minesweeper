@@ -1,8 +1,9 @@
 import { useState, ReactElement } from 'react';
 import { ReactComponent as WierdFace} from './*_*.svg';
 import { ReactComponent as SmileFace} from './smile.svg';
+import { GameData } from '../data';
 
-export default function RestartGameEmoji(){
+export default function RestartGameEmoji({setCurrentGameData, selectedOption} : {setCurrentGameData: React.Dispatch<React.SetStateAction<GameData>>, selectedOption: number}){
     const [isHovered, setIsHovered] = useState(false);
 
   // Event handlers for hover
@@ -14,6 +15,7 @@ export default function RestartGameEmoji(){
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         className='pb-3'
+        onClick={() => {setCurrentGameData(new GameData(selectedOption))}}
         >
         {isHovered ? (
             // SVG displayed on hover
