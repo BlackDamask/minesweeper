@@ -68,7 +68,8 @@ export default function Game({ currentGameData, setCurrentGameData, selectedOpti
                 <ModalContent backgroundColor="#28cc0a">
                     <ModalHeader textAlign="center" fontSize="3xl" textColor={'#052e16'}  className="font-customFont">You won</ModalHeader>
                     <ModalBody pb={6} fontSize="2xl" textColor={'#052e16'}  className="font-customFont">
-                        Your time:
+                        <p>{`Your time: ${currentGameData.time}`}</p>
+                        <p>Your record:</p>
                     </ModalBody>
                     <ModalFooter>
                         <Button colorScheme="green" borderColor="#000000" backgroundColor="#052e16" mr={5} onClick={() => { setCurrentGameData(new GameData(selectedOption)); onClose(); }}>
@@ -85,7 +86,7 @@ export default function Game({ currentGameData, setCurrentGameData, selectedOpti
                         Game Over
                     </ModalHeader>
                     <ModalBody pb={6} fontSize="2xl" textColor={'#ceffff'}  className="font-customFont">
-                        Your time:
+                        {`Your time: ${currentGameData.time}`}
                     </ModalBody>
                     <ModalFooter>
                         <Button colorScheme="gray" borderColor="#000000" textColor={'#000000'} backgroundColor="#ceffff" mr={5} onClick={() => { setCurrentGameData(new GameData(selectedOption)); onClose(); }}>

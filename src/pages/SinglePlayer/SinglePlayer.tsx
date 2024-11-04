@@ -31,7 +31,7 @@ export default function SinglePlayer(){
                             <option value={2}>2</option>
                             <option value={3}>3</option>
                         </Select>
-                        <RestartGameEmoji setCurrentGameData = {setCurrentGameData} selectedOption = {selectedOption}/>
+                        <RestartGameEmoji setCurrentGameData = {setCurrentGameData} currentGameData = {currentGameData} selectedOption = {selectedOption}/>
                         <div className='flex'>
                             <Cursor className='h-[4em]'/>
                             <img

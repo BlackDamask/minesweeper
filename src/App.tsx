@@ -4,7 +4,7 @@ import { ReactDOM } from 'react';
 import { BrowserRouter, Routes, Route } from "react-router-dom"
 import Layout from './pages/Layout/Layout';
 import { ChakraProvider, extendTheme } from '@chakra-ui/react'
-import SinglePlayer from './pages/Layout/SinglePlayer';
+import SinglePlayer from './pages/SinglePlayer/SinglePlayer';
 
 const theme = extendTheme({
   styles: {

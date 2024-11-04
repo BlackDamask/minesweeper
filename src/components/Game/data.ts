@@ -13,16 +13,19 @@ export class GameData {
     public gameField: Tile[][] = [[]];
     public isGameOver: boolean = false;
     public isWin: boolean = true;
+    public isStarted = false;
     private difficulty: number;
     private numberOfBombs: number = 0;
-    private numberOfTiles: number = 0; 
+    private numberOfTiles: number = 0;
     private numberOfRevealedTiles: number = 0;
     private isFirstClick: boolean = true;
-    
+    public time: string | null = null;
+
+    private startTime: number | null = null;
+    private endTime: number | null = null;
 
     constructor(difficulty: number) {
         this.difficulty = difficulty;
-        
         this.Generate();
     }
 
@@ -30,6 +33,7 @@ export class GameData {
         if (this.isFirstClick) {
             this.PlaceBombs(colIndex, rowIndex);
             this.isFirstClick = false;
+            this.startTime = Date.now(); // Start the timer
         }
 
         if (this.gameField[colIndex][rowIndex].isRevealed ||
@@ -38,20 +42,17 @@ export class GameData {
             return;
         }
 
-        //Checkfor gameEnd
-        if( this.gameField[colIndex][rowIndex].hasBomb){
-            this.isWin = false;
-            this.isGameOver = true;
+        // Check for game end
+        if (this.gameField[colIndex][rowIndex].hasBomb) {
+            this.GameOver(false);
         }
-
-        
 
         this.gameField[colIndex][rowIndex].isRevealed = true;
         this.numberOfRevealedTiles++;
 
-        
-        if(this.numberOfRevealedTiles === (this.numberOfTiles * this.numberOfTiles) - this.numberOfBombs){
-            this.isGameOver = true;
+        // Check for win condition
+        if (this.numberOfRevealedTiles === (this.numberOfTiles * this.numberOfTiles) - this.numberOfBombs) {
+            this.GameOver(true);
         }
 
         this.checkEmptyTiles(colIndex, rowIndex);
@@ -103,21 +104,43 @@ export class GameData {
         }
     }
 
+    private GameOver(isWin: boolean): void{
+        this.isGameOver = true;
+        this.isWin = isWin;
+        this.endTime = Date.now();
+        this.time = this.getElapsedTime();
+        console.info("time " + this.time);
+    }
+
+    private getElapsedTime(): string {
+        if (this.startTime === null) return "0s";
+        
+        const end = this.endTime || Date.now();
+        const elapsedMilliseconds = end - this.startTime;
+        const elapsedSeconds = Math.floor(elapsedMilliseconds / 1000);
+        
+        const minutes = Math.floor(elapsedSeconds / 60);
+        const seconds = elapsedSeconds % 60;
+
+        return `${minutes}m ${seconds}s`;
+    }
+
     private PlaceBombs(colIndex: number, rowIndex: number): void {
+        this.isStarted = true;
         const exclusionZone = new Set<string>();
-    
+
         // Exclude initial tile and its neighbors from bomb placement
         for (let x = -1; x <= 1; x++) {
             for (let y = -1; y <= 1; y++) {
                 const newRow = colIndex + x;
                 const newCol = rowIndex + y;
-    
+
                 if (newRow >= 0 && newRow < this.numberOfTiles && newCol >= 0 && newCol < this.numberOfTiles) {
                     exclusionZone.add(`${newRow},${newCol}`);
                 }
             }
         }
-        console.log(this.difficulty);
+
         // Set number of bombs based on difficulty
         switch (Number(this.difficulty)) {
             case 1:
@@ -134,7 +157,7 @@ export class GameData {
                 this.numberOfBombs = 10;
                 break;
         }
-        console.log(this.numberOfBombs+"bombs");
+
         // Place bombs avoiding the initial clicked tile
         let bombsPlaced = 0;
         while (bombsPlaced < this.numberOfBombs) {

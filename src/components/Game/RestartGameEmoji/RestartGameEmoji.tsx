@@ -2,28 +2,77 @@ import { useState, ReactElement } from 'react';
 import { ReactComponent as WierdFace} from './*_*.svg';
 import { ReactComponent as SmileFace} from './smile.svg';
 import { GameData } from '../data';
+import { Button, Popover, PopoverArrow, PopoverBody, PopoverCloseButton, PopoverContent, PopoverFooter, PopoverHeader, PopoverTrigger, useDisclosure } from '@chakra-ui/react';
+import React from 'react';
 
-export default function RestartGameEmoji({setCurrentGameData, selectedOption} : {setCurrentGameData: React.Dispatch<React.SetStateAction<GameData>>, selectedOption: number}){
+export default function RestartGameEmoji({
+    setCurrentGameData,
+    currentGameData,
+    selectedOption
+}: {
+    setCurrentGameData: React.Dispatch<React.SetStateAction<GameData>>,
+    currentGameData: GameData,
+    selectedOption: number
+}) {
     const [isHovered, setIsHovered] = useState(false);
+    const initialFocusRef = React.useRef<HTMLDivElement>(null);
+    const { onOpen, onClose, isOpen } = useDisclosure();
 
-  // Event handlers for hover
+    // Event handlers for hover
     const handleMouseEnter = () => setIsHovered(true);
     const handleMouseLeave = () => setIsHovered(false);
 
+    const handleRestartClick = () => {
+        onClose();
+        setCurrentGameData(new GameData(selectedOption));
+    };
+
+    const handleButtonClick = () => {
+        if (currentGameData.isStarted) {
+            onOpen();  // Show popover only if the game has started
+        } else {
+            setCurrentGameData(new GameData(selectedOption));  // Restart game directly
+        }
+    };
+
     return (
-        <div
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-        className='pb-3'
-        onClick={() => {setCurrentGameData(new GameData(selectedOption))}}
-        >
-        {isHovered ? (
-            // SVG displayed on hover
-            <SmileFace className='h-[4em]'></SmileFace>
-        ) : (
-            // Default SVG displayed when not hovered
-            <WierdFace className='h-[4em]'></WierdFace>
-        )}
-        </div>
+        <>
+            <Popover
+                initialFocusRef={initialFocusRef}
+                placement='right'
+                closeOnBlur={false}
+                isOpen={isOpen}
+                onClose={onClose}
+            >
+                <PopoverTrigger>
+                    <div
+                        onMouseEnter={handleMouseEnter}
+                        onMouseLeave={handleMouseLeave}
+                        className='pb-3'
+                        onClick={handleButtonClick}
+                    >
+                        {isHovered ? (
+                            <SmileFace className='h-[4em]' />
+                        ) : (
+                            <WierdFace className='h-[4em]' />
+                        )}
+                    </div>
+                </PopoverTrigger>
+                <PopoverContent bg='gray.800' borderColor='gray.900' color='#ceffff'>
+                    <PopoverArrow bg='gray.900' />
+                    <PopoverCloseButton />
+                    <PopoverHeader borderColor='gray.900'>Warning</PopoverHeader>
+                    <PopoverBody>Are you sure you want to end the current game and start a new one?</PopoverBody>
+                    <PopoverFooter borderColor='gray.900'>
+                        <Button bg='red.400' color='gray.800' onClick={handleRestartClick} mr='1em'>
+                            Restart
+                        </Button>
+                        <Button bg='#ceffff' color='gray.800' onClick={onClose}>
+                            Continue
+                        </Button>
+                    </PopoverFooter>
+                </PopoverContent>
+            </Popover>
+        </>
     );
 }
