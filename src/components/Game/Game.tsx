@@ -38,7 +38,11 @@ const showBombCount = (bombCount: number | null): ReactElement => {
     return <p className={colorClass}>{bombCount}</p>;
 };
 
-export default function Game({ currentGameData, setCurrentGameData, selectedOption }: { currentGameData: GameData, setCurrentGameData:  React.Dispatch<React.SetStateAction<GameData>>, selectedOption: number}) {
+export default function Game(
+        { currentGameData, setCurrentGameData, selectedOption, selectedMode }: 
+        { currentGameData: GameData, setCurrentGameData:  React.Dispatch<React.SetStateAction<GameData>>, selectedOption: number, selectedMode: number}
+    ) 
+{
 
     // Open/close modal
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -49,17 +53,35 @@ export default function Game({ currentGameData, setCurrentGameData, selectedOpti
         }
     }, [currentGameData.isGameOver, onOpen]);
 
-    const handleClick = (rowIndex: number, colIndex: number) => {
+    const setFlaggedTile = (rowIndex: number, colIndex: number) => {
+        currentGameData.setFlaggedTile(rowIndex, colIndex);
+        setCurrentGameData(Object.assign(Object.create(Object.getPrototypeOf(currentGameData)), currentGameData));
+    
+    } 
+    const setRevealedTile = (rowIndex: number, colIndex: number) => {
         if (!currentGameData.gameField[rowIndex][colIndex].isFlagged) {
             currentGameData.setRevealedTile(rowIndex, colIndex);
             setCurrentGameData(Object.assign(Object.create(Object.getPrototypeOf(currentGameData)), currentGameData));
+        }
+    }
+
+    const handleClick = (rowIndex: number, colIndex: number) => {
+        if(selectedMode === 1){
+            setRevealedTile(rowIndex, colIndex);
+        }
+        else{
+            setFlaggedTile(rowIndex, colIndex);
         }
     };
 
     const handleRightClick = (e: React.MouseEvent, rowIndex: number, colIndex: number) => {
         e.preventDefault();
-        currentGameData.setFlaggedTile(rowIndex, colIndex);
-        setCurrentGameData(Object.assign(Object.create(Object.getPrototypeOf(currentGameData)), currentGameData));
+        if(selectedMode === 1){
+            setFlaggedTile(rowIndex, colIndex);
+        }
+        else{
+            setRevealedTile(rowIndex, colIndex);
+        }
     };
 
     const showModalContent = (isWon: boolean): ReactElement => {
