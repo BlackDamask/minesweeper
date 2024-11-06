@@ -2,15 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 
 namespace Minesweeper.models
 {
-    public class Player
+    public class Player : IdentityUser
     {
-        public required int Id { get; set; }
-        public required string Name { get; set; }
-        public required string Email { get; set; }
-        public required string Password { get; set; }
         public int Points { get; set; }
+        public string? Name { get; set; }
     }
 }
