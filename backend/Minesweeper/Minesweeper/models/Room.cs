@@ -1,15 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Security.Principal;
 
 namespace Minesweeper.models
 {
     public class Room
     {
         public int Id { get; set; }
-        public List<int>? PlayerId { get; set; }
-        public int? Difficulty { get; set; }
+        public int Player_Id { get; set; }
+        public int Difficulty { get; set; }
         public string? FirstPlayerGameData { get; set; }
         public string? SecondPlayerGameData { get; set; }
         public int? FirstPlayerProgress { get; set; }

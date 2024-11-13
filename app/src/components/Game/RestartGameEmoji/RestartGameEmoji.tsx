@@ -1,5 +1,5 @@
 import { useState, ReactElement } from 'react';
-import { ReactComponent as WierdFace} from './*_*.svg';
+import { ReactComponent as WierdFace} from './mean.svg';
 import { ReactComponent as SmileFace} from './smile.svg';
 import { GameData } from '../data';
 import { Button, Popover, PopoverArrow, PopoverBody, PopoverCloseButton, PopoverContent, PopoverFooter, PopoverHeader, PopoverTrigger, useDisclosure } from '@chakra-ui/react';
