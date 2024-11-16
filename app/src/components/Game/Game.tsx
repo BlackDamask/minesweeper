@@ -125,15 +125,16 @@ export default function Game(
         <>
             
             {currentGameData.gameField.map((row, rowIndex) => (
-                <div className="flex" key={rowIndex}>
+                <div className="flex w-[40rem] text-xl" key={rowIndex}>
                     {row.map((tile, colIndex) => {
                         const tileColor = tile.color as TileColor;
 
                         return (
                             <div
                                 key={colIndex}
-                                className="flex items-center justify-center text-5xl h-14 w-14 font-customFont cursor-pointer"
+                                className="flex items-center justify-center text-[2.5em] w-[10%]  font-customFont cursor-pointer"
                                 style={{
+                                    aspectRatio: "1 / 1",
                                     backgroundColor: currentGameData.gameField[rowIndex][colIndex].isRevealed
                                         ? currentGameData.gameField[rowIndex][colIndex].hasBomb ? tileColorMap[tileColor].withBomb : tileColorMap[tileColor].clicked // Color after click
                                         : tileColorMap[tileColor].default // Default color before click

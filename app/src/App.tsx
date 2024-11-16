@@ -29,8 +29,8 @@ function App() {
           <Route path="/single" element={<SinglePlayer></SinglePlayer>}/>
         </Routes>
       </BrowserRouter>
-    </ChakraProvider>
-  );
+    </ChakraProvider> 
+    );
 }
 
 export default App;

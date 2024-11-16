@@ -2,47 +2,21 @@ import { Card, CardHeader, CardBody, CardFooter, Stack, Image, Heading, Text, Di
 import '../../index.css';
 import Header from '../../components/Header';
 import { Link } from 'react-router-dom';
+import { SimpleGrid } from '@chakra-ui/react'
+import Nav from '../../components/Nav/Nav';
+import Game from '../../components/Game/Game';
+import GamePanel from '../../components/Game/GamePanel';
 
 export default function Layout() {
   return (
-    <main className='w-screen h-screen flex flex-col'>
+    <main className='w-screen h-screen flex flex-col bg-slate-900'>
+      
       {/* Header stays at the top */}
-      <Header />
-
+      <Nav/>
       {/* Content centered in the remaining space */}
       <div className='flex-grow flex flex-col justify-center items-center'>
-        <div className='flex flex-col lg:flex-row space-y-24 lg:space-y-0 lg:space-x-12 xl:space-x-44 2xl:space-x-64 justify-center items-center'>
-          <Link to="/single">
-            <Card maxW='sm' backgroundColor={'#1e9907'} >
-              <CardHeader className='font-customFont text-center text-4xl'>
-                Single player
-              </CardHeader>
-              <CardBody className='bg-regural-dark-green'>
-                <Image
-                  className='self-center h-60'
-                  src='./singleplayer.png'
-                  alt='Single player'
-                  borderRadius='lg'
-                />
-              </CardBody>
-              <CardFooter />
-            </Card>
-          </Link>
-
-          <Card maxW='sm' backgroundColor={'#1e9907'}>
-            <CardHeader className='font-customFont text-center text-4xl'>
-              Saper Battle
-            </CardHeader>
-            <CardBody>
-              <Image
-                className='h-60 self-center'
-                src='./pvp.png'
-                alt='Saper Battle'
-                borderRadius='lg'
-              />
-            </CardBody>
-            <CardFooter />
-          </Card>
+        <div className='flex flex-col ml-[5rem] xl:flex-row space-y-24 xl:space-y-0 xl:space-x-12 2xl:space-x-44 3xl:space-x-64 justify-center items-center'>
+           <GamePanel/>
         </div>
       </div>
     </main>
