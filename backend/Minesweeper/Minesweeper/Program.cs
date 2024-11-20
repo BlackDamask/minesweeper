@@ -27,7 +27,22 @@ builder.Services.AddIdentityCore<Player>()
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend",
+        policy => policy.WithOrigins("http://localhost:3000") // Replace with your frontend URL
+                        .AllowAnyHeader()
+                        .AllowAnyMethod());
+});
+
+
+
 var app = builder.Build();
+
+builder.Services.AddLogging(logging =>
+{
+    logging.AddConsole();
+});
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -36,6 +51,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseCors("AllowFrontend");
 
 app.UseHttpsRedirection();
 

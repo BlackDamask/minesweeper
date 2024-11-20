@@ -51,6 +51,8 @@ namespace Minesweeper.Services.PlayerService
             }
             else
             {
+                var errors = string.Join("; ", result.Errors.Select(e => e.Description));
+                serviceResponse.Message = errors;
                 serviceResponse.Success = false;
             }
             return serviceResponse;
