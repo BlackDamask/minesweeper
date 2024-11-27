@@ -10,6 +10,7 @@ namespace Minesweeper
         {
             CreateMap<RegisterPlayerDTO, Player>()
                 .ForMember(dest => dest.PasswordHash, opt => opt.MapFrom(src => src.Password));
+            CreateMap<Player, GetPlayerDTO>();
         }
     }
 }

@@ -1,9 +1,12 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using Minesweeper.DTOs.PlayerDTO;
 using Minesweeper.models;
 using Minesweeper.Services.PlayerService;
+using System.Security.Claims;
 
 namespace Minesweeper.Controllers
 {
@@ -33,9 +36,38 @@ namespace Minesweeper.Controllers
             return Ok(await playerService.Register(newPlayer));
         }
         [HttpPost("login")]
-        public async Task<IActionResult> Login(string username, string password)
+        public async Task<IActionResult> Login(LoginPlayerDTO player)
         {
-            return Ok(await playerService.Login(username, password));
+            return Ok(await playerService.Login(player));
+        }
+
+        [HttpPost("refresh-token")]
+        public async Task<IActionResult> RefreshToken(string refreshToken)
+        {
+            return Ok(await playerService.RefreshToken(refreshToken));
+        }
+
+        [Authorize]
+        [HttpGet("profile")]
+        public async Task<IActionResult> GetProfile()
+        {
+            var playerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if(playerId is null)
+            {
+                return BadRequest();
+            }
+            return Ok(await playerService.GetProfile(playerId));
+        }
+        [Authorize]
+        [HttpPut("changePoints")]
+        public async Task<IActionResult> ChangePoints(int pointsChange)
+        {
+            var playerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (playerId is null)
+            {
+                return BadRequest();
+            }
+            return Ok(await playerService.ChangePoints(playerId, pointsChange));
         }
     }
 }

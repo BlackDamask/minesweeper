@@ -1,11 +1,16 @@
-﻿using Minesweeper.DTOs.PlayerDTO;
+﻿using Minesweeper.DTOs;
+using Minesweeper.DTOs.PlayerDTO;
 using Minesweeper.models;
+using System.Security.Claims;
 
 namespace Minesweeper.Services.PlayerService
 {
     public interface IPlayerService
     {
         Task<ServiceResponse<string>> Register(RegisterPlayerDTO newPlayer);
-        Task<ServiceResponse<string>> Login(string username, string password);
+        Task<ServiceResponse<LoginPlayerResponseDTO>> Login(LoginPlayerDTO player);
+        Task<ServiceResponse<string>> RefreshToken(string refreshToken);
+        Task<ServiceResponse<GetPlayerDTO>> GetProfile(string playerId);
+        Task<ServiceResponse<int>> ChangePoints(string playerId, int pointsChange);
     }
 }

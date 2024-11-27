@@ -1,5 +1,6 @@
 import React, { useState, useRef } from "react";
 import {
+    Avatar,
   Box,
   Image,
   useDisclosure,
@@ -14,7 +15,17 @@ export default function Nav() {
     const [isHovered, setIsHovered] = useState(false);
     const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
     const hoverTimeout = useRef<NodeJS.Timeout | null>(null); // To manage hover delays
-    const { isOpen, onOpen, onClose } = useDisclosure();
+    const {
+        isOpen: isLoginOpen,
+        onOpen: onLoginOpen,
+        onClose: onLoginClose,
+      } = useDisclosure();
+      
+      const {
+        isOpen: isRegisterOpen,
+        onOpen: onRegisterOpen,
+        onClose: onRegisterClose,
+      } = useDisclosure();
     const buttons = [
         {
             routePath: "/single",
@@ -55,8 +66,7 @@ export default function Nav() {
 
     return (
         <>
-            <div className="bg-slate-950 fixed left-0 h-screen w-20 flex flex-col items-center">
-                {/* Example for a static button */}
+            <div className="bg-slate-950 fixed left-0 h-screen w-20 flex flex-col items-center justify-between">
                 <Box
                     width={"100%"}
                     height={"5em"}
@@ -69,39 +79,45 @@ export default function Nav() {
                         borderRadius="lg"
                     />
                 </Box>
+                <div>
+                    
 
-                {buttons.map((button, index) => (
+                    {buttons.map((button, index) => (
+                        <Box
+                            key={index}
+                            width={"100%"}
+                            height={"5em"}
+                            className="flex py-[0.5em] justify-center items-center hover:bg-gray-950"
+                            onMouseEnter={() => handleMouseEnterButton(index)}
+                            onMouseLeave={handleMouseLeaveButton}
+                        >
+                            <Image
+                                className="self-left w-[3.3em] m-2"
+                                src={button.imagePath}
+                                alt={button.alt}
+                                borderRadius="lg"
+                            />
+                        </Box>
+                    ))}
+                    
+                </div>
+                <div className="flex flex-col space-y-4 mb-10 items-center">
+                    
                     <Box
-                        key={index}
                         width={"100%"}
                         height={"5em"}
-                        className="flex py-[0.5em] justify-center items-center hover:bg-gray-950"
-                        onMouseEnter={() => handleMouseEnterButton(index)}
-                        onMouseLeave={handleMouseLeaveButton}
+                        className="flex  fill-slate-300 hover:fill-white justify-center items-center hover:bg-gray-950"
+                        onClick={onRegisterOpen}
                     >
-                        <Image
-                            className="self-left w-[3.3em] m-2"
-                            src={button.imagePath}
-                            alt={button.alt}
-                            borderRadius="lg"
+                        <RegisterButton
+                            className="self-left  fill-slate-300 hover:fill-white  h-[4em] w-[2.5em] "
                         />
                     </Box>
-                ))}
-                <Box
-                    width={"100%"}
-                    height={"5em"}
-                    className="flex py-[0.5em] fill-slate-300 hover:fill-white justify-center items-center hover:bg-gray-950"
-                    onClick={onOpen}
-                >
-                    <RegisterButton
-                        className="self-left  fill-slate-300 hover:fill-white  h-[4em] w-[2.5em] m-2"
-                    />
-                </Box>
                     <Box
                         width={"100%"}
                         height={"5em"}
-                        className="flex py-[0.5em] fill-slate-300 hover:fill-white justify-center items-center hover:bg-gray-950"
-                        onClick={onOpen}
+                        className="flex  py-[0.5em] fill-slate-300 hover:fill-white justify-center items-center hover:bg-gray-950"
+                        onClick={onLoginOpen}
                     >
                         <div className="flex justify-center w-16 bg-green-700 hover:bg-green-800 rounded-lg border-b-[3px] border-green-900">
                             <LoginButton
@@ -109,7 +125,10 @@ export default function Nav() {
                             />
                         </div>
                     </Box>
-                
+                    <Avatar className="">
+
+                    </Avatar>
+                </div> 
             </div>
 
             {/* Render hover options */}
@@ -131,8 +150,8 @@ export default function Nav() {
                     ))}
                 </Box>
             )}
-            <LoginModal isOpen={isOpen} onClose={onClose}/>
-            <RegisterModal isOpen={isOpen} onClose={onClose}/>
+            <LoginModal isOpen={isLoginOpen} onClose={onLoginClose} />
+            <RegisterModal isOpen={isRegisterOpen} onClose={onRegisterClose} />
         </>
     );
 }
