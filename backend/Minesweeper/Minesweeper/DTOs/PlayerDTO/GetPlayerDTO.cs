@@ -4,5 +4,6 @@
     {
         public required string UserName { get; set; }
         public int? Points { get; set; }
+        public string? AccessToken { get; set; }
     }
 }

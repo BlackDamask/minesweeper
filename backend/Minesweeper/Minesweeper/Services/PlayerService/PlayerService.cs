@@ -64,7 +64,7 @@ namespace Minesweeper.Services.PlayerService
             serviceResponse.Success = true;
             serviceResponse.Data = new LoginPlayerResponseDTO 
                 { 
-                    AccesToken = accessToken, 
+                    AccessToken = accessToken, 
                     RefreshToken = refreshToken 
                 };
 
