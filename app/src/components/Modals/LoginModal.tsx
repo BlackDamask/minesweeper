@@ -2,62 +2,48 @@ import { Modal, ModalOverlay, ModalHeader, ModalBody, Stack, InputGroup, InputLe
 import { ReactComponent as UserIcon } from "./user-icon.svg";
 import { ReactComponent as LockIcon } from "./lock-icon.svg";
 import { useContext, useState } from 'react';
-import axios from 'axios';
 import { AuthContext } from '../../AuthProvider';
 
 export default function LoginModal({isOpen, onClose} : {isOpen: boolean, onClose: () => void}){
     const auth = useContext(AuthContext);
 
     const [formData, setFormData] = useState({ username: '', password: '' });
-    // const [isLoading, setLoading] = useState(false);
-     const toast = useToast();
+    const [isLoading, setLoading] = useState(false);
+    const toast = useToast();
     
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setFormData((prev) => ({ ...prev, [name]: value }));
       };
       const handleSubmit = async () => {
-        const result = await auth!.login(formData.username, formData.password);
-        console.warn(result);
-        if (!result.success) {
-            console.error(result.message);
+        setLoading(true);
+        try{
+            const result = await auth!.login(formData.username, formData.password);
+            if (!result.success) {
+                throw(result.message);
+            }
+            else{
+                toast({
+                    title: "Login successed",
+                    status: 'success',
+                    isClosable: true,
+                });
+                onClose();
+            }
+        }
+        catch(error){
+            toast({
+                title: "Login failed",
+                description: `${error}`,
+                status: 'error',
+                isClosable: true,
+            });
+        }
+        finally{
+            setLoading(false);
         }
       };
 
-    // const handleLogin = async () => {
-    //     setLoading(true);
-    //     try {
-    //       const response = await axios.post('https://localhost:7036/api/player/login', formData);
-    //       console.log(response.data);
-    //       if(response.data.success){
-    //           toast({
-    //               title: "Registration successed",
-    //               description: response.data.message,
-    //               status: 'success',
-    //               isClosable: true,
-    //             });
-    //             onClose();
-    //       }
-    //       else{
-    //           toast({
-    //               title: "Registration failed",
-    //               description: response.data.message,
-    //               status: 'error',
-    //               isClosable: true,
-    //             });
-    //       }
-          
-    //     } catch (error: any) {
-    //       toast({
-    //         title: 'Login Failed',
-    //         description: error.response?.data?.message || 'Something went wrong.',
-    //         status: 'error',
-    //         isClosable: true,
-    //       });
-    //     } finally {
-    //       setLoading(false);
-    //     }
-    //   };
     return(
         <Modal isOpen={isOpen} onClose={onClose} isCentered size="lg">
             <ModalOverlay
@@ -100,8 +86,7 @@ export default function LoginModal({isOpen, onClose} : {isOpen: boolean, onClose
                     onClick={handleSubmit}
                     style={{ cursor: 'pointer' }}
                 >
-                    Log In
-                    {/* {isLoading ? 'Loading...' : 'Log In'} */}
+                    {isLoading ? 'Loading...' : 'Log In'}
                 </Box>
                 </ModalFooter>
             </ModalContent>

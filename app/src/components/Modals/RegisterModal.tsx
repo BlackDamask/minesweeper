@@ -14,54 +14,49 @@ import {
   } from '@chakra-ui/react';
   import { ReactComponent as UserIcon } from "./user-icon.svg";
   import { ReactComponent as LockIcon } from "./lock-icon.svg";
-  import { useState } from 'react';
-  import axios from 'axios';
+  import { useContext, useState } from 'react';
+import { AuthContext } from '../../AuthProvider';
+import { compileFunction } from 'vm';
   
   export default function RegisterModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
-    const [formData, setFormData] = useState({ username: '', email: '', password: '' });
-    const [loading, setLoading] = useState(false);
+    const auth = useContext(AuthContext);
+    const [formData, setFormData] = useState({ username: '', password: '', email: '' });
+    const [isLoading, setLoading] = useState(false);
     const toast = useToast();
-  
+    
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      const { name, value } = e.target;
-      setFormData((prev) => ({ ...prev, [name]: value }));
-    };
-  
-    const handleRegister = async () => {
-      setLoading(true);
-      try {
-        console.log(formData);
-        const response = await axios.post('https://localhost:7036/api/player/register-user', formData);
-        console.log(response.data);
-        if(response.data.success){
-            toast({
-                title: "Registration successed",
-                description: response.data.message,
-                status: 'success',
-                isClosable: true,
-              });
-              onClose();
+        const { name, value } = e.target;
+        setFormData((prev) => ({ ...prev, [name]: value }));
+      };
+      const handleSubmit = async () => {
+        setLoading(true);
+        try{
+            const result = await auth!.register(formData.username, formData.email, formData.password);
+            console.warn(result);
+            if (!result.success) {
+              throw(result.message);
+            }
+            else{
+                toast({
+                    title: "Registration successed",
+                    status: 'success',
+                    isClosable: true,
+                });
+                onClose();
+            }
         }
-        else{
+        catch(error){
             toast({
                 title: "Registration failed",
-                description: response.data.message,
+                description: `${error}`,
                 status: 'error',
                 isClosable: true,
-              });
+            });
         }
-        
-      } catch (error: any) {
-        toast({
-          title: 'Registration Failed',
-          description: error.response?.data?.message || 'Something went wrong.',
-          status: 'error',
-          isClosable: true,
-        });
-      } finally {
-        setLoading(false);
-      }
-    };
+        finally{
+            setLoading(false);
+        }
+      };
   
     return (
       <Modal isOpen={isOpen} onClose={onClose} isCentered size="lg">
@@ -111,10 +106,10 @@ import {
           <ModalFooter>
             <Box
               className="flex items-center justify-center w-2/6 m-auto text-white text-xl font-bold h-14 bg-green-700 hover:bg-green-800 rounded-lg border-b-[3px] border-green-900"
-              onClick={handleRegister}
-              style={{ cursor: 'pointer', opacity: loading ? 0.6 : 1 }}
+              onClick={handleSubmit}
+              style={{ cursor: 'pointer', opacity: isLoading ? 0.6 : 1 }}
             >
-              {loading ? 'Loading...' : 'Sign Up'}
+              {isLoading ? 'Loading...' : 'Sign Up'}
             </Box>
           </ModalFooter>
         </ModalContent>
