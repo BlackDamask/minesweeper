@@ -23,41 +23,6 @@ export default function LoginModal({isOpen, onClose} : {isOpen: boolean, onClose
             console.error(result.message);
         }
       };
-
-    // const handleLogin = async () => {
-    //     setLoading(true);
-    //     try {
-    //       const response = await axios.post('https://localhost:7036/api/player/login', formData);
-    //       console.log(response.data);
-    //       if(response.data.success){
-    //           toast({
-    //               title: "Registration successed",
-    //               description: response.data.message,
-    //               status: 'success',
-    //               isClosable: true,
-    //             });
-    //             onClose();
-    //       }
-    //       else{
-    //           toast({
-    //               title: "Registration failed",
-    //               description: response.data.message,
-    //               status: 'error',
-    //               isClosable: true,
-    //             });
-    //       }
-          
-    //     } catch (error: any) {
-    //       toast({
-    //         title: 'Login Failed',
-    //         description: error.response?.data?.message || 'Something went wrong.',
-    //         status: 'error',
-    //         isClosable: true,
-    //       });
-    //     } finally {
-    //       setLoading(false);
-    //     }
-    //   };
     return(
         <Modal isOpen={isOpen} onClose={onClose} isCentered size="lg">
             <ModalOverlay

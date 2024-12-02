@@ -13,6 +13,7 @@ interface AuthContextType {
   register: (username: string, email: string, password: string) => Promise<{ success: boolean; message?: string }>;
   logout: () => void;
   accessToken: string | null;
+  isLoggedIn: boolean;
 }
 
 interface AuthProviderProps {
@@ -26,6 +27,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [accessToken, setAccessToken] = useState<string | null>(localStorage.getItem("accessToken"));
   const [refreshToken, setRefreshToken] = useState<string | null>(localStorage.getItem("refreshToken"));
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
 
   // Login function
   const login = async (username: string, password: string): Promise<{ success: boolean; message?: string }> => {
@@ -41,10 +43,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const userProfile = await axios.get<User>("/player/profile", {
         headers: { Authorization: `bearer ${accessToken}` },
       });
+      console.warn(userProfile.data);
       setUser(userProfile.data);
+      setIsLoggedIn(true);
+
       return { success: true };
     } catch (error: any) {
       console.error(error);
+      setIsLoggedIn(false);
       return { success: false, message: error.response?.data?.message || "Login failed" };
     }
   };
@@ -84,6 +90,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setUser(null);
     setAccessToken(null);
     setRefreshToken(null);
+    setIsLoggedIn(false);
+
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
   };
@@ -103,7 +111,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
               .get<User>("/player/profile", {
                 headers: { Authorization: `Bearer ${newToken}` },
               })
-              .then((response) => setUser(response.data))
+              .then((response) => {
+                
+                setUser(response.data);
+              })
               .catch(logout);
           }
         });
@@ -111,7 +122,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, [accessToken]);
 
   return (
-    <AuthContext.Provider value={{ user, login, register, logout, accessToken }}>
+    <AuthContext.Provider value={{ user, login, register, logout, accessToken, isLoggedIn }}>
       {children}
     </AuthContext.Provider>
   );

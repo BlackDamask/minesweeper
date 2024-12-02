@@ -14,10 +14,12 @@ import {
   } from '@chakra-ui/react';
   import { ReactComponent as UserIcon } from "./user-icon.svg";
   import { ReactComponent as LockIcon } from "./lock-icon.svg";
-  import { useState } from 'react';
+  import { useContext, useState } from 'react';
   import axios from 'axios';
+import { AuthContext } from '../../AuthProvider';
   
   export default function RegisterModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
+    const auth = useContext(AuthContext);
     const [formData, setFormData] = useState({ username: '', email: '', password: '' });
     const [loading, setLoading] = useState(false);
     const toast = useToast();
@@ -27,39 +29,11 @@ import {
       setFormData((prev) => ({ ...prev, [name]: value }));
     };
   
-    const handleRegister = async () => {
-      setLoading(true);
-      try {
-        console.log(formData);
-        const response = await axios.post('https://localhost:7036/api/player/register-user', formData);
-        console.log(response.data);
-        if(response.data.success){
-            toast({
-                title: "Registration successed",
-                description: response.data.message,
-                status: 'success',
-                isClosable: true,
-              });
-              onClose();
-        }
-        else{
-            toast({
-                title: "Registration failed",
-                description: response.data.message,
-                status: 'error',
-                isClosable: true,
-              });
-        }
-        
-      } catch (error: any) {
-        toast({
-          title: 'Registration Failed',
-          description: error.response?.data?.message || 'Something went wrong.',
-          status: 'error',
-          isClosable: true,
-        });
-      } finally {
-        setLoading(false);
+    const handleSubmit = async () => {
+      const result = await auth!.register(formData.username, formData.email,formData.password );
+      console.warn(result);
+      if (!result.success) {
+          console.error(result.message);
       }
     };
   
@@ -111,7 +85,7 @@ import {
           <ModalFooter>
             <Box
               className="flex items-center justify-center w-2/6 m-auto text-white text-xl font-bold h-14 bg-green-700 hover:bg-green-800 rounded-lg border-b-[3px] border-green-900"
-              onClick={handleRegister}
+              onClick={handleSubmit}
               style={{ cursor: 'pointer', opacity: loading ? 0.6 : 1 }}
             >
               {loading ? 'Loading...' : 'Sign Up'}
