@@ -1,17 +1,24 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useContext } from "react";
 import {
     Avatar,
-  Box,
-  Image,
-  useDisclosure,
+    Box,
+    Image,
+    Popover,
+    PopoverTrigger,
+    PopoverContent,
+    PopoverBody,
+    useDisclosure,
+    MenuList,
+    MenuItem,
 } from "@chakra-ui/react";
 import { ReactComponent as RegisterButton } from "./register-button.svg";
 import { ReactComponent as LoginButton } from "./login-button.svg";
 import LoginModal from '../Modals/LoginModal';
 import RegisterModal from "../Modals/RegisterModal";
-
+import { AuthContext } from "../../AuthProvider";
 
 export default function Nav() {
+    const auth = useContext(AuthContext);
     const [isHovered, setIsHovered] = useState(false);
     const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
     const hoverTimeout = useRef<NodeJS.Timeout | null>(null); // To manage hover delays
@@ -63,7 +70,6 @@ export default function Nav() {
             setHoveredIndex(null);
         }, 200); 
     };
-
     return (
         <>
             <div className="bg-slate-950 fixed left-0 h-screen w-20 flex flex-col items-center justify-between">
@@ -102,32 +108,54 @@ export default function Nav() {
                     
                 </div>
                 <div className="flex flex-col space-y-4 mb-10 items-center">
-                    
-                    <Box
-                        width={"100%"}
-                        height={"5em"}
-                        className="flex  fill-slate-300 hover:fill-white justify-center items-center hover:bg-gray-950"
-                        onClick={onRegisterOpen}
-                    >
-                        <RegisterButton
-                            className="self-left  fill-slate-300 hover:fill-white  h-[4em] w-[2.5em] "
-                        />
-                    </Box>
-                    <Box
-                        width={"100%"}
-                        height={"5em"}
-                        className="flex  py-[0.5em] fill-slate-300 hover:fill-white justify-center items-center hover:bg-gray-950"
-                        onClick={onLoginOpen}
-                    >
-                        <div className="flex justify-center w-16 bg-green-700 hover:bg-green-800 rounded-lg border-b-[3px] border-green-900">
-                            <LoginButton
-                                className="self-left fill-slate-300 hover:fill-white h-[3em] w-[2.5em] m-2"
-                            />
-                        </div>
-                    </Box>
-                    <Avatar className="">
+                    {auth?.isLoggedIn 
+                        ?
+                        <Popover
+                            placement='right'
+                            
+                        >
+                            <PopoverTrigger>
+                                <Avatar name = {auth.user?.userName}  className=""> 
+                                </Avatar>
+                            </PopoverTrigger>
+                            <PopoverContent
+                                width={"40"}
+                            >
+                                <PopoverBody>
+                                    <Box >
 
-                    </Avatar>
+                                    </Box>
+                                </PopoverBody>
+                            </PopoverContent>
+                        </Popover>
+                        :
+                        <div>
+                            <Box
+                            width={"100%"}
+                            height={"5em"}
+                            className="flex  fill-slate-300 hover:fill-white justify-center items-center hover:bg-gray-950"
+                            onClick={onRegisterOpen}
+                            >
+                                <RegisterButton
+                                    className="self-left  fill-slate-300 hover:fill-white  h-[4em] w-[2.5em] "
+                                />
+                            </Box>
+                            <Box
+                                width={"100%"}
+                                height={"5em"}
+                                className="flex  py-[0.5em] fill-slate-300 hover:fill-white justify-center items-center hover:bg-gray-950"
+                                onClick={onLoginOpen}
+                            >
+                                <div className="flex justify-center w-16 bg-green-700 hover:bg-green-800 rounded-lg border-b-[3px] border-green-900">
+                                    <LoginButton
+                                        className="self-left fill-slate-300 hover:fill-white h-[3em] w-[2.5em] m-2"
+                                    />
+                                </div>
+                            </Box>
+                        </div>
+                    }
+                    
+                    
                 </div> 
             </div>
 

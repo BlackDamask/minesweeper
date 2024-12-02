@@ -15,13 +15,12 @@ import {
   import { ReactComponent as UserIcon } from "./user-icon.svg";
   import { ReactComponent as LockIcon } from "./lock-icon.svg";
   import { useContext, useState } from 'react';
-import { AuthContext } from '../../AuthProvider';
-import { compileFunction } from 'vm';
+  import { AuthContext } from '../../AuthProvider';
   
   export default function RegisterModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
     const auth = useContext(AuthContext);
-    const [formData, setFormData] = useState({ username: '', password: '', email: '' });
-    const [isLoading, setLoading] = useState(false);
+    const [formData, setFormData] = useState({ username: '', email: '', password: '' });
+    const [loading, setLoading] = useState(false);
     const toast = useToast();
     
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -107,9 +106,9 @@ import { compileFunction } from 'vm';
             <Box
               className="flex items-center justify-center w-2/6 m-auto text-white text-xl font-bold h-14 bg-green-700 hover:bg-green-800 rounded-lg border-b-[3px] border-green-900"
               onClick={handleSubmit}
-              style={{ cursor: 'pointer', opacity: isLoading ? 0.6 : 1 }}
+              style={{ cursor: 'pointer', opacity: loading ? 0.6 : 1 }}
             >
-              {isLoading ? 'Loading...' : 'Sign Up'}
+              {loading ? 'Loading...' : 'Sign Up'}
             </Box>
           </ModalFooter>
         </ModalContent>

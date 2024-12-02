@@ -1,7 +1,10 @@
 import React, { createContext, useState, useEffect, ReactNode } from "react";
 import axios from "./api/axios";
 
-// Define types for AuthContext values
+interface ApiResponse<T> {
+  data: T;
+}
+
 interface User {
   userName: string;
   points: number;
@@ -13,6 +16,7 @@ interface AuthContextType {
   register: (username: string, email: string, password: string) => Promise<{ success: boolean; message?: string }>;
   logout: () => void;
   accessToken: string | null;
+  isLoggedIn: boolean;
 }
 
 interface AuthProviderProps {
@@ -26,6 +30,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [accessToken, setAccessToken] = useState<string | null>(localStorage.getItem("accessToken"));
   const [refreshToken, setRefreshToken] = useState<string | null>(localStorage.getItem("refreshToken"));
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
 
   // Login function
   const login = async (username: string, password: string): Promise<{ success: boolean; message?: string }> => {
@@ -38,13 +43,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       localStorage.setItem("accessToken", accessToken);
       localStorage.setItem("refreshToken", refreshToken);
 
-      const userProfile = await axios.get<User>("/player/profile", {
-        headers: { Authorization: `bearer ${accessToken}` },
+      const userProfile = await axios.get<ApiResponse<User>>("/player/profile", {
+        headers: { Authorization: `Bearer ${accessToken}` },
       });
-      setUser(userProfile.data);
+      setUser(userProfile.data.data);
+      setIsLoggedIn(true);
+
       return { success: true };
     } catch (error: any) {
       console.error(error);
+      setIsLoggedIn(false);
       return { success: false, message: error.response?.data?.message || "Login failed" };
     }
   };
@@ -85,6 +93,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setUser(null);
     setAccessToken(null);
     setRefreshToken(null);
+    setIsLoggedIn(false);
+
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
   };
@@ -93,10 +103,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   useEffect(() => {
     if (accessToken) {
       axios
-        .get<User>("/player/profile", {
-          headers: { Authorization: `bearer ${accessToken}` },
+        .get<ApiResponse<User>>("/player/profile", {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      })
+        .then((response) =>{
+            setIsLoggedIn(true);
+            setUser(response.data.data);
         })
-        .then((response) => setUser(response.data))
         .catch(async () => {
           const newToken = await refreshAccessToken();
           if (newToken) {
@@ -104,7 +117,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
               .get<User>("/player/profile", {
                 headers: { Authorization: `Bearer ${newToken}` },
               })
-              .then((response) => setUser(response.data))
+              .then((response) => {
+                setIsLoggedIn(true);
+                setUser(response.data);
+              })
               .catch(logout);
           }
         });
@@ -112,7 +128,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, [accessToken]);
 
   return (
-    <AuthContext.Provider value={{ user, login, register, logout, accessToken }}>
+    <AuthContext.Provider value={{ user, login, register, logout, accessToken, isLoggedIn }}>
       {children}
     </AuthContext.Provider>
   );

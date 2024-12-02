@@ -43,7 +43,6 @@ export default function LoginModal({isOpen, onClose} : {isOpen: boolean, onClose
             setLoading(false);
         }
       };
-
     return(
         <Modal isOpen={isOpen} onClose={onClose} isCentered size="lg">
             <ModalOverlay
