@@ -3,7 +3,13 @@ import {
     Avatar,
     Box,
     Image,
+    Popover,
+    PopoverTrigger,
+    PopoverContent,
+    PopoverBody,
     useDisclosure,
+    MenuList,
+    MenuItem,
 } from "@chakra-ui/react";
 import { ReactComponent as RegisterButton } from "./register-button.svg";
 import { ReactComponent as LoginButton } from "./login-button.svg";
@@ -64,8 +70,6 @@ export default function Nav() {
             setHoveredIndex(null);
         }, 200); 
     };
-    console.log(auth?.user);
-    console.log(auth?.user?.userName);
     return (
         <>
             <div className="bg-slate-950 fixed left-0 h-screen w-20 flex flex-col items-center justify-between">
@@ -106,9 +110,24 @@ export default function Nav() {
                 <div className="flex flex-col space-y-4 mb-10 items-center">
                     {auth?.isLoggedIn 
                         ?
-                        <Avatar name = {auth.user?.userName}  className="">
+                        <Popover
+                            placement='right'
                             
-                        </Avatar>
+                        >
+                            <PopoverTrigger>
+                                <Avatar name = {auth.user?.userName}  className=""> 
+                                </Avatar>
+                            </PopoverTrigger>
+                            <PopoverContent
+                                width={"40"}
+                            >
+                                <PopoverBody>
+                                    <Box >
+
+                                    </Box>
+                                </PopoverBody>
+                            </PopoverContent>
+                        </Popover>
                         :
                         <div>
                             <Box
