@@ -94,7 +94,7 @@ export default function Game(
                         <p>Your record:</p>
                     </ModalBody>
                     <ModalFooter>
-                        <Button colorScheme="green" borderColor="#000000" backgroundColor="#052e16" mr={5} onClick={() => { setCurrentGameData(new GameData(selectedOption)); onClose(); }}>
+                        <Button colorScheme="green" color="white" borderColor="#000000" backgroundColor="#052e16" mr={5} onClick={() => { setCurrentGameData(new GameData(selectedOption)); onClose(); }}>
                             Retry
                         </Button>
                         <Button colorScheme="gray" onClick={onClose}>Show field</Button>
@@ -114,7 +114,7 @@ export default function Game(
                         <Button colorScheme="gray" borderColor="#000000" textColor={'#000000'} backgroundColor="#ceffff" mr={5} onClick={() => { setCurrentGameData(new GameData(selectedOption)); onClose(); }}>
                             Retry
                         </Button>
-                        <Button colorScheme="blue" backgroundColor={'#032448'} onClick={onClose}>Show field</Button>
+                        <Button colorScheme="blue" color={'white'} backgroundColor={'#032448'} onClick={onClose}>Show field</Button>
                     </ModalFooter>
                 </ModalContent>
             );
@@ -122,10 +122,10 @@ export default function Game(
     };
 
     return (
-        <>
+        <div>
             
             {currentGameData.gameField.map((row, rowIndex) => (
-                <div className="flex w-[40rem] text-xl" key={rowIndex}>
+                <div className="flex w-[40rem] text-xl" key={rowIndex} >
                     {row.map((tile, colIndex) => {
                         const tileColor = tile.color as TileColor;
 
@@ -174,7 +174,7 @@ export default function Game(
                 />
                 {showModalContent(currentGameData.isWin)}
             </Modal>
-        </>
+        </div>
     );
 }
 

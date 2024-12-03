@@ -10,6 +10,14 @@ import {
     useDisclosure,
     MenuList,
     MenuItem,
+    Modal,
+    ModalContent,
+    ModalHeader,
+    ModalCloseButton,
+    ModalBody,
+    ModalFooter,
+    Button,
+    ModalOverlay,
 } from "@chakra-ui/react";
 import { ReactComponent as RegisterButton } from "./register-button.svg";
 import { ReactComponent as LoginButton } from "./login-button.svg";
@@ -28,11 +36,18 @@ export default function Nav() {
         onClose: onLoginClose,
       } = useDisclosure();
       
-      const {
+    const {
         isOpen: isRegisterOpen,
         onOpen: onRegisterOpen,
         onClose: onRegisterClose,
-      } = useDisclosure();
+    } = useDisclosure();
+
+    const {
+        isOpen: isLogoutOpen,
+        onOpen: onLogoutOpen,
+        onClose: onLogoutClose,
+    } = useDisclosure();
+
     const buttons = [
         {
             routePath: "/single",
@@ -44,6 +59,18 @@ export default function Nav() {
             imagePath: "./bomb-shape.png",
             alt: "Play",
         },
+        {
+            routePath: "/single",
+            options: null,
+            imagePath: "./achievements.png",
+            alt: "Play",
+        },
+        {
+            routePath: "/single",
+            options: null,
+            imagePath: "./spectaculate.png",
+            alt: "Play",
+        }
     ];
 
     const handleMouseEnterButton = (index: number) => {
@@ -92,7 +119,7 @@ export default function Nav() {
                         <Box
                             key={index}
                             width={"100%"}
-                            height={"5em"}
+                            height={"6em"}
                             className="flex py-[0.5em] justify-center items-center hover:bg-gray-950"
                             onMouseEnter={() => handleMouseEnterButton(index)}
                             onMouseLeave={handleMouseLeaveButton}
@@ -120,10 +147,13 @@ export default function Nav() {
                             </PopoverTrigger>
                             <PopoverContent
                                 width={"40"}
+                                borderWidth={3}
+                                
                             >
-                                <PopoverBody>
-                                    <Box >
-
+                                <PopoverBody padding={0} >
+                                    <Box className="h-[2.5em] text-xl flex items-center pl-3 filter brightness-100 hover:brightness-75 bg-slate-900"
+                                        onClick={onLogoutOpen}>
+                                        Log out
                                     </Box>
                                 </PopoverBody>
                             </PopoverContent>
@@ -159,14 +189,14 @@ export default function Nav() {
                 </div> 
             </div>
 
-            {/* Render hover options */}
-            {isHovered && hoveredIndex !== null && (
+            
+            {isHovered && hoveredIndex !== null && buttons[hoveredIndex]?.options && (
                 <Box
                     className="fixed left-20 w-80 bg-gray-950 h-screen z-50"
                     onMouseEnter={handleMouseEnterOptionsBox}
                     onMouseLeave={handleMouseLeaveOptionsBox}
                 >
-                    {buttons[hoveredIndex].options.map((option, idx) => (
+                    {buttons[hoveredIndex].options!.map((option, idx) => (
                         <Box
                             key={idx}
                             width={"100%"}
@@ -180,6 +210,20 @@ export default function Nav() {
             )}
             <LoginModal isOpen={isLoginOpen} onClose={onLoginClose} />
             <RegisterModal isOpen={isRegisterOpen} onClose={onRegisterClose} />
+            <Modal isCentered isOpen={isLogoutOpen} onClose={onLoginClose}>
+                <ModalOverlay/>
+                <ModalContent>
+                <ModalHeader>Modal Title</ModalHeader>
+                <ModalCloseButton />
+                <ModalBody>
+                    <p>Custom backdrop filters!</p>
+                </ModalBody>
+                <ModalFooter>
+                    <Button onClick={auth?.logout}>Close</Button>
+                    <Button onClick={onLogoutClose}>Close</Button>
+                </ModalFooter>
+                </ModalContent>
+            </Modal>
         </>
     );
 }

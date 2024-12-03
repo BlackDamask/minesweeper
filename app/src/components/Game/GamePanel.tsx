@@ -20,8 +20,8 @@ export default function GamePanel()
     };
     return(
         <main className='flex justify-center'>
-            <div className="bg-green-950 h-fit w-fit p-5">
-                <nav className='flex justify-between items-center'>
+            <div className="bg-[#1e9907] h-fit w-fit pt-3 border-t rounded-xl overflow-hidden">
+                <nav className='flex justify-between items-center px-3 text-black'>
                     <Select
                     width={'8rem'}
                     bg='#28cc0a' size='md' _hover={{backgroundColor: '#39ff13'}} 
@@ -51,8 +51,9 @@ export default function GamePanel()
                             <Cursor className='h-[4em]'/>
                             {selectedMode === 1 ? 
                                 <img
+                                alt=''
                                 className='h-[4em] w-[4em]'
-                                src='./logo192.png'
+                                src='./bomb-shape.png'
                                 />
                             :
                                 <span className='w-[4em]'>
@@ -61,13 +62,14 @@ export default function GamePanel()
                             }
                         </div>
                     </a>
-
                 </nav>
+                <div className='h-3 w-full bg-[#1e9907]'></div>
                 <Game 
                     currentGameData={currentGameData} 
                     setCurrentGameData = {setCurrentGameData} 
                     selectedOption = {selectedOption} 
                     selectedMode = {selectedMode}
+                    
                 />
             </div>
         </main>
