@@ -57,7 +57,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  // Register function
   const register = async (
     username: string,
     email: string,
@@ -73,7 +72,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  // Refresh token function
   const refreshAccessToken = async (): Promise<string | null> => {
     try {
       const response = await axios.post("/player/refresh-token", { refreshToken });
@@ -88,7 +86,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  // Logout function
   const logout = (): void => {
     setUser(null);
     setAccessToken(null);
@@ -99,7 +96,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     localStorage.removeItem("refreshToken");
   };
 
-  // Verify token validity on app load
   useEffect(() => {
     if (accessToken) {
       axios
