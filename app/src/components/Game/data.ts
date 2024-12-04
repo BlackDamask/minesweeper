@@ -1,6 +1,3 @@
-import { CONNREFUSED } from "dns";
-import { Reorder } from "framer-motion";
-
 interface Tile {
     color: string;
     hasBomb: boolean;
@@ -16,7 +13,8 @@ export class GameData {
     public isStarted = false;
     private difficulty: number;
     private numberOfBombs: number = 0;
-    private numberOfTiles: number = 0;
+    private numberOfTilesX: number = 0;
+    private numberOfTilesY: number = 0;
     private numberOfRevealedTiles: number = 0;
     private isFirstClick: boolean = true;
     public time: string | null = null;
@@ -51,7 +49,7 @@ export class GameData {
         this.numberOfRevealedTiles++;
 
         // Check for win condition
-        if (this.numberOfRevealedTiles === (this.numberOfTiles * this.numberOfTiles) - this.numberOfBombs) {
+        if (this.numberOfRevealedTiles === (this.numberOfTilesX * this.numberOfTilesY) - this.numberOfBombs) {
             this.GameOver(true);
         }
 
@@ -73,7 +71,7 @@ export class GameData {
                     const newRow = colIndex + x;
                     const newCol = rowIndex + y;
 
-                    if (newRow >= 0 && newRow < this.gameField.length && newCol >= 0 && newCol < this.gameField.length) {
+                    if (newRow >= 0 && newRow < this.numberOfTilesY && newCol >= 0 && newCol < this.numberOfTilesX) {
                         if (!this.gameField[newRow][newCol].isRevealed && !this.gameField[newRow][newCol].hasBomb) {
                             this.setRevealedTile(newRow, newCol);
                         }
@@ -84,13 +82,30 @@ export class GameData {
     }
 
     private Generate(): void {
-        // Adjust `numberOfTiles` and `numberOfBombs` based on difficulty
-        this.numberOfTiles = 5 + this.difficulty * 5;
-        
+        // Adjust grid size based on difficulty
+        switch (Number(this.difficulty)) {
+            case 1: // Beginner
+                this.numberOfTilesX = 9;
+                this.numberOfTilesY = 9;
+                break;
+            case 2: // Intermediate
+                this.numberOfTilesX = 16;
+                this.numberOfTilesY = 16;
+                break;
+            case 3: // Expert
+                this.numberOfTilesX = 30;
+                this.numberOfTilesY = 16;
+                break;
+            default:
+                this.numberOfTilesX = 9;
+                this.numberOfTilesY = 9;
+                break;
+        }
+
         this.gameField = [];
-        for (let i = 0; i < this.numberOfTiles; i++) {
+        for (let i = 0; i < this.numberOfTilesY; i++) {  // Loop through rows
             const row: Tile[] = [];
-            for (let j = 0; j < this.numberOfTiles; j++) {
+            for (let j = 0; j < this.numberOfTilesX; j++) {  // Loop through columns
                 const color = (i + j) % 2 === 0 ? 'light-tile' : 'dark-tile';
                 row.push({
                     color: color,   
@@ -104,7 +119,7 @@ export class GameData {
         }
     }
 
-    private GameOver(isWin: boolean): void{
+    private GameOver(isWin: boolean): void {
         this.isGameOver = true;
         this.isWin = isWin;
         this.endTime = Date.now();
@@ -135,7 +150,7 @@ export class GameData {
                 const newRow = colIndex + x;
                 const newCol = rowIndex + y;
 
-                if (newRow >= 0 && newRow < this.numberOfTiles && newCol >= 0 && newCol < this.numberOfTiles) {
+                if (newRow >= 0 && newRow < this.numberOfTilesY && newCol >= 0 && newCol < this.numberOfTilesX) {
                     exclusionZone.add(`${newRow},${newCol}`);
                 }
             }
@@ -161,8 +176,8 @@ export class GameData {
         // Place bombs avoiding the initial clicked tile
         let bombsPlaced = 0;
         while (bombsPlaced < this.numberOfBombs) {
-            const randomRow = Math.floor(Math.random() * this.numberOfTiles);
-            const randomCol = Math.floor(Math.random() * this.numberOfTiles);
+            const randomRow = Math.floor(Math.random() * this.numberOfTilesY);
+            const randomCol = Math.floor(Math.random() * this.numberOfTilesX);
 
             if (
                 (randomRow !== colIndex || randomCol !== rowIndex) &&
@@ -174,8 +189,8 @@ export class GameData {
         }
 
         // Calculate nearby bombs for each tile
-        for (let i = 0; i < this.numberOfTiles; i++) {
-            for (let j = 0; j < this.numberOfTiles; j++) {
+        for (let i = 0; i < this.numberOfTilesY; i++) {
+            for (let j = 0; j < this.numberOfTilesX; j++) {
                 let nearbyBombs = 0;
                 if (this.gameField[i][j].hasBomb) continue;
 
@@ -186,7 +201,7 @@ export class GameData {
                         const newRow = i + x;
                         const newCol = j + y;
 
-                        if (newRow >= 0 && newRow < this.numberOfTiles && newCol >= 0 && newCol < this.numberOfTiles) {
+                        if (newRow >= 0 && newRow < this.numberOfTilesY && newCol >= 0 && newCol < this.numberOfTilesX) {
                             if (this.gameField[newRow][newCol].hasBomb) {
                                 nearbyBombs++;
                             }

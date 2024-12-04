@@ -124,44 +124,58 @@ export default function Game(
             
             {currentGameData.gameField.map((row, rowIndex) => (
                 <div className={`flex w-fit h-fit text-xl`} key={rowIndex} >
-                    {row.map((tile, colIndex) => {
-                        const tileColor = tile.color as TileColor;
+                   {row.map((tile, colIndex) => {
+                    const tileColor = tile.color as TileColor;
 
-                        return (
-                            <div
-                                key={colIndex}
-                                className="flex items-center justify-center  font-customFont cursor-pointer"
-                                style={{
-                                    width: `${selectedZoom}px`, 
-                                    height: `${selectedZoom}px`, 
-                                    fontSize: `${selectedZoom}px`,
-                                    backgroundColor: currentGameData.gameField[rowIndex][colIndex].isRevealed
-                                        ? currentGameData.gameField[rowIndex][colIndex].hasBomb ? tileColorMap[tileColor].withBomb : tileColorMap[tileColor].clicked 
-                                        : tileColorMap[tileColor].default 
-                                }}
-                                onClick={() => handleClick(rowIndex, colIndex)} // Left click
-                                onContextMenu={(e) => handleRightClick(e, rowIndex, colIndex)} // Right click
-                            >
-                                {currentGameData.gameField[rowIndex][colIndex].isRevealed &&
-                                !currentGameData.gameField[rowIndex][colIndex].isFlagged
-                                    ? showBombCount(tile.nearbyBombs)
-                                    : null}
+                    // Determine the background color for the tile
+                    const backgroundColor = tile.isRevealed
+                        ? tile.hasBomb
+                            ? tileColorMap[tileColor].withBomb
+                            : tileColorMap[tileColor].clicked
+                        : tileColorMap[tileColor].default;
 
-                                {currentGameData.gameField[rowIndex][colIndex].isFlagged &&
-                                !currentGameData.gameField[rowIndex][colIndex].isRevealed && (
-                                    <FlagIcon width="0.90em" height="0.90em" />
-                                )}
-                                {currentGameData.gameField[rowIndex][colIndex].hasBomb && 
-                                currentGameData.gameField[rowIndex][colIndex].isRevealed && (
-                                    <img
-                                    className='h-3/4 m-2'
+                    // Set hover effect darker only if the tile is revealed
+                    const hoverStyle = tile.isRevealed
+                        ? { filter: 'brightness(100%)' } // Darken the tile on hover
+                        : {};
+
+                    return (
+                        <div
+                            key={colIndex}
+                            className={`flex items-center justify-center font-customFont cursor-pointer`}
+                            style={{
+                                width: `${selectedZoom}px`,
+                                height: `${selectedZoom}px`,
+                                fontSize: `${selectedZoom}px`,
+                                backgroundColor,
+                                ...hoverStyle, // Apply hover style dynamically
+                            }}
+                            onClick={() => handleClick(rowIndex, colIndex)} // Left click
+                            onContextMenu={(e) => handleRightClick(e, rowIndex, colIndex)} // Right click
+                            onMouseOver={(e) => {
+                                if (tile.isRevealed) e.currentTarget.style.filter = 'brightness(90%)';
+                            }} // Add dark effect on hover
+                            onMouseOut={(e) => {
+                                if (tile.isRevealed) e.currentTarget.style.filter = 'none';
+                            }} // Reset dark effect when mouse leaves
+                        >
+                            {tile.isRevealed && !tile.isFlagged
+                                ? showBombCount(tile.nearbyBombs)
+                                : null}
+
+                            {tile.isFlagged && !tile.isRevealed && (
+                                <FlagIcon width="0.90em" height="0.90em" />
+                            )}
+                            {tile.hasBomb && tile.isRevealed && (
+                                <img
+                                    className="h-3/4 m-2"
                                     alt=""
-                                    src='./logo192.png'
-                                    />
-                                    )}
-                            </div>
-                        );
-                    })}
+                                    src="./logo192.png"
+                                />
+                            )}
+                        </div>
+                    );
+                })}
                 </div>
             ))}
             
