@@ -8,11 +8,13 @@ import React from 'react';
 export default function RestartGameEmoji({
     setCurrentGameData,
     currentGameData,
-    selectedOption
+    selectedOption,
+    zoom
 }: {
     setCurrentGameData: React.Dispatch<React.SetStateAction<GameData>>,
     currentGameData: GameData,
-    selectedOption: number
+    selectedOption: number,
+    zoom: number
 }) {
     const [isHovered, setIsHovered] = useState(false);
     const initialFocusRef = React.useRef<HTMLDivElement>(null);
@@ -34,7 +36,7 @@ export default function RestartGameEmoji({
             setCurrentGameData(new GameData(selectedOption));  // Restart game directly
         }
     };
-
+    console.log(zoom);
     return (
         <>
             <Popover
@@ -52,9 +54,9 @@ export default function RestartGameEmoji({
                         onClick={handleButtonClick}
                     >
                         {isHovered ? (
-                            <SmileFace className='h-[4em]' />
+                            <SmileFace style={{height: `${zoom*2}px`}}  />
                         ) : (
-                            <WierdFace className='h-[4em]' />
+                            <WierdFace style={{height: `${zoom*2}px`}} />
                         )}
                     </div>
                 </PopoverTrigger>

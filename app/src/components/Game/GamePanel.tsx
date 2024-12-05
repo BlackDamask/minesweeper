@@ -35,13 +35,11 @@ export default function GamePanel()
     const resizeValues : number[] = generateResizeValues();
     
     return(
-        <main className='flex justify-center'>
-            <div className='h-fit w-fit'>
-                
-                <div className='flex'>
+        <main className='flex flex-col ml-14'>
+            <div className=''>
                     <Select 
-                        width={'calc(content-fit + 3em)'} 
-                        marginBottom={2} 
+                        width={'7rem'} 
+                        marginBottom={4} 
                         color={'black'} 
                         borderColor={"#1e9907"} 
                         backgroundColor={"#28cc0a"}
@@ -53,13 +51,10 @@ export default function GamePanel()
                             <option key={value} value={value} >🔍 {value}</option>
                         ))}
                     </Select>
-                
-                </div>
-                
-                <div className="bg-[#1e9907] h-full w-full pt-3 border-t rounded-xl ">
-                    <nav className='flex justify-between items-center px-3 text-black'>
-                        <Select
-                        width={'8rem'}
+                    <Select
+                        width={'7rem'}
+                        marginBottom={4} 
+                        color={'black'}
                         bg='#28cc0a' size='md' _hover={{backgroundColor: '#39ff13'}} 
                         variant='filled'
                         onChange={handleSelectChange}
@@ -67,12 +62,28 @@ export default function GamePanel()
                             <option value={1}>Beginner</option>
                             <option value={2}>Indermediate</option>
                             <option value={3}>Expert</option>
-                        </Select>
+                    </Select>
+                </div>
+            <div className='h-fit w-fit'>
+                
+                <div className='flex'>
+                    
+                
+                </div>
+                
+                <div className="bg-[#1e9907] h-full w-full pt-3 border-t rounded-xl ">
+                    <nav className='flex justify-between items-center text-black'>
+                        <div style={{width: `${selectedZoom*3}px`, height: `${selectedZoom*2}px` }}>
+
+                        </div>
+                        <div className="flex justify-center" style={{width: `${selectedZoom*2}px`}}>
                         <RestartGameEmoji 
                             setCurrentGameData = {setCurrentGameData} 
                             currentGameData = {currentGameData} 
                             selectedOption = {selectedOption}
+                            zoom = {selectedZoom}
                         />
+                        </div>
                         <a onClick={() => 
                             {
                                 if(selectedMode === 1){
@@ -84,16 +95,16 @@ export default function GamePanel()
                             }
                         } className='cursor-pointer'>
                             <div className='flex'>
-                                <Cursor className='h-[4em]'/>
+                                <Cursor style={{width: `${selectedZoom*1.5}px`}}/>
                                 {selectedMode === 1 ? 
                                     <img
                                     alt=''
-                                    className='h-[4em] w-[4em]'
+                                    style={{width: `${selectedZoom*1.5}px`}}
                                     src='./bomb-shape.png'
                                     />
                                 :
                                     <span className='w-[4em]'>
-                                        <FlagIcon className='h-[4em] w-[3em]'></FlagIcon>
+                                        <FlagIcon style={{width: `${selectedZoom*2}px`}}></FlagIcon>
                                     </span>
                                 }
                             </div>
