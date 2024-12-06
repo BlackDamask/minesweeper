@@ -33,9 +33,11 @@ export class GameData {
             this.isFirstClick = false;
             this.startTime = Date.now(); // Start the timer
         }
+        if(this.gameField[colIndex][rowIndex].isRevealed){
+            this.handleSmartReveal(colIndex, rowIndex);
+        }
 
-        if (this.gameField[colIndex][rowIndex].isRevealed ||
-            this.gameField[colIndex][rowIndex].isFlagged ||
+        if (this.gameField[colIndex][rowIndex].isFlagged ||
             this.isGameOver) {
             return;
         }
@@ -209,6 +211,45 @@ export class GameData {
                     }
                 }
                 this.gameField[i][j].nearbyBombs = nearbyBombs;
+            }
+        }
+    }
+    private handleSmartReveal(colIndex:number, rowIndex: number): void{
+        let nearbyBombs = this.gameField[rowIndex][colIndex].nearbyBombs;
+
+        //search for flagged tiles
+        let nearbyFlags = 0;
+        for (let x = -1; x <= 1; x++) {
+            for (let y = -1; y <= 1; y++) {
+                if (x === 0 && y === 0) continue;
+
+                const newRow = rowIndex + x;
+                const newCol = colIndex + y;
+
+                if (newRow >= 0 && newRow < this.numberOfTilesY && newCol >= 0 && newCol < this.numberOfTilesX) {
+                    if (this.gameField[newRow][newCol].isFlagged) {
+                        nearbyFlags++;
+                    }
+                }
+            }
+        }
+        console.log("nearby flags"+ nearbyFlags);
+        console.log("nearby bombs"+ nearbyBombs);
+        if(nearbyBombs === nearbyFlags){
+            for (let x = -1; x <= 1; x++) {
+                for (let y = -1; y <= 1; y++) {
+                    if (x === 0 && y === 0) continue;
+    
+                    const newRow = rowIndex + x;
+                    const newCol = colIndex + y;
+    
+                    if (newRow >= 0 && newRow < this.numberOfTilesY && newCol >= 0 && newCol < this.numberOfTilesX) {
+                        if (this.gameField[newRow][newCol].isFlagged) {
+                            this.setFlaggedTile(newCol, newRow);
+                        }
+                        this.setRevealedTile(newCol, newRow);
+                    }
+                }
             }
         }
     }

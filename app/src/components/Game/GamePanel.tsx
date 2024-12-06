@@ -52,7 +52,7 @@ export default function GamePanel()
                         ))}
                     </Select>
                     <Select
-                        width={'7rem'}
+                        width={'10rem'}
                         marginBottom={4} 
                         color={'black'}
                         bg='#28cc0a' size='md' _hover={{backgroundColor: '#39ff13'}} 
