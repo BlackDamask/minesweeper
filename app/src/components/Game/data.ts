@@ -27,19 +27,22 @@ export class GameData {
         this.Generate();
     }
 
+
     public setRevealedTile(colIndex: number, rowIndex: number): void {
         if (this.isFirstClick) {
             this.PlaceBombs(colIndex, rowIndex);
             this.isFirstClick = false;
             this.startTime = Date.now(); // Start the timer
         }
-        if(this.gameField[colIndex][rowIndex].isRevealed){
-            this.handleSmartReveal(colIndex, rowIndex);
-        }
+        
 
         if (this.gameField[colIndex][rowIndex].isFlagged ||
-            this.isGameOver) {
+            this.isGameOver || this.gameField[colIndex][rowIndex].isRevealed) {
             return;
+        }
+
+        if(this.gameField[colIndex][rowIndex].isRevealed){
+            this.handleSmartReveal(rowIndex, colIndex);
         }
 
         // Check for game end
@@ -50,7 +53,6 @@ export class GameData {
         this.gameField[colIndex][rowIndex].isRevealed = true;
         this.numberOfRevealedTiles++;
 
-        // Check for win condition
         if (this.numberOfRevealedTiles === (this.numberOfTilesX * this.numberOfTilesY) - this.numberOfBombs) {
             this.GameOver(true);
         }
@@ -214,18 +216,19 @@ export class GameData {
             }
         }
     }
-    private handleSmartReveal(colIndex:number, rowIndex: number): void{
-        let nearbyBombs = this.gameField[rowIndex][colIndex].nearbyBombs;
-
-        //search for flagged tiles
+    private handleSmartReveal(colIndex: number, rowIndex: number): void {
+        const nearbyBombs = this.gameField[rowIndex][colIndex].nearbyBombs;
+    
+        // Search for flagged tiles around the current tile
         let nearbyFlags = 0;
         for (let x = -1; x <= 1; x++) {
             for (let y = -1; y <= 1; y++) {
-                if (x === 0 && y === 0) continue;
-
+                if (x === 0 && y === 0) continue; // Skip the current tile
+    
                 const newRow = rowIndex + x;
                 const newCol = colIndex + y;
-
+    
+                // Ensure the indices are within bounds
                 if (newRow >= 0 && newRow < this.numberOfTilesY && newCol >= 0 && newCol < this.numberOfTilesX) {
                     if (this.gameField[newRow][newCol].isFlagged) {
                         nearbyFlags++;
@@ -235,22 +238,33 @@ export class GameData {
         }
         console.log("nearby flags"+ nearbyFlags);
         console.log("nearby bombs"+ nearbyBombs);
-        if(nearbyBombs === nearbyFlags){
+
+        // If the number of nearby bombs equals the number of flags, reveal unflagged tiles
+        if (nearbyBombs === nearbyFlags) {
             for (let x = -1; x <= 1; x++) {
                 for (let y = -1; y <= 1; y++) {
-                    if (x === 0 && y === 0) continue;
+                    if (x === 0 && y === 0) continue; // Skip the current tile
     
                     const newRow = rowIndex + x;
                     const newCol = colIndex + y;
     
+                    // Ensure the indices are within bounds
                     if (newRow >= 0 && newRow < this.numberOfTilesY && newCol >= 0 && newCol < this.numberOfTilesX) {
-                        if (this.gameField[newRow][newCol].isFlagged) {
-                            this.setFlaggedTile(newCol, newRow);
+                        const tile = this.gameField[newRow][newCol];
+                        
+                        // Reveal unflagged and unrevealed tiles
+                        if (!tile.isFlagged && !tile.isRevealed) {
+                            if (tile.hasBomb) {
+                                // End the game if a bomb is revealed
+                                this.GameOver(false);
+                            } else {
+                                this.setRevealedTile(newCol, newRow); // Recursive reveal
+                            }
                         }
-                        this.setRevealedTile(newCol, newRow);
                     }
                 }
             }
         }
     }
+
 }
