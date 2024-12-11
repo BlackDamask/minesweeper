@@ -36,7 +36,6 @@ export default function RestartGameEmoji({
             setCurrentGameData(new GameData(selectedOption));  // Restart game directly
         }
     };
-    console.log(zoom);
     return (
         <>
             <Popover

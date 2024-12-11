@@ -28,56 +28,47 @@ export class GameData {
     }
 
 
-    public setRevealedTile(colIndex: number, rowIndex: number): void {
+    public handleClickOnTile(colIndex: number, rowIndex: number): void {
         if (this.isFirstClick) {
             this.PlaceBombs(colIndex, rowIndex);
             this.isFirstClick = false;
             this.startTime = Date.now(); // Start the timer
         }
-        
-
-        if (this.gameField[colIndex][rowIndex].isFlagged ||
-            this.isGameOver || this.gameField[colIndex][rowIndex].isRevealed) {
+        console.log("isRevealed"+ this.gameField[rowIndex][colIndex].isRevealed+ " isFlagged"+ this.gameField[rowIndex][colIndex].isFlagged+ " isGameOver"+ this.isGameOver);
+        if (this.gameField[rowIndex][colIndex].isFlagged ||
+            this.isGameOver ) {
+            console.warn("returned");
             return;
         }
 
-        if(this.gameField[colIndex][rowIndex].isRevealed){
-            this.handleSmartReveal(rowIndex, colIndex);
+        if(this.gameField[rowIndex][colIndex].isRevealed){
+            console.warn()
+            this.handleSmartReveal(colIndex, rowIndex);
         }
-
-        // Check for game end
-        if (this.gameField[colIndex][rowIndex].hasBomb) {
-            this.GameOver(false);
+        else{
+            this.RevealTile(colIndex, rowIndex);
         }
-
-        this.gameField[colIndex][rowIndex].isRevealed = true;
-        this.numberOfRevealedTiles++;
-
-        if (this.numberOfRevealedTiles === (this.numberOfTilesX * this.numberOfTilesY) - this.numberOfBombs) {
-            this.GameOver(true);
-        }
-
-        this.checkEmptyTiles(colIndex, rowIndex);
+        
     }
 
     public setFlaggedTile(colIndex: number, rowIndex: number): void {
-        if (!this.gameField[colIndex][rowIndex].isRevealed && !this.isGameOver) {
-            this.gameField[colIndex][rowIndex].isFlagged = !this.gameField[colIndex][rowIndex].isFlagged;
+        if (!this.gameField[rowIndex][colIndex].isRevealed && !this.isGameOver) {
+            this.gameField[rowIndex][colIndex].isFlagged = !this.gameField[rowIndex][colIndex].isFlagged;
         }
     }
 
     public checkEmptyTiles(colIndex: number, rowIndex: number): void {
-        if (this.gameField[colIndex][rowIndex].nearbyBombs === 0) {
+        if (this.gameField[rowIndex][colIndex].nearbyBombs === 0) {
             for (let x = -1; x <= 1; x++) {
                 for (let y = -1; y <= 1; y++) {
                     if (x === 0 && y === 0) continue;
 
-                    const newRow = colIndex + x;
-                    const newCol = rowIndex + y;
+                    const newRow = rowIndex + x;
+                    const newCol = colIndex + y;
 
                     if (newRow >= 0 && newRow < this.numberOfTilesY && newCol >= 0 && newCol < this.numberOfTilesX) {
                         if (!this.gameField[newRow][newCol].isRevealed && !this.gameField[newRow][newCol].hasBomb) {
-                            this.setRevealedTile(newRow, newCol);
+                            this.handleClickOnTile(newCol, newRow);
                         }
                     }
                 }
@@ -144,6 +135,20 @@ export class GameData {
         return `${minutes}m ${seconds}s`;
     }
 
+    private RevealTile(colIndex: number, rowIndex: number): void{
+        this.gameField[rowIndex][colIndex].isRevealed = true;
+        this.numberOfRevealedTiles++;
+        // Check for game end
+        if (this.gameField[rowIndex][colIndex].hasBomb) {
+            this.GameOver(false);
+        }
+
+        if (this.numberOfRevealedTiles === (this.numberOfTilesX * this.numberOfTilesY) - this.numberOfBombs) {
+            this.GameOver(true);
+        }
+        this.checkEmptyTiles(colIndex, rowIndex);
+    }
+
     private PlaceBombs(colIndex: number, rowIndex: number): void {
         this.isStarted = true;
         const exclusionZone = new Set<string>();
@@ -151,8 +156,8 @@ export class GameData {
         // Exclude initial tile and its neighbors from bomb placement
         for (let x = -1; x <= 1; x++) {
             for (let y = -1; y <= 1; y++) {
-                const newRow = colIndex + x;
-                const newCol = rowIndex + y;
+                const newRow = rowIndex + x;
+                const newCol = colIndex + y;
 
                 if (newRow >= 0 && newRow < this.numberOfTilesY && newCol >= 0 && newCol < this.numberOfTilesX) {
                     exclusionZone.add(`${newRow},${newCol}`);
@@ -184,7 +189,7 @@ export class GameData {
             const randomCol = Math.floor(Math.random() * this.numberOfTilesX);
 
             if (
-                (randomRow !== colIndex || randomCol !== rowIndex) &&
+                (randomCol !== colIndex || randomRow !== rowIndex) &&
                 !this.gameField[randomRow][randomCol].hasBomb && !exclusionZone.has(`${randomRow},${randomCol}`)
             ) {
                 this.gameField[randomRow][randomCol].hasBomb = true;
@@ -219,7 +224,6 @@ export class GameData {
     private handleSmartReveal(colIndex: number, rowIndex: number): void {
         const nearbyBombs = this.gameField[rowIndex][colIndex].nearbyBombs;
     
-        // Search for flagged tiles around the current tile
         let nearbyFlags = 0;
         for (let x = -1; x <= 1; x++) {
             for (let y = -1; y <= 1; y++) {
@@ -253,13 +257,9 @@ export class GameData {
                         const tile = this.gameField[newRow][newCol];
                         
                         // Reveal unflagged and unrevealed tiles
-                        if (!tile.isFlagged && !tile.isRevealed) {
-                            if (tile.hasBomb) {
-                                // End the game if a bomb is revealed
-                                this.GameOver(false);
-                            } else {
-                                this.setRevealedTile(newCol, newRow); // Recursive reveal
-                            }
+                        if (!tile.isRevealed && !tile.isFlagged) {
+
+                            this.RevealTile(newCol, newRow);
                         }
                     }
                 }

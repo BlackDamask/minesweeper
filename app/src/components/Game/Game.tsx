@@ -56,29 +56,29 @@ export default function Game(
         setCurrentGameData(Object.assign(Object.create(Object.getPrototypeOf(currentGameData)), currentGameData));
     
     } 
-    const setRevealedTile = (rowIndex: number, colIndex: number) => {
+    const setRevealedTile = (colIndex: number, rowIndex: number) => {
         if (!currentGameData.gameField[rowIndex][colIndex].isFlagged) {
-            currentGameData.setRevealedTile(rowIndex, colIndex);
+            currentGameData.handleClickOnTile(colIndex, rowIndex);
             setCurrentGameData(Object.assign(Object.create(Object.getPrototypeOf(currentGameData)), currentGameData));
         }
     }
 
     const handleClick = (rowIndex: number, colIndex: number) => {
         if(selectedMode === 1){
-            setRevealedTile(rowIndex, colIndex);
+            setRevealedTile(colIndex, rowIndex);
         }
         else{
-            setFlaggedTile(rowIndex, colIndex);
+            setFlaggedTile(colIndex, rowIndex);
         }
     };
 
     const handleRightClick = (e: React.MouseEvent, rowIndex: number, colIndex: number) => {
         e.preventDefault();
         if(selectedMode === 1){
-            setFlaggedTile(rowIndex, colIndex);
+            setFlaggedTile(colIndex, rowIndex);
         }
         else{
-            setRevealedTile(rowIndex, colIndex);
+            setRevealedTile(colIndex ,rowIndex );
         }
     };
 
@@ -128,11 +128,14 @@ export default function Game(
                     const tileColor = tile.color as TileColor;
 
                     // Determine the background color for the tile
-                    const backgroundColor = tile.isRevealed
+                    let backgroundColor = tile.isRevealed
                         ? tile.hasBomb
                             ? tileColorMap[tileColor].withBomb
                             : tileColorMap[tileColor].clicked
                         : tileColorMap[tileColor].default;
+                    if(tile.hasBomb){
+                        backgroundColor= tileColorMap[tileColor].withBomb;
+                    }
 
                     // Set hover effect darker only if the tile is revealed
                     const hoverStyle = tile.isRevealed
