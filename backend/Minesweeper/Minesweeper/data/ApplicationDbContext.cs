@@ -12,6 +12,10 @@ namespace Minesweeper.data
             
         }
         public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
+        public DbSet<GameParticipant> GameParticipants => Set<GameParticipant>();
+        public DbSet<Game> Games => Set<Game>();
+        public DbSet<MatchmakingQueue> MatchmakingQueues => Set<MatchmakingQueue>();
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);

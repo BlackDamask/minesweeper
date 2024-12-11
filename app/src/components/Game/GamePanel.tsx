@@ -25,6 +25,7 @@ export default function GamePanel()
     const handleSelectChange = (event : any) => {
         const selectedValue = event.target.value;
         setSelectedOption(selectedValue);
+        setCurrentGameData(new GameData(selectedValue));
     };
 
     const handleSelectZoom = (event : any) => {
