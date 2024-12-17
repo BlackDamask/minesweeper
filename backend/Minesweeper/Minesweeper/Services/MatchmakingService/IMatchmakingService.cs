@@ -2,6 +2,6 @@
 {
     public interface IMatchmakingService
     {
-        public Task AddPlaayersToGameAsync();
+        public Task AddPlayersToGameAsync();
     }
 }

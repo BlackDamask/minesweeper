@@ -8,6 +8,7 @@ using Microsoft.IdentityModel.Tokens;
 using Swashbuckle.AspNetCore.Filters;
 using System.Text;
 using Microsoft.OpenApi.Models;
+using Minesweeper.Services.MatchmakingService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,7 +33,7 @@ builder.Services.AddSwaggerGen(c => {
 builder.Services.AddAutoMapper(typeof(Program));
 
 builder.Services.AddScoped<IPlayerService, PlayerService>();
-
+builder.Services.AddScoped<IMatchmakingService, MatchmakingService>();
 
 builder.Services.AddAuthorization();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

@@ -5,15 +5,15 @@ using System.Security.AccessControl;
 
 namespace Minesweeper.Services.MatchmakingService
 {
-    public class MatchamakingService : IMatchmakingService
+    public class MatchmakingService : IMatchmakingService
     {
         private readonly ApplicationDbContext context;
-        public MatchamakingService(ApplicationDbContext context) 
+        public MatchmakingService(ApplicationDbContext context) 
         {
             this.context = context;
         }
 
-        public async Task AddPlaayersToGameAsync()
+        public async Task AddPlayersToGameAsync()
         {
             var eligiblePlayers = await context.MatchmakingQueue
                 .OrderBy(q => q.QueeuedAt)

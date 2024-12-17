@@ -122,12 +122,13 @@ namespace Minesweeper.Services.PlayerService
             try
             {
                 var player = await context.Users.FindAsync(playerId) ?? throw new Exception("player not found");
-                //context.MatchmakingQueue.Add(
-                //    new MatchmakingQueue {
-                //        //Id = Guid.NewGuid().ToString(),
-                //        PlayerId = player.Id
-              
-                //    });
+                context.MatchmakingQueue.Add(
+                    new MatchmakingQueue
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        PlayerId = player.Id,
+                        QueeuedAt = DateTime.UtcNow,
+                    });
                 await context.SaveChangesAsync();
             }
             catch (Exception ex)

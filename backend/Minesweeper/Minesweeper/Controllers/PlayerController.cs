@@ -59,7 +59,7 @@ namespace Minesweeper.Controllers
             return Ok(await playerService.GetProfile(playerId));
         }
         [Authorize]
-        [HttpPut("changePoints")]
+        [HttpPut("change-points")]
         public async Task<IActionResult> ChangePoints(int pointsChange)
         {
             var playerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -68,6 +68,18 @@ namespace Minesweeper.Controllers
                 return BadRequest();
             }
             return Ok(await playerService.ChangePoints(playerId, pointsChange));
+        }
+
+        [Authorize]
+        [HttpPost("add-to-queue")]
+        public async Task<IActionResult> AddToQueue()
+        {
+            var playerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (playerId is null)
+            {
+                return BadRequest();
+            }
+            return Ok(await playerService.AddPlayerToQueue(playerId));
         }
     }
 }
