@@ -11,6 +11,7 @@ namespace Minesweeper.Services.PlayerService
         Task<ServiceResponse<LoginPlayerResponseDTO>> Login(LoginPlayerDTO player);
         Task<ServiceResponse<string>> RefreshToken(string refreshToken);
         Task<ServiceResponse<GetPlayerDTO>> GetProfile(string playerId);
+        Task<ServiceResponse<string>> AddPlayerToQueue(string playerId);
         Task<ServiceResponse<int>> ChangePoints(string playerId, int pointsChange);
     }
 }

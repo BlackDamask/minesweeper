@@ -116,6 +116,28 @@ namespace Minesweeper.Services.PlayerService
             return serviceResponse;
         }
 
+        public async Task<ServiceResponse<string>> AddPlayerToQueue(string playerId)
+        {
+            var serviceResponse = new ServiceResponse<string>();
+            try
+            {
+                var player = await context.Users.FindAsync(playerId) ?? throw new Exception("player not found");
+                //context.MatchmakingQueue.Add(
+                //    new MatchmakingQueue {
+                //        //Id = Guid.NewGuid().ToString(),
+                //        PlayerId = player.Id
+              
+                //    });
+                await context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.Message = ex.Message;
+            }
+            return serviceResponse;
+            
+        }
+
         public string GenerateAccessToken(IEnumerable<Claim> claims)
         {
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]!));

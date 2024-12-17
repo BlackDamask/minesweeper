@@ -2,10 +2,10 @@
 {
     public class Game
     {       
-        public int Id { get; set; }
-        public DateTime startTime { get; set; }
-        public DateTime endTime { get; set; }
+        public required string Id { get; set; }
+        public DateTime StartTime { get; set; }
+        public DateTime EndTime { get; set; }
         public required string Status { get; set; }
-        public string? gameType { get; set; }
+        public string? GameType { get; set; }
     }
 }

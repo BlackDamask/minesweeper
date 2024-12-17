@@ -2,9 +2,9 @@
 {
     public class GameParticipant
     {
-        public int Id { get; set; }
-        public int GameId { get; set; }
-        public int PlayerId { get; set; }
-        public int Progress { get; set; }
+        public required string Id { get; set; }
+        public required string GameId { get; set; }
+        public required string PlayerId { get; set; }
+        public int Progress { get; set; } = 0;
     }
 }
