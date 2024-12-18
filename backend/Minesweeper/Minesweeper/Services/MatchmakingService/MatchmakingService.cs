@@ -50,7 +50,7 @@ namespace Minesweeper.Services.MatchmakingService
             {
                 Id = Guid.NewGuid().ToString(),
                 GameId = newGame.Id,
-                PlayerId = player.Id,
+                PlayerId = player.PlayerId,
             }).ToList();
 
             await context.GameParticipants.AddRangeAsync(gameParticipants);

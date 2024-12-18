@@ -133,9 +133,6 @@ export default function Game(
                             ? tileColorMap[tileColor].withBomb
                             : tileColorMap[tileColor].clicked
                         : tileColorMap[tileColor].default;
-                    if(tile.hasBomb){
-                        backgroundColor= tileColorMap[tileColor].withBomb;
-                    }
 
                     // Set hover effect darker only if the tile is revealed
                     const hoverStyle = tile.isRevealed

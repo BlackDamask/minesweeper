@@ -35,6 +35,8 @@ builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddScoped<IPlayerService, PlayerService>();
 builder.Services.AddScoped<IMatchmakingService, MatchmakingService>();
 
+builder.Services.AddHostedService<MatchmakingBackgroundService>();
+
 builder.Services.AddAuthorization();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>

@@ -8,8 +8,6 @@ import {
     PopoverContent,
     PopoverBody,
     useDisclosure,
-    MenuList,
-    MenuItem,
     Modal,
     ModalContent,
     ModalHeader,
@@ -24,6 +22,7 @@ import { ReactComponent as LoginButton } from "./login-button.svg";
 import LoginModal from '../Modals/LoginModal';
 import RegisterModal from "../Modals/RegisterModal";
 import { AuthContext } from "../../AuthProvider";
+import { Link } from "react-router-dom";
 
 export default function Nav() {
     const auth = useContext(AuthContext);
@@ -50,11 +49,11 @@ export default function Nav() {
 
     const buttons = [
         {
-            routePath: "/single",
+            routePath: "/multiplayer",
             options: [
-                { alt: "Single Player", routePath: "./single", imagePath: "./play-button.svg" },
-                { alt: "PvP", routePath: "./single", imagePath: "./play-button.svg" },
-                { alt: "Cooperative", routePath: "./single", imagePath: "./play-button.svg" },
+                { alt: "Single Player", routePath: "/single", imagePath: "./play-button.svg" },
+                { alt: "PvP", routePath: "/single", imagePath: "./play-button.svg" },
+                { alt: "Cooperative", routePath: "/single", imagePath: "./play-button.svg" },
             ],
             imagePath: "./bomb-shape.png",
             alt: "Play",
@@ -100,6 +99,7 @@ export default function Nav() {
     return (
         <>
             <div className="bg-slate-950 fixed left-0 h-screen w-20 flex flex-col items-center justify-between">
+                <Link to="/">
                 <Box
                     width={"100%"}
                     height={"5em"}
@@ -112,6 +112,7 @@ export default function Nav() {
                         borderRadius="lg"
                     />
                 </Box>
+                </Link>
                 <div>
                     
 

@@ -5,6 +5,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom"
 import Layout from './pages/Layout/Layout';
 import { ChakraProvider, extendTheme } from '@chakra-ui/react'
 import SinglePlayer from './pages/SinglePlayer/SinglePlayer';
+import Multiplayer from './pages/Multiplayer/Multiplayer';
 
 const theme = extendTheme({
   styles: {
@@ -27,6 +28,7 @@ function App() {
           <Route path="/" element={<Layout />}>
           </Route>
           <Route path="/single" element={<SinglePlayer></SinglePlayer>}/>
+          <Route path="/multiplayer" element={<Multiplayer></Multiplayer>}/>
         </Routes>
       </BrowserRouter>
     </ChakraProvider> 

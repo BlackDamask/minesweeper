@@ -1,13 +1,26 @@
-import { Card, CardHeader, CardBody, CardFooter, Stack, Image, Heading, Text, Divider, ButtonGroup, Button, useDisclosure } from '@chakra-ui/react';
 import '../../index.css';
-import { Link } from 'react-router-dom';
-import { SimpleGrid } from '@chakra-ui/react'
+import { Link, useNavigate } from 'react-router-dom';
 import Nav from '../../components/Nav/Nav';
-import GamePanel from '../../components/Game/GamePanel';
-import { ReactComponent as PlayButton } from './play-button.svg'; 
+import { AuthContext } from '../../AuthProvider';
+import { useContext } from 'react';
+import { useDisclosure } from '@chakra-ui/react';
+import LoginModal from '../../components/Modals/LoginModal';
 
 export default function Layout() {
-  
+  const auth = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  const {isOpen ,onOpen, onClose} = useDisclosure();
+
+  const handlePvpButtonClick = () : void => {
+    if(auth?.isLoggedIn){
+      navigate("/multiplayer");
+    }
+    else{
+      onOpen();
+    }
+  }
+
   return (
     <main className='w-screen h-screen flex flex-row bg-slate-900'>
       
@@ -30,7 +43,8 @@ export default function Layout() {
               </div>
             </div>
           </Link>
-          <div className='flex ml-14 h-24 w-full lg:w-[60%] xl:w-[70%] 2xl: rounded-lg text-white bg-[#1072d6] hover:bg-[#0d5bab] border-b-[3px] border-[#0d5bab] cursor-pointer'>
+          <div className='flex ml-14 h-24 w-full lg:w-[60%] xl:w-[70%] 2xl: rounded-lg text-white bg-[#1072d6] hover:bg-[#0d5bab] border-b-[3px] border-[#0d5bab] cursor-pointer'
+            onClick={handlePvpButtonClick}>
             <div className='w-1/5 h-full p-3'>
               <img alt='' src="./pvp.png" className='h-full aspect-square' />
             </div>
@@ -53,6 +67,7 @@ export default function Layout() {
       <div className='w-[calc(30%-5rem)]'>
 
       </div>
+       <LoginModal isOpen={isOpen} onClose={onClose} />
     </main>
   );
 }

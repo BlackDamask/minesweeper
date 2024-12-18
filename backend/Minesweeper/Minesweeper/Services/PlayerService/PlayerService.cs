@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Validations;
 using Minesweeper.data;
@@ -121,7 +122,22 @@ namespace Minesweeper.Services.PlayerService
             var serviceResponse = new ServiceResponse<string>();
             try
             {
-                var player = await context.Users.FindAsync(playerId) ?? throw new Exception("player not found");
+                // Retrieve player and throw an exception if not found
+                var player = await context.Users.FindAsync(playerId)
+                              ?? throw new Exception("Player not found");
+
+                // Check for existing queue entry for the player
+                var existingQueueEntry = await context.MatchmakingQueue
+                    .FirstOrDefaultAsync(q => q.PlayerId == player.Id);
+
+                if (existingQueueEntry != null)
+                {
+                    // Remove existing entry if found
+                    context.MatchmakingQueue.Remove(existingQueueEntry);
+                    await context.SaveChangesAsync(); // Save the removal explicitly
+                }
+
+                // Add the player to the queue
                 context.MatchmakingQueue.Add(
                     new MatchmakingQueue
                     {
@@ -129,15 +145,25 @@ namespace Minesweeper.Services.PlayerService
                         PlayerId = player.Id,
                         QueeuedAt = DateTime.UtcNow,
                     });
+
+                // Save changes to persist the new entry
                 await context.SaveChangesAsync();
+
+                // Prepare success response
+                serviceResponse.Message = "Player added to the queue successfully";
+                serviceResponse.Data = player.Id;
             }
             catch (Exception ex)
             {
+                // Handle exceptions
+                serviceResponse.Success = false;
                 serviceResponse.Message = ex.Message;
             }
+
             return serviceResponse;
-            
         }
+
+
 
         public string GenerateAccessToken(IEnumerable<Claim> claims)
         {

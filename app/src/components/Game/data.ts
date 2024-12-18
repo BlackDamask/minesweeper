@@ -174,7 +174,7 @@ export class GameData {
                 this.numberOfBombs = 40;
                 break;
             case 3:
-                this.numberOfBombs = 100;
+                this.numberOfBombs = 99;
                 break;
             default:
                 console.warn(`Unknown difficulty level: ${this.difficulty}. Defaulting to 10 bombs.`);

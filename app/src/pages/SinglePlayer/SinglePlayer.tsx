@@ -1,5 +1,4 @@
 import GamePanel from '../../components/Game/GamePanel';
-import Header from '../../components/Header';
 import Nav from '../../components/Nav/Nav';
 
 export default function SinglePlayer(){
