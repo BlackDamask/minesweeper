@@ -122,19 +122,16 @@ namespace Minesweeper.Services.PlayerService
             var serviceResponse = new ServiceResponse<string>();
             try
             {
-                // Retrieve player and throw an exception if not found
                 var player = await context.Users.FindAsync(playerId)
                               ?? throw new Exception("Player not found");
 
-                // Check for existing queue entry for the player
                 var existingQueueEntry = await context.MatchmakingQueue
                     .FirstOrDefaultAsync(q => q.PlayerId == player.Id);
 
                 if (existingQueueEntry != null)
                 {
-                    // Remove existing entry if found
                     context.MatchmakingQueue.Remove(existingQueueEntry);
-                    await context.SaveChangesAsync(); // Save the removal explicitly
+                    await context.SaveChangesAsync();
                 }
 
                 // Add the player to the queue
@@ -146,7 +143,6 @@ namespace Minesweeper.Services.PlayerService
                         QueeuedAt = DateTime.UtcNow,
                     });
 
-                // Save changes to persist the new entry
                 await context.SaveChangesAsync();
 
                 // Prepare success response
@@ -155,7 +151,6 @@ namespace Minesweeper.Services.PlayerService
             }
             catch (Exception ex)
             {
-                // Handle exceptions
                 serviceResponse.Success = false;
                 serviceResponse.Message = ex.Message;
             }

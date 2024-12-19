@@ -9,6 +9,8 @@ using Swashbuckle.AspNetCore.Filters;
 using System.Text;
 using Microsoft.OpenApi.Models;
 using Minesweeper.Services.MatchmakingService;
+using Minesweeper.Services;
+using Minesweeper.Services.Minesweeper.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,6 +38,8 @@ builder.Services.AddScoped<IPlayerService, PlayerService>();
 builder.Services.AddScoped<IMatchmakingService, MatchmakingService>();
 
 builder.Services.AddHostedService<MatchmakingBackgroundService>();
+
+builder.Services.AddSignalR();
 
 builder.Services.AddAuthorization();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -65,7 +69,8 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowFrontend",
         policy => policy.WithOrigins("http://localhost:3000") 
                         .AllowAnyHeader()
-                        .AllowAnyMethod());
+                        .AllowAnyMethod()
+                        .AllowCredentials());
 });
 
 
@@ -88,7 +93,15 @@ app.UseCors("AllowFrontend");
 
 app.UseHttpsRedirection();
 
+app.UseRouting();
+
 app.UseAuthorization();
+
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllers(); // Maps controllers.
+    endpoints.MapHub<GameHub>("/game"); // Maps SignalR hub.
+});
 
 app.MapControllers();
 

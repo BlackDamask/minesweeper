@@ -1,6 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.SignalR;
+using Microsoft.EntityFrameworkCore;
 using Minesweeper.data;
 using Minesweeper.models;
+using Minesweeper.Services.Minesweeper.Services;
 using System.Security.AccessControl;
 
 namespace Minesweeper.Services.MatchmakingService
@@ -8,9 +10,11 @@ namespace Minesweeper.Services.MatchmakingService
     public class MatchmakingService : IMatchmakingService
     {
         private readonly ApplicationDbContext context;
-        public MatchmakingService(ApplicationDbContext context) 
+        private readonly IHubContext<GameHub> hubContext;
+        public MatchmakingService(ApplicationDbContext context, IHubContext<GameHub> hubContext)
         {
             this.context = context;
+            this.hubContext = hubContext;
         }
 
         public async Task AddPlayersToGameAsync()
@@ -60,6 +64,11 @@ namespace Minesweeper.Services.MatchmakingService
             await context.SaveChangesAsync();
 
             Console.WriteLine($"Game {newGame.Id} created with {matchedPlayers.Count} players.");
+
+            foreach (var player in matchedPlayers)
+            {
+                await hubContext.Clients.All.SendAsync("GameStarted");
+            }
         }
     }
 }
