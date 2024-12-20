@@ -10,7 +10,7 @@ using System.Text;
 using Microsoft.OpenApi.Models;
 using Minesweeper.Services.MatchmakingService;
 using Minesweeper.Services;
-using Minesweeper.Services.Minesweeper.Services;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -37,9 +37,10 @@ builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddScoped<IPlayerService, PlayerService>();
 builder.Services.AddScoped<IMatchmakingService, MatchmakingService>();
 
+
 builder.Services.AddHostedService<MatchmakingBackgroundService>();
 
-builder.Services.AddSignalR();
+
 
 builder.Services.AddAuthorization();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -56,6 +57,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
         };
     });
+
+builder.Services.AddSignalR();
 
 builder.Services.AddIdentityCore<Player>()
     .AddEntityFrameworkStores<ApplicationDbContext>()

@@ -124,12 +124,12 @@ namespace Minesweeper.Services.PlayerService
             {
                 var player = await context.Users.FindAsync(playerId)
                               ?? throw new Exception("Player not found");
-
                 var existingQueueEntry = await context.MatchmakingQueue
                     .FirstOrDefaultAsync(q => q.PlayerId == player.Id);
 
                 if (existingQueueEntry != null)
                 {
+                    
                     context.MatchmakingQueue.Remove(existingQueueEntry);
                     await context.SaveChangesAsync();
                 }
@@ -146,7 +146,7 @@ namespace Minesweeper.Services.PlayerService
                 await context.SaveChangesAsync();
 
                 // Prepare success response
-                serviceResponse.Message = "Player added to the queue successfully";
+                
                 serviceResponse.Data = player.Id;
             }
             catch (Exception ex)
