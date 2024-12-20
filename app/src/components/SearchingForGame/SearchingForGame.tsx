@@ -18,6 +18,18 @@ export default function SearchingForGame() {
         }).catch(error => {
             console.error("Error adding to queue:", error);
         });
+        return () => {
+            axios.delete(
+                "/player/remove-from-queue",
+                {
+                    headers: { Authorization: `Bearer ${auth?.accessToken}` },
+                }
+            ).then(response => {
+                console.log("Removed from queue:", response.data);
+            }).catch(error => {
+                console.error("Error removing from queue:", error);
+            });
+        }
     }, [auth]);
 
     return (

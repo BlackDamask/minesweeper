@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using Minesweeper.DTOs.PlayerDTO;
 using Minesweeper.models;
 using Minesweeper.Services.PlayerService;
+using System.Reflection.Metadata.Ecma335;
 using System.Security.Claims;
 
 namespace Minesweeper.Controllers
@@ -81,5 +82,19 @@ namespace Minesweeper.Controllers
             }
             return Ok(await playerService.AddPlayerToQueue(playerId));
         }
+
+        [Authorize]
+        [HttpDelete("remove-from-queue")]
+        public async Task<IActionResult> RemoveFromQueue()
+        {
+            var playerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (playerId is null)
+            {
+                return BadRequest();
+            }
+            return Ok(await playerService.RemovePlayerFromQueue(playerId));
+        }
+
+
     }
 }

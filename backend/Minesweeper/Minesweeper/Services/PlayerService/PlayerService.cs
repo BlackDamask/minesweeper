@@ -224,6 +224,22 @@ namespace Minesweeper.Services.PlayerService
             return serviceResponse;
         }
 
+        public async Task<ServiceResponse<string>> RemovePlayerFromQueue(string playerId)
+        {
+            var serviceResponse = new ServiceResponse<string>();
+            try
+            {
+                var position = await context.MatchmakingQueue.FirstOrDefaultAsync(p => p.PlayerId == playerId) ?? throw new Exception("Player not found");
+                context.MatchmakingQueue.Remove(position);
+                await context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.Message = ex.Message;
+                serviceResponse.Success = false;
+            }
+            return serviceResponse;
+        }
     }
 
 }

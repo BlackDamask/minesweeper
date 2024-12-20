@@ -88,5 +88,6 @@ namespace Minesweeper.Services.MatchmakingService
                 await hubContext.Clients.User(player.PlayerId).SendAsync("GameStarted");
             }
         }
+
     }
 }
