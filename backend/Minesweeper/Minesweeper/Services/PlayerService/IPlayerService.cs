@@ -7,9 +7,7 @@ namespace Minesweeper.Services.PlayerService
 {
     public interface IPlayerService
     {
-        Task<ServiceResponse<string>> Register(RegisterPlayerDTO newPlayer);
-        Task<ServiceResponse<LoginPlayerResponseDTO>> Login(LoginPlayerDTO player);
-        Task<ServiceResponse<string>> RefreshToken(string refreshToken);
+        
         Task<ServiceResponse<GetPlayerDTO>> GetProfile(string playerId);
         Task<ServiceResponse<string>> AddPlayerToQueue(string playerId);
         Task<ServiceResponse<string>> RemovePlayerFromQueue(string playerId);

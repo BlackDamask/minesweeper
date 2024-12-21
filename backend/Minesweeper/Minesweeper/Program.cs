@@ -10,6 +10,7 @@ using System.Text;
 using Microsoft.OpenApi.Models;
 using Minesweeper.Services.MatchmakingService;
 using Minesweeper.Services;
+using Minesweeper.Services.AuthenticationService;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -34,8 +35,10 @@ builder.Services.AddSwaggerGen(c => {
 
 builder.Services.AddAutoMapper(typeof(Program));
 
+builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 builder.Services.AddScoped<IPlayerService, PlayerService>();
 builder.Services.AddScoped<IMatchmakingService, MatchmakingService>();
+
 
 
 builder.Services.AddHostedService<MatchmakingBackgroundService>();
