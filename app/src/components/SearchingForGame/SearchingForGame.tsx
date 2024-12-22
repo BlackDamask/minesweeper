@@ -1,15 +1,19 @@
 import { Spinner } from "@chakra-ui/react";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useRef } from "react";
 import { AuthContext } from "../../AuthProvider";
 import axios from "../../api/axios";
 
 export default function SearchingForGame() {
     const auth = useContext(AuthContext);
+    const isMounted = useRef(false); 
 
     useEffect(() => {
+        if (isMounted.current) return; 
+        isMounted.current = true;
+
         axios.post(
             "/player/add-to-queue",
-            {}, 
+            {},
             {
                 headers: { Authorization: `Bearer ${auth?.accessToken}` },
             }
@@ -18,6 +22,7 @@ export default function SearchingForGame() {
         }).catch(error => {
             console.error("Error adding to queue:", error);
         });
+
         return () => {
             axios.delete(
                 "/player/remove-from-queue",
@@ -29,7 +34,7 @@ export default function SearchingForGame() {
             }).catch(error => {
                 console.error("Error removing from queue:", error);
             });
-        }
+        };
     }, [auth]);
 
     return (
