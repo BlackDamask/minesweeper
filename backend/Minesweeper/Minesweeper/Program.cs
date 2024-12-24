@@ -11,6 +11,7 @@ using Microsoft.OpenApi.Models;
 using Minesweeper.Services.MatchmakingService;
 using Minesweeper.Services;
 using Minesweeper.Services.AuthenticationService;
+using Minesweeper.Services.GameService;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -38,7 +39,7 @@ builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 builder.Services.AddScoped<IPlayerService, PlayerService>();
 builder.Services.AddScoped<IMatchmakingService, MatchmakingService>();
-
+builder.Services.AddScoped<IGameService, GameService>();
 
 
 builder.Services.AddHostedService<MatchmakingBackgroundService>();
