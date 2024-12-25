@@ -7,7 +7,7 @@
         private int numberOfTilesY;
         private int numberOfBombs;
         private bool isStarted = false;
-        private Tile[,]? gameField;
+        public Tile[,]? gameField { get; set; }
 
         public MinesweeperGame(int difficulty)
         {

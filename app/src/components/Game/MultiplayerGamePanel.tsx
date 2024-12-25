@@ -1,11 +1,12 @@
 import Game from '../../components/Game/Game';
-import { GameData } from '../../components/Game/data';
+import { GameData, Tile } from '../../components/Game/data';
 import RestartGameEmoji from '../../components/Game/RestartGameEmoji/RestartGameEmoji';
 import { Select, Menu, MenuButton, MenuList, MenuItem } from '@chakra-ui/react';
 import { ReactComponent as Cursor } from './cursor.svg';
 import { ReactComponent as FlagIcon } from '../../components/Game/flag.svg';
 import { ReactComponent as HandLens } from '../../components/Game/hand-lens.svg';
 import { useState } from 'react';
+
 
 const generateResizeValues = () =>{
     let resizeValues = [];
@@ -15,11 +16,11 @@ const generateResizeValues = () =>{
     return(resizeValues);
 }
 
-export default function GamePanel() 
+export default function MultiplayerGamePanel({gameField} : {gameField : Tile[][]}) 
 {
     const [selectedZoom, setSelectedZoom] = useState(26);
     const [selectedOption, setSelectedOption] = useState<number>(1);
-    const [currentGameData, setCurrentGameData] = useState<GameData>(new GameData({difficulty:selectedOption}));
+    const [currentGameData, setCurrentGameData] = useState<GameData>(new GameData({gameField: gameField}));
     const [selectedMode, setSelectedMode] = useState<number>(1);
 
     const handleSelectChange = (event : any) => {

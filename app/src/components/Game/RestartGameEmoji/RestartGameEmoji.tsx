@@ -26,14 +26,14 @@ export default function RestartGameEmoji({
 
     const handleRestartClick = () => {
         onClose();
-        setCurrentGameData(new GameData(selectedOption));
+        setCurrentGameData(new GameData({difficulty:selectedOption}));
     };
 
     const handleButtonClick = () => {
         if (currentGameData.isStarted) {
             onOpen();  // Show popover only if the game has started
         } else {
-            setCurrentGameData(new GameData(selectedOption));  // Restart game directly
+            setCurrentGameData(new GameData({difficulty:selectedOption}));  // Restart game directly
         }
     };
     return (

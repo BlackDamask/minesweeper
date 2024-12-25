@@ -62,7 +62,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-builder.Services.AddSignalR();
+builder.Services.AddSignalR().AddNewtonsoftJsonProtocol();
 
 builder.Services.AddIdentityCore<Player>()
     .AddEntityFrameworkStores<ApplicationDbContext>()

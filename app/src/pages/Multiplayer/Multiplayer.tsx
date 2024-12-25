@@ -5,11 +5,13 @@ import SearchingForGame from "../../components/SearchingForGame/SearchingForGame
 import * as signalR from '@microsoft/signalr';
 import { AuthContext } from "../../AuthProvider";
 import GamePanel from "../../components/Game/GamePanel";
+import { GameData, Tile } from "../../components/Game/data";
 
 export default function Multiplayer() {
     const toast = useToast();
     const auth = useContext(AuthContext);
     const accessToken = auth?.accessToken;
+    let gameField; 
 
     // State to track whether the game has started
     const [isGameStarted, setIsGameStarted] = useState(false);
@@ -24,7 +26,8 @@ export default function Multiplayer() {
             })
             .build();
         
-        connection.on("GameStarted", () => {
+        connection.on("GameStarted", (gameField : Tile[][]) => {
+            
             setIsGameStarted(true); // Update state when the game starts
             toast({
                 title: "Game Started",

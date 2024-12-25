@@ -1,4 +1,4 @@
-interface Tile {
+export interface Tile {
     color: string;
     hasBomb: boolean;
     nearbyBombs: number | null;
@@ -8,25 +8,37 @@ interface Tile {
 
 export class GameData {
     public gameField: Tile[][] = [[]];
+
     public isGameOver: boolean = false;
     public isWin: boolean = true;
-    public isStarted = false;
+    public isStarted: boolean = false;
+
+    private isFirstClick: boolean = true;
+    private isMultiplayerGame: boolean = false;
+
     private difficulty: number;
     private numberOfBombs: number = 0;
     private numberOfTilesX: number = 0;
     private numberOfTilesY: number = 0;
     private numberOfRevealedTiles: number = 0;
-    private isFirstClick: boolean = true;
-    public time: string | null = null;
 
     private startTime: number | null = null;
     private endTime: number | null = null;
+    public time: string | null = null;
 
-    constructor(difficulty: number) {
-        this.difficulty = difficulty;
-        this.Generate();
+    constructor(config: { difficulty?: number; gameField?: Tile[][] }) {
+        if (config.difficulty !== undefined) {
+            this.difficulty = config.difficulty;
+            this.Generate();
+        } else if (config.gameField !== undefined) {
+            this.difficulty = 1;
+            this.gameField = config.gameField;
+            this.isMultiplayerGame = true;
+            this.isFirstClick =false;
+        } else {
+            throw new Error("Invalid constructor arguments for GameData");
+        }
     }
-
 
     public handleClickOnTile(colIndex: number, rowIndex: number): void {
         if (this.isFirstClick) {

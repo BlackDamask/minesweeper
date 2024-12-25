@@ -30,13 +30,13 @@ namespace Minesweeper.Services.GameService
             var serviceResponse = new ServiceResponse<bool>();
             try
             {
-                var player = await context.GameParticipants.FirstOrDefaultAsync(x => x.PlayerId == playerId) ?? throw new Exception("player is not in a game");
-                serviceResponse.Data = false;
+                var playerExists = await context.GameParticipants.AnyAsync(x => x.PlayerId == playerId);
+                serviceResponse.Data = playerExists;
             }
-            catch(Exception ex) 
-            { 
+            catch (Exception ex)
+            {
                 serviceResponse.Data = false;
-                serviceResponse.Message = ex.Message;
+                serviceResponse.Message = $"Error checking player game status: {ex.Message}";
             }
             return serviceResponse;
         }
@@ -45,8 +45,14 @@ namespace Minesweeper.Services.GameService
         {
             var serviceResponse = new ServiceResponse<bool>();
             using var transaction = await context.Database.BeginTransactionAsync();
+
             try
             {
+                if (matchedPlayers == null || !matchedPlayers.Any())
+                {
+                    throw new ArgumentException("Matched players list cannot be null or empty.");
+                }
+
                 var newGame = new Game
                 {
                     Id = Guid.NewGuid().ToString(),
@@ -69,22 +75,22 @@ namespace Minesweeper.Services.GameService
 
                 await transaction.CommitAsync();
 
-                Console.WriteLine($"Game {newGame.Id} created with {gameParticipants.Count} players.");
-
-                MinesweeperGame minesweeperGame = new MinesweeperGame(1);
-
+                // Send game state to players
+                MinesweeperGame minesweeperGame = new MinesweeperGame(10);
                 foreach (var player in matchedPlayers)
                 {
-                    await hubContext.Clients.User(player.PlayerId).SendAsync("GameStarted", minesweeperGame);
+                    await hubContext.Clients.User(player.PlayerId).SendAsync("GameStarted", minesweeperGame.gameField);
                 }
+
                 serviceResponse.Data = true;
             }
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
                 serviceResponse.Data = false;
-                serviceResponse.Message = ex.Message;
+                serviceResponse.Message = $"Error starting game: {ex.Message}";
             }
+
             return serviceResponse;
         }
 
