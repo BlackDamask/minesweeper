@@ -1,11 +1,12 @@
 import Game from '../../components/Game/Game';
 import { GameData } from '../../components/Game/data';
 import RestartGameEmoji from '../../components/Game/RestartGameEmoji/RestartGameEmoji';
-import { Select, Menu, MenuButton, MenuList, MenuItem } from '@chakra-ui/react';
+import { Select, Menu, MenuButton, MenuList, MenuItem, AspectRatio } from '@chakra-ui/react';
 import { ReactComponent as Cursor } from './cursor.svg';
 import { ReactComponent as FlagIcon } from '../../components/Game/flag.svg';
 import { ReactComponent as HandLens } from '../../components/Game/hand-lens.svg';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { start } from 'repl';
 
 const generateResizeValues = () =>{
     let resizeValues = [];
@@ -21,7 +22,7 @@ export default function GamePanel()
     const [selectedOption, setSelectedOption] = useState<number>(1);
     const [currentGameData, setCurrentGameData] = useState<GameData>(new GameData({difficulty:selectedOption}));
     const [selectedMode, setSelectedMode] = useState<number>(1);
-
+    const [startTime, setStartTime] = useState<number | null>(null);
     const handleSelectChange = (event : any) => {
         const selectedValue = event.target.value;
         setSelectedOption(selectedValue);
@@ -34,6 +35,29 @@ export default function GamePanel()
     };
 
     const resizeValues : number[] = generateResizeValues();
+    const [timer, setTimer] = useState("00:00");
+
+    const getTime = () => {
+        if(startTime){
+            const time = Date.now() - startTime;
+            let minutes = String(Math.floor((time / 1000 / 60) % 60));
+            let seconds = String(Math.floor((time / 1000) % 60));
+            if(minutes.length === 1){
+                minutes = "0"+minutes
+            }
+            if(seconds.length === 1){
+                seconds = "0"+seconds
+            }
+            setTimer(minutes+":"+ seconds);
+        }
+        
+      };
+
+    useEffect(() => {
+        const interval = setInterval(() => getTime(), 1000);
+        
+        return () => clearInterval(interval);
+      }, [startTime]);
     
     return(
         <main className='flex flex-col ml-14'>
@@ -74,10 +98,10 @@ export default function GamePanel()
                 
                 <div className="bg-[#1e9907] h-full w-full pt-3 border-t rounded-xl ">
                     <nav className='flex justify-between items-center text-black'>
-                        <div style={{width: `${selectedZoom*3}px`, height: `${selectedZoom*2}px` }}>
-
+                        <div style={{width: `${selectedZoom*3}px`, height: `${selectedZoom*2}px`,fontSize: `${selectedZoom*1.2}px` }} className='flex justify-center items-center font-pixelFont'>
+                            {timer}
                         </div>
-                        <div className="flex justify-center" style={{width: `${selectedZoom*2}px`}}>
+                        <div className="flex h-full justify-center items-center" style={{width: `${selectedZoom*2}px`}}>
                         <RestartGameEmoji 
                             setCurrentGameData = {setCurrentGameData} 
                             currentGameData = {currentGameData} 
@@ -104,9 +128,9 @@ export default function GamePanel()
                                     src='./bomb-shape.png'
                                     />
                                 :
-                                    <span className='w-[4em]'>
-                                        <FlagIcon style={{width: `${selectedZoom*2}px`}}></FlagIcon>
-                                    </span>
+                                    
+                                    <FlagIcon style={{width: `${selectedZoom*1.5}px`,  height: `${selectedZoom*1.5}px`}}></FlagIcon>
+                                    
                                 }
                             </div>
                         </a>
@@ -118,7 +142,8 @@ export default function GamePanel()
                         selectedOption = {selectedOption} 
                         selectedMode = {selectedMode}
                         selectedZoom = {selectedZoom}
-                        
+                        setStartTime = {setStartTime}
+                        startTime={startTime}
                     />
                 </div>
             </div>
@@ -126,3 +151,4 @@ export default function GamePanel()
     )
     
 }
+

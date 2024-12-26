@@ -39,12 +39,11 @@ const showBombCount = (bombCount: number | null): ReactElement => {
 };
 
 export default function Game(
-        { currentGameData, setCurrentGameData, selectedOption, selectedMode,selectedZoom}: 
-        { currentGameData: GameData, setCurrentGameData:  React.Dispatch<React.SetStateAction<GameData>>, selectedOption: number, selectedMode: number, selectedZoom: number}
+        { currentGameData, setCurrentGameData, selectedOption, selectedMode,selectedZoom, setStartTime, startTime}: 
+        { currentGameData: GameData, setCurrentGameData:  React.Dispatch<React.SetStateAction<GameData>>, setStartTime: React.Dispatch<React.SetStateAction<number | null>>, startTime: number | null, selectedOption: number, selectedMode: number, selectedZoom: number}
     ) 
 {
     const { isOpen, onOpen, onClose } = useDisclosure();
-
     useEffect(() => {
         if (currentGameData.isGameOver) {
             onOpen();
@@ -58,12 +57,16 @@ export default function Game(
     } 
     const setRevealedTile = (colIndex: number, rowIndex: number) => {
         if (!currentGameData.gameField[rowIndex][colIndex].isFlagged) {
+            
             currentGameData.handleClickOnTile(colIndex, rowIndex);
             setCurrentGameData(Object.assign(Object.create(Object.getPrototypeOf(currentGameData)), currentGameData));
         }
     }
 
     const handleClick = (rowIndex: number, colIndex: number) => {
+        if(!startTime){
+            setStartTime(Date.now());
+        }
         if(selectedMode === 1){
             setRevealedTile(colIndex, rowIndex);
         }

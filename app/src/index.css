@@ -20,6 +20,13 @@ body {
     font-display: swap;
     src: url(/public/fonts/VT323/VT323-Regular.ttf) format('truetype');
   }
+  @font-face {
+    font-family: 'Timer';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url(/public/fonts/digital-7.ttf) format('truetype');
+  }
 }
 
 code {

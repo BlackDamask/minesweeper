@@ -12,6 +12,7 @@ module.exports = {
       
       fontFamily: {
         customFont: ['"Pixelify"', "sans-serif"],
+        pixelFont: ['"Timer"', "sans-serif"],
         // Add more custom font families as needed
       },
     },

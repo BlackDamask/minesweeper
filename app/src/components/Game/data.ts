@@ -44,11 +44,9 @@ export class GameData {
     public handleClickOnTile(colIndex: number, rowIndex: number): void {
         if (this.isFirstClick) {
             this.PlaceBombs(colIndex, rowIndex);
-            console.log(this.gameField);
             this.isFirstClick = false;
             this.startTime = Date.now(); // Start the timer
         }
-        console.log("isRevealed"+ this.gameField[rowIndex][colIndex].isRevealed+ " isFlagged"+ this.gameField[rowIndex][colIndex].isFlagged+ " isGameOver"+ this.isGameOver);
         if (this.gameField[rowIndex][colIndex].isFlagged ||
             this.isGameOver ) {
             console.warn("returned");
@@ -95,31 +93,21 @@ export class GameData {
             case 1: // Beginner
                 this.numberOfTilesX = 9;
                 this.numberOfTilesY = 9;
+                this.numberOfBombs = 10;
                 break;
             case 2: // Intermediate
                 this.numberOfTilesX = 16;
                 this.numberOfTilesY = 16;
+                this.numberOfBombs = 40;
                 break;
             case 3: // Expert
                 this.numberOfTilesX = 30;
                 this.numberOfTilesY = 16;
+                this.numberOfBombs = 99;
                 break;
             default:
                 this.numberOfTilesX = 9;
                 this.numberOfTilesY = 9;
-                break;
-        }
-        switch (Number(difficulty)) {
-            case 1:
-                this.numberOfBombs = 10;
-                break;
-            case 2:
-                this.numberOfBombs = 40;
-                break;
-            case 3:
-                this.numberOfBombs = 99;
-                break;
-            default:
                 console.warn(`Unknown difficulty level: ${difficulty}. Defaulting to 10 bombs.`);
                 this.numberOfBombs = 10;
                 break;
@@ -171,8 +159,7 @@ export class GameData {
     private RevealTile(colIndex: number, rowIndex: number): void{
         this.gameField[rowIndex][colIndex].isRevealed = true;
         this.numberOfRevealedTiles++;
-        console.log(this.numberOfRevealedTiles);
-        // Check for game end
+        
         if (this.gameField[rowIndex][colIndex].hasBomb) {
             this.GameOver(false);
         }
@@ -248,7 +235,6 @@ export class GameData {
                 const newRow = rowIndex + x;
                 const newCol = colIndex + y;
     
-                // Ensure the indices are within bounds
                 if (newRow >= 0 && newRow < this.numberOfTilesY && newCol >= 0 && newCol < this.numberOfTilesX) {
                     if (this.gameField[newRow][newCol].isFlagged) {
                         nearbyFlags++;
@@ -267,12 +253,10 @@ export class GameData {
     
                     const newRow = rowIndex + x;
                     const newCol = colIndex + y;
-    
-                    // Ensure the indices are within bounds
+     
                     if (newRow >= 0 && newRow < this.numberOfTilesY && newCol >= 0 && newCol < this.numberOfTilesX) {
                         const tile = this.gameField[newRow][newCol];
                         
-                        // Reveal unflagged and unrevealed tiles
                         if (!tile.isRevealed && !tile.isFlagged) {
 
                             this.RevealTile(newCol, newRow);

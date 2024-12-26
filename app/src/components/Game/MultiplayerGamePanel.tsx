@@ -24,6 +24,7 @@ export default function MultiplayerGamePanel({gameField, colIndex, rowIndex}
     const [selectedOption, setSelectedOption] = useState<number>(1);
     const [currentGameData, setCurrentGameData] = useState<GameData>(new GameData({gameField: gameField, colStartIndex: colIndex, rowStartIndex: rowIndex}));
     const [selectedMode, setSelectedMode] = useState<number>(1);
+    const [startTime, setStartTime] = useState<number | null>(null);
 
     const handleSelectChange = (event : any) => {
         const selectedValue = event.target.value;
@@ -121,7 +122,8 @@ export default function MultiplayerGamePanel({gameField, colIndex, rowIndex}
                         selectedOption = {selectedOption} 
                         selectedMode = {selectedMode}
                         selectedZoom = {selectedZoom}
-                        
+                        setStartTime={setStartTime}
+                        startTime={startTime}
                     />
                 </div>
             </div>

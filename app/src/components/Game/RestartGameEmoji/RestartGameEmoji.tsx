@@ -49,13 +49,13 @@ export default function RestartGameEmoji({
                     <div
                         onMouseEnter={handleMouseEnter}
                         onMouseLeave={handleMouseLeave}
-                        className='pb-3'
+                        className='aspect-square'
                         onClick={handleButtonClick}
                     >
                         {isHovered ? (
-                            <SmileFace style={{height: `${zoom*2}px`}}  />
+                            <SmileFace style={{width: `${zoom*2}px`}}  />
                         ) : (
-                            <WierdFace style={{height: `${zoom*2}px`}} />
+                            <WierdFace style={{width: `${zoom*2}px`}} />
                         )}
                     </div>
                 </PopoverTrigger>
