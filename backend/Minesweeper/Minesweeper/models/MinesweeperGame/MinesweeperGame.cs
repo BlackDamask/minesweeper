@@ -2,15 +2,19 @@
 {
     public class MinesweeperGame
     {
+        public Tile[,]? gameField  { get; set; } 
+
+        public int colStartIndex { get; set; }
+        public int rowStartIndex { get; set; }
+
         private int difficulty;
         private int numberOfTilesX;
         private int numberOfTilesY;
         private int numberOfBombs;
         private bool isStarted = false;
-        public Tile[,]? gameField { get; set; }
-
+        
         public MinesweeperGame(int difficulty)
-        {
+        { 
             this.difficulty = difficulty;
             Generate();
         }
@@ -58,6 +62,8 @@
 
             int rowIndex = rnd.Next(0, numberOfTilesY);
             int colIndex  = rnd.Next(0, numberOfTilesX);
+            this.colStartIndex = colIndex;
+            this.rowStartIndex = rowIndex;
             PlaceBombs(colIndex, rowIndex);
         }
 

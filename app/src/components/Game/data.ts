@@ -16,7 +16,6 @@ export class GameData {
     private isFirstClick: boolean = true;
     private isMultiplayerGame: boolean = false;
 
-    private difficulty: number;
     private numberOfBombs: number = 0;
     private numberOfTilesX: number = 0;
     private numberOfTilesY: number = 0;
@@ -26,15 +25,17 @@ export class GameData {
     private endTime: number | null = null;
     public time: string | null = null;
 
-    constructor(config: { difficulty?: number; gameField?: Tile[][] }) {
+    constructor(config: { difficulty?: number; gameField?: Tile[][]; colStartIndex?: number; rowStartIndex?: number }) {
         if (config.difficulty !== undefined) {
-            this.difficulty = config.difficulty;
+            this.SetDifficulty(config.difficulty);
             this.Generate();
-        } else if (config.gameField !== undefined) {
-            this.difficulty = 1;
+        } else if (config.gameField !== undefined && config.colStartIndex !== undefined && config.rowStartIndex !== undefined) {
+            this.SetDifficulty(1);
+            console.log(config.gameField);
             this.gameField = config.gameField;
             this.isMultiplayerGame = true;
-            this.isFirstClick =false;
+            this.isFirstClick = false;
+            this.RevealTile(config.colStartIndex, config.rowStartIndex);
         } else {
             throw new Error("Invalid constructor arguments for GameData");
         }
@@ -43,6 +44,7 @@ export class GameData {
     public handleClickOnTile(colIndex: number, rowIndex: number): void {
         if (this.isFirstClick) {
             this.PlaceBombs(colIndex, rowIndex);
+            console.log(this.gameField);
             this.isFirstClick = false;
             this.startTime = Date.now(); // Start the timer
         }
@@ -88,9 +90,8 @@ export class GameData {
         }
     }
 
-    private Generate(): void {
-        // Adjust grid size based on difficulty
-        switch (Number(this.difficulty)) {
+    private SetDifficulty(difficulty : number){
+        switch (Number(difficulty)) {
             case 1: // Beginner
                 this.numberOfTilesX = 9;
                 this.numberOfTilesY = 9;
@@ -108,6 +109,26 @@ export class GameData {
                 this.numberOfTilesY = 9;
                 break;
         }
+        switch (Number(difficulty)) {
+            case 1:
+                this.numberOfBombs = 10;
+                break;
+            case 2:
+                this.numberOfBombs = 40;
+                break;
+            case 3:
+                this.numberOfBombs = 99;
+                break;
+            default:
+                console.warn(`Unknown difficulty level: ${difficulty}. Defaulting to 10 bombs.`);
+                this.numberOfBombs = 10;
+                break;
+        }
+    }
+
+    private Generate(): void {
+        // Adjust grid size based on difficulty
+        
 
         this.gameField = [];
         for (let i = 0; i < this.numberOfTilesY; i++) {  // Loop through rows
@@ -150,6 +171,7 @@ export class GameData {
     private RevealTile(colIndex: number, rowIndex: number): void{
         this.gameField[rowIndex][colIndex].isRevealed = true;
         this.numberOfRevealedTiles++;
+        console.log(this.numberOfRevealedTiles);
         // Check for game end
         if (this.gameField[rowIndex][colIndex].hasBomb) {
             this.GameOver(false);
@@ -176,24 +198,6 @@ export class GameData {
                 }
             }
         }
-
-        // Set number of bombs based on difficulty
-        switch (Number(this.difficulty)) {
-            case 1:
-                this.numberOfBombs = 10;
-                break;
-            case 2:
-                this.numberOfBombs = 40;
-                break;
-            case 3:
-                this.numberOfBombs = 99;
-                break;
-            default:
-                console.warn(`Unknown difficulty level: ${this.difficulty}. Defaulting to 10 bombs.`);
-                this.numberOfBombs = 10;
-                break;
-        }
-
         // Place bombs avoiding the initial clicked tile
         let bombsPlaced = 0;
         while (bombsPlaced < this.numberOfBombs) {

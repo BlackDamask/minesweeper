@@ -6,15 +6,28 @@ import * as signalR from '@microsoft/signalr';
 import { AuthContext } from "../../AuthProvider";
 import GamePanel from "../../components/Game/GamePanel";
 import { GameData, Tile } from "../../components/Game/data";
+import MultiplayerGamePanel from "../../components/Game/MultiplayerGamePanel";
+
+interface GameStartResponse{
+    gameField: Tile[][],
+    colBeginIndex: number,
+    rowBeginIndex: number,
+}
+
+interface StartCoordinates{
+    colIndex: number,
+    rowIndex: number
+}
 
 export default function Multiplayer() {
     const toast = useToast();
     const auth = useContext(AuthContext);
     const accessToken = auth?.accessToken;
-    let gameField; 
 
     // State to track whether the game has started
     const [isGameStarted, setIsGameStarted] = useState(false);
+    const [gameField, setGameField] = useState<Tile[][]>([[]] as Tile[][]);
+    const [startCoordinates, setStartCoordinates] = useState<StartCoordinates>({colIndex : 0, rowIndex : 0});
 
     useEffect(() => {
         const connection = new signalR.HubConnectionBuilder()
@@ -26,9 +39,13 @@ export default function Multiplayer() {
             })
             .build();
         
-        connection.on("GameStarted", (gameField : Tile[][]) => {
-            
-            setIsGameStarted(true); // Update state when the game starts
+        connection.on("GameStarted", (response : GameStartResponse) => {
+            console.log(response);
+            console.warn(response.colBeginIndex);
+            console.warn(response.rowBeginIndex);
+            setGameField(response.gameField);
+            setStartCoordinates({colIndex: response.colBeginIndex, rowIndex: response.rowBeginIndex});
+            setIsGameStarted(true);
             toast({
                 title: "Game Started",
                 status: 'success',
@@ -60,7 +77,7 @@ export default function Multiplayer() {
     return (
         <main className='w-screen h-screen flex flex-row bg-slate-900 justify-center items-center'>
             <Nav></Nav>
-            {isGameStarted ? <GamePanel></GamePanel> : <SearchingForGame></SearchingForGame>}
+            {isGameStarted ? <MultiplayerGamePanel gameField={gameField} colIndex={startCoordinates.colIndex} rowIndex={startCoordinates.rowIndex}></MultiplayerGamePanel> : <SearchingForGame></SearchingForGame>}
         </main>
     );
 }

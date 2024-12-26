@@ -16,18 +16,20 @@ const generateResizeValues = () =>{
     return(resizeValues);
 }
 
-export default function MultiplayerGamePanel({gameField} : {gameField : Tile[][]}) 
+export default function MultiplayerGamePanel({gameField, colIndex, rowIndex} 
+    : 
+    {gameField : Tile[][], colIndex: number, rowIndex: number}) 
 {
     const [selectedZoom, setSelectedZoom] = useState(26);
     const [selectedOption, setSelectedOption] = useState<number>(1);
-    const [currentGameData, setCurrentGameData] = useState<GameData>(new GameData({gameField: gameField}));
+    const [currentGameData, setCurrentGameData] = useState<GameData>(new GameData({gameField: gameField, colStartIndex: colIndex, rowStartIndex: rowIndex}));
     const [selectedMode, setSelectedMode] = useState<number>(1);
 
     const handleSelectChange = (event : any) => {
         const selectedValue = event.target.value;
         setSelectedOption(selectedValue);
         setCurrentGameData(new GameData(selectedValue));
-    };
+    }; 
 
     const handleSelectZoom = (event : any) => {
         const selectedValue = event.target.value;
