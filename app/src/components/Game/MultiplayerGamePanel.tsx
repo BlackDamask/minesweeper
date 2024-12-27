@@ -56,6 +56,8 @@ export default function MultiplayerGamePanel({gameField, colIndex, rowIndex}
                             <option key={value} value={value} >🔍 {value}</option>
                         ))}
                     </Select>
+                    💣🚩
+                    👆
                     <Select
                         width={'10rem'}
                         marginBottom={4} 
@@ -81,14 +83,7 @@ export default function MultiplayerGamePanel({gameField, colIndex, rowIndex}
                         <div style={{width: `${selectedZoom*3}px`, height: `${selectedZoom*2}px` }}>
 
                         </div>
-                        <div className="flex justify-center" style={{width: `${selectedZoom*2}px`}}>
-                        <RestartGameEmoji 
-                            setCurrentGameData = {setCurrentGameData} 
-                            currentGameData = {currentGameData} 
-                            selectedOption = {selectedOption}
-                            zoom = {selectedZoom}
-                        />
-                        </div>
+
                         <a onClick={() => 
                             {
                                 if(selectedMode === 1){

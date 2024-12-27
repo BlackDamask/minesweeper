@@ -92,7 +92,7 @@ namespace Minesweeper.Services.MatchmakingService
                 ColBeginIndex = minesweeperGame.colStartIndex,
                 RowBeginIndex = minesweeperGame.rowStartIndex,
             };
-            Console.WriteLine("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" + response.ColBeginIndex + response.RowBeginIndex);
+            Console.WriteLine(response.ColBeginIndex + response.RowBeginIndex);
 
             foreach (var player in matchedPlayers)
             {

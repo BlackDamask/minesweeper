@@ -29,6 +29,11 @@ export default function GamePanel()
         setCurrentGameData(new GameData(selectedValue));
     };
 
+    const handleSelectMode = (event: any) => {
+        const selectedMode = Number(event.target.value); // Convert to number
+        setSelectedMode(selectedMode);
+    };
+
     const handleSelectZoom = (event : any) => {
         const selectedValue = event.target.value;
         setSelectedZoom(selectedValue);
@@ -88,13 +93,20 @@ export default function GamePanel()
                             <option value={2}>Indermediate</option>
                             <option value={3}>Expert</option>
                     </Select>
+                    <Select
+                         width={'10rem'}
+                         marginBottom={4}
+                         color={'black'}
+                         bg='#28cc0a' size='md' _hover={{backgroundColor: '#39ff13'}} 
+                         variant='filled'
+                         onChange={handleSelectMode}
+                         value = {selectedMode}
+                    >
+                        <option value={1}>👆 💣</option>
+                        <option value={2}>👆 🚩</option>
+                    </Select>
                 </div>
             <div className='h-fit w-fit'>
-                
-                <div className='flex'>
-                    
-                
-                </div>
                 
                 <div className="bg-[#1e9907] h-full w-full pt-3 border-t rounded-xl ">
                     <nav className='flex justify-between items-center text-black'>
@@ -107,33 +119,10 @@ export default function GamePanel()
                             currentGameData = {currentGameData} 
                             selectedOption = {selectedOption}
                             zoom = {selectedZoom}
+                            setStartTime={setStartTime}
                         />
                         </div>
-                        <a onClick={() => 
-                            {
-                                if(selectedMode === 1){
-                                    setSelectedMode(2)
-                                }
-                                else{
-                                    setSelectedMode(1);
-                                }
-                            }
-                        } className='cursor-pointer'>
-                            <div className='flex'>
-                                <Cursor style={{width: `${selectedZoom*1.5}px`}}/>
-                                {selectedMode === 1 ? 
-                                    <img
-                                    alt=''
-                                    style={{width: `${selectedZoom*1.5}px`}}
-                                    src='./bomb-shape.png'
-                                    />
-                                :
-                                    
-                                    <FlagIcon style={{width: `${selectedZoom*1.5}px`,  height: `${selectedZoom*1.5}px`}}></FlagIcon>
-                                    
-                                }
-                            </div>
-                        </a>
+
                     </nav>
                     <div className='h-3 w-full bg-[#1e9907]'></div>
                     <Game 

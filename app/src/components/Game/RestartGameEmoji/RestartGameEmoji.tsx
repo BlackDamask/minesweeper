@@ -9,12 +9,14 @@ export default function RestartGameEmoji({
     setCurrentGameData,
     currentGameData,
     selectedOption,
-    zoom
+    zoom,
+    setStartTime
 }: {
     setCurrentGameData: React.Dispatch<React.SetStateAction<GameData>>,
     currentGameData: GameData,
     selectedOption: number,
-    zoom: number
+    zoom: number,
+    setStartTime: React.Dispatch<React.SetStateAction<number | null>>
 }) {
     const [isHovered, setIsHovered] = useState(false);
     const initialFocusRef = React.useRef<HTMLDivElement>(null);

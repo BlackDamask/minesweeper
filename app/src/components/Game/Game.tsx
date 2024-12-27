@@ -95,7 +95,7 @@ export default function Game(
                         <p>Your record:</p>
                     </ModalBody>
                     <ModalFooter>
-                        <Button colorScheme="green" color="white" borderColor="#000000" backgroundColor="#052e16" mr={5} onClick={() => { setCurrentGameData(new GameData({difficulty:selectedOption})); onClose(); }}>
+                        <Button colorScheme="green" color="white" borderColor="#000000" backgroundColor="#052e16" mr={5} onClick={() => { setCurrentGameData(new GameData({difficulty:selectedOption})); setStartTime(null); onClose(); }}>
                             Retry
                         </Button>
                         <Button colorScheme="gray" onClick={onClose}>Show field</Button>
@@ -112,7 +112,7 @@ export default function Game(
                         {`Your time: ${currentGameData.time}`}
                     </ModalBody>
                     <ModalFooter>
-                        <Button colorScheme="gray" borderColor="#000000" textColor={'#000000'} backgroundColor="#ceffff" mr={5} onClick={() => { setCurrentGameData(new GameData({difficulty:selectedOption})); onClose(); }}>
+                        <Button colorScheme="gray" borderColor="#000000" textColor={'#000000'} backgroundColor="#ceffff" mr={5} onClick={() => { setCurrentGameData(new GameData({difficulty:selectedOption})); setStartTime(null); onClose(); }}>
                             Retry
                         </Button>
                         <Button colorScheme="blue" color={'white'} backgroundColor={'#032448'} onClick={onClose}>Show field</Button>
