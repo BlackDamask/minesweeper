@@ -26,7 +26,7 @@ export default function GamePanel()
     const handleSelectChange = (event : any) => {
         const selectedValue = event.target.value;
         setSelectedOption(selectedValue);
-        setCurrentGameData(new GameData(selectedValue));
+        setCurrentGameData(new GameData({difficulty: selectedOption}));
     };
 
     const handleSelectMode = (event: any) => {
@@ -121,6 +121,9 @@ export default function GamePanel()
                             zoom = {selectedZoom}
                             setStartTime={setStartTime}
                         />
+                        </div>
+                        <div style={{width: `${selectedZoom*3}px`, height: `${selectedZoom*2}px`,fontSize: `${selectedZoom*1.2}px` }} className='flex justify-center items-center font-pixelFont'>
+                            {currentGameData.numberOfBombs-currentGameData.numberOfFlags}
                         </div>
 
                     </nav>

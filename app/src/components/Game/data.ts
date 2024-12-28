@@ -11,12 +11,14 @@ export class GameData {
 
     public isGameOver: boolean = false;
     public isWin: boolean = true;
-    public isStarted: boolean = false;
+    public isStarted: boolean = false; 
+    
+    public numberOfFlags: number = 0;
+    public numberOfBombs: number = 0;
 
     private isFirstClick: boolean = true;
     private isMultiplayerGame: boolean = false;
 
-    private numberOfBombs: number = 0;
     private numberOfTilesX: number = 0;
     private numberOfTilesY: number = 0;
     private numberOfRevealedTiles: number = 0;
@@ -66,6 +68,10 @@ export class GameData {
     public setFlaggedTile(colIndex: number, rowIndex: number): void {
         if (!this.gameField[rowIndex][colIndex].isRevealed && !this.isGameOver) {
             this.gameField[rowIndex][colIndex].isFlagged = !this.gameField[rowIndex][colIndex].isFlagged;
+            if(this.gameField[rowIndex][colIndex].isFlagged)
+                this.numberOfFlags++;
+            else
+                this.numberOfFlags--;
         }
     }
 
