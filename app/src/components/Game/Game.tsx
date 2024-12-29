@@ -44,9 +44,11 @@ export default function Game(
     ) 
 {
     const { isOpen, onOpen, onClose } = useDisclosure();
+
     useEffect(() => {
         if (currentGameData.isGameOver) {
             onOpen();
+            setStartTime(null);
         }
     }, [currentGameData.isGameOver, onOpen]);
 

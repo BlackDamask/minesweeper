@@ -23,14 +23,17 @@ export default function GamePanel()
     const [currentGameData, setCurrentGameData] = useState<GameData>(new GameData({difficulty:selectedOption}));
     const [selectedMode, setSelectedMode] = useState<number>(1);
     const [startTime, setStartTime] = useState<number | null>(null);
+
     const handleSelectChange = (event : any) => {
-        const selectedValue = event.target.value;
+        const selectedValue = Number(event.target.value);
         setSelectedOption(selectedValue);
-        setCurrentGameData(new GameData({difficulty: selectedOption}));
+        console.log(selectedValue);
+        setCurrentGameData(new GameData({difficulty: selectedValue}));
+        setStartTime(null);
     };
 
     const handleSelectMode = (event: any) => {
-        const selectedMode = Number(event.target.value); // Convert to number
+        const selectedMode = Number(event.target.value); // Convert to number\
         setSelectedMode(selectedMode);
     };
 
@@ -54,6 +57,9 @@ export default function GamePanel()
                 seconds = "0"+seconds
             }
             setTimer(minutes+":"+ seconds);
+        }
+        else{
+            setTimer("00:00");
         }
         
       };
@@ -82,6 +88,18 @@ export default function GamePanel()
                         ))}
                     </Select>
                     <Select
+                         width={'7rem'}
+                         marginBottom={4}
+                         color={'black'}
+                         bg='#28cc0a' size='md' _hover={{backgroundColor: '#39ff13'}} 
+                         variant='filled'
+                         onChange={handleSelectMode}
+                         value = {selectedMode}
+                    >
+                        <option value={1}>👆 💣</option>
+                        <option value={2}>👆 🚩</option>
+                    </Select>
+                    <Select
                         width={'10rem'}
                         marginBottom={4} 
                         color={'black'}
@@ -93,18 +111,7 @@ export default function GamePanel()
                             <option value={2}>Indermediate</option>
                             <option value={3}>Expert</option>
                     </Select>
-                    <Select
-                         width={'10rem'}
-                         marginBottom={4}
-                         color={'black'}
-                         bg='#28cc0a' size='md' _hover={{backgroundColor: '#39ff13'}} 
-                         variant='filled'
-                         onChange={handleSelectMode}
-                         value = {selectedMode}
-                    >
-                        <option value={1}>👆 💣</option>
-                        <option value={2}>👆 🚩</option>
-                    </Select>
+                    
                 </div>
             <div className='h-fit w-fit'>
                 

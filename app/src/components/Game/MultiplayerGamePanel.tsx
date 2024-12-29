@@ -16,21 +16,19 @@ const generateResizeValues = () =>{
     return(resizeValues);
 }
 
-export default function MultiplayerGamePanel({gameField, colIndex, rowIndex} 
+export default function MultiplayerGamePanel({gameField, colIndex, rowIndex, selectedOption} 
     : 
-    {gameField : Tile[][], colIndex: number, rowIndex: number}) 
+    {gameField : Tile[][], colIndex: number, rowIndex: number, selectedOption: number}) 
 {
     const [selectedZoom, setSelectedZoom] = useState(26);
-    const [selectedOption, setSelectedOption] = useState<number>(1);
     const [currentGameData, setCurrentGameData] = useState<GameData>(new GameData({gameField: gameField, colStartIndex: colIndex, rowStartIndex: rowIndex}));
     const [selectedMode, setSelectedMode] = useState<number>(1);
     const [startTime, setStartTime] = useState<number | null>(null);
 
-    const handleSelectChange = (event : any) => {
-        const selectedValue = event.target.value;
-        setSelectedOption(selectedValue);
-        setCurrentGameData(new GameData(selectedValue));
-    }; 
+    const handleSelectMode = (event: any) => {
+        const selectedMode = Number(event.target.value); // Convert to number\
+        setSelectedMode(selectedMode);
+    };
 
     const handleSelectZoom = (event : any) => {
         const selectedValue = event.target.value;
@@ -56,19 +54,17 @@ export default function MultiplayerGamePanel({gameField, colIndex, rowIndex}
                             <option key={value} value={value} >🔍 {value}</option>
                         ))}
                     </Select>
-                    💣🚩
-                    👆
                     <Select
-                        width={'10rem'}
-                        marginBottom={4} 
-                        color={'black'}
-                        bg='#28cc0a' size='md' _hover={{backgroundColor: '#39ff13'}} 
-                        variant='filled'
-                        onChange={handleSelectChange}
-                        value={selectedOption}>
-                            <option value={1}>Beginner</option>
-                            <option value={2}>Indermediate</option>
-                            <option value={3}>Expert</option>
+                         width={'7rem'}
+                         marginBottom={4}
+                         color={'black'}
+                         bg='#28cc0a' size='md' _hover={{backgroundColor: '#39ff13'}} 
+                         variant='filled'
+                         onChange={handleSelectMode}
+                         value = {selectedMode}
+                    >
+                        <option value={1}>👆 💣</option>
+                        <option value={2}>👆 🚩</option>
                     </Select>
                 </div>
             <div className='h-fit w-fit'>
@@ -79,36 +75,17 @@ export default function MultiplayerGamePanel({gameField, colIndex, rowIndex}
                 </div>
                 
                 <div className="bg-[#1e9907] h-full w-full pt-3 border-t rounded-xl ">
-                    <nav className='flex justify-between items-center text-black'>
-                        <div style={{width: `${selectedZoom*3}px`, height: `${selectedZoom*2}px` }}>
+                <nav className='flex justify-between items-center text-black'>
+                        <div style={{width: `${selectedZoom*3}px`, height: `${selectedZoom*2}px`,fontSize: `${selectedZoom*1.2}px` }} className='flex justify-center items-center font-pixelFont'>
+                            00:00
+                        </div>
+                        <div className="flex h-full justify-center items-center" style={{width: `${selectedZoom*2}px`}}>
 
                         </div>
+                        <div style={{width: `${selectedZoom*3}px`, height: `${selectedZoom*2}px`,fontSize: `${selectedZoom*1.2}px` }} className='flex justify-center items-center font-pixelFont'>
+                            {currentGameData.numberOfBombs-currentGameData.numberOfFlags}
+                        </div>
 
-                        <a onClick={() => 
-                            {
-                                if(selectedMode === 1){
-                                    setSelectedMode(2)
-                                }
-                                else{
-                                    setSelectedMode(1);
-                                }
-                            }
-                        } className='cursor-pointer'>
-                            <div className='flex'>
-                                <Cursor style={{width: `${selectedZoom*1.5}px`}}/>
-                                {selectedMode === 1 ? 
-                                    <img
-                                    alt=''
-                                    style={{width: `${selectedZoom*1.5}px`}}
-                                    src='./bomb-shape.png'
-                                    />
-                                :
-                                    <span className='w-[4em]'>
-                                        <FlagIcon style={{width: `${selectedZoom*2}px`}}></FlagIcon>
-                                    </span>
-                                }
-                            </div>
-                        </a>
                     </nav>
                     <div className='h-3 w-full bg-[#1e9907]'></div>
                     <Game 
