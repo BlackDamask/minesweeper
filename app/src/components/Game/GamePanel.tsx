@@ -76,9 +76,9 @@ export default function GamePanel()
                     <Select 
                         width={'7rem'} 
                         marginBottom={4} 
-                        color={'black'} 
-                        borderColor={"#1e9907"} 
-                        backgroundColor={"#28cc0a"}
+                        color={'white'} 
+                        borderColor={"#4a619b"} 
+                        bg='#4A619B' size='md' _hover={{backgroundColor: '#314167'}} 
                         onChange={handleSelectZoom}
                         value={selectedZoom}
                         defaultValue={26}
@@ -90,8 +90,8 @@ export default function GamePanel()
                     <Select
                          width={'7rem'}
                          marginBottom={4}
-                         color={'black'}
-                         bg='#28cc0a' size='md' _hover={{backgroundColor: '#39ff13'}} 
+                         color={'white'}
+                         bg='#4A619B' size='md' _hover={{backgroundColor: '#314167'}} 
                          variant='filled'
                          onChange={handleSelectMode}
                          value = {selectedMode}
@@ -102,8 +102,8 @@ export default function GamePanel()
                     <Select
                         width={'10rem'}
                         marginBottom={4} 
-                        color={'black'}
-                        bg='#28cc0a' size='md' _hover={{backgroundColor: '#39ff13'}} 
+                        color={'white'}
+                        bg='#4A619B' size='md' _hover={{backgroundColor: '#314167'}} 
                         variant='filled'
                         onChange={handleSelectChange}
                         value={selectedOption}>
@@ -115,9 +115,9 @@ export default function GamePanel()
                 </div>
             <div className='h-fit w-fit'>
                 
-                <div className="bg-[#1e9907] h-full w-full pt-3 border-t rounded-xl ">
+                <div className="bg-[#4A619B] h-full w-full pt-3 border-t rounded-xl ">
                     <nav className='flex justify-between items-center text-black'>
-                        <div style={{width: `${selectedZoom*3}px`, height: `${selectedZoom*2}px`,fontSize: `${selectedZoom*1.2}px` }} className='flex justify-center items-center font-pixelFont'>
+                        <div style={{width: `${selectedZoom*3}px`, height: `${selectedZoom*2}px`,fontSize: `${selectedZoom*1.2}px`, color:"white" }} className='flex justify-center items-center font-pixelFont'>
                             {timer}
                         </div>
                         <div className="flex h-full justify-center items-center" style={{width: `${selectedZoom*2}px`}}>
@@ -129,12 +129,12 @@ export default function GamePanel()
                             setStartTime={setStartTime}
                         />
                         </div>
-                        <div style={{width: `${selectedZoom*3}px`, height: `${selectedZoom*2}px`,fontSize: `${selectedZoom*1.2}px` }} className='flex justify-center items-center font-pixelFont'>
+                        <div style={{width: `${selectedZoom*3}px`, height: `${selectedZoom*2}px`,fontSize: `${selectedZoom*1.2}px`, color:"white"  }} className='flex justify-center items-center font-pixelFont'>
                             {currentGameData.numberOfBombs-currentGameData.numberOfFlags}
                         </div>
 
                     </nav>
-                    <div className='h-3 w-full bg-[#1e9907]'></div>
+                    <div className='h-3 w-full bg-[#5D789CX]'></div>
                     <Game 
                         currentGameData={currentGameData} 
                         setCurrentGameData = {setCurrentGameData} 

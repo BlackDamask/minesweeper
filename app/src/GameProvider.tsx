@@ -21,6 +21,7 @@ interface GameContextType {
   playerProgress: number;
   enemyProgress: number;
   gameField: Tile[][];
+  setGameField : React.Dispatch<React.SetStateAction<Tile[][]>>;
   startCoordinates: StartCoordinates;
 }
 
@@ -33,6 +34,8 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
   
   const [isGameStarted, setIsGameStarted] = useState(false);
   const [isGameEnded, setIsGameEnded] = useState(false);
+  const [playerProgress, setPlayerProgress] = useState<number>(0);
+  const [enemyProgress, setEnemyProgress] = useState<number>(0);
   const [gameField, setGameField] = useState<Tile[][]>([[]] as Tile[][]);
   const [startCoordinates, setStartCoordinates] = useState<StartCoordinates>({ colIndex: 0, rowIndex: 0 });
 
@@ -74,8 +77,15 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
   }, [accessToken, toast]);
 
+  useEffect(() => {
+    const onGameFieldChange = () => {
+        console.log('Game field has changed!', gameField);
+    };
+    onGameFieldChange();
+}, [gameField]);
+
   return (
-    <GameContext.Provider value={{ isGameStarted,isGameEnded, gameField, startCoordinates }}>
+    <GameContext.Provider value={{ isGameStarted,isGameEnded, playerProgress, setGameField, enemyProgress, gameField, startCoordinates }}>
       {children}
     </GameContext.Provider>
   );

@@ -35,7 +35,6 @@ export class GameData {
             this.Generate();
         } else if (config.gameField !== undefined && config.colStartIndex !== undefined && config.rowStartIndex !== undefined) {
             this.SetDifficulty(1);
-            console.log(config.gameField);
             this.gameField = config.gameField;
             this.isMultiplayerGame = true;
             this.isFirstClick = false;
@@ -258,8 +257,6 @@ export class GameData {
                 }
             }
         }
-        console.log("nearby flags"+ nearbyFlags);
-        console.log("nearby bombs"+ nearbyBombs);
 
         // If the number of nearby bombs equals the number of flags, reveal unflagged tiles
         if (nearbyBombs === nearbyFlags) {

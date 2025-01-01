@@ -1,11 +1,8 @@
+import { useGameContext } from '../../GameProvider';
 import Game from '../../components/Game/Game';
 import { GameData, Tile } from '../../components/Game/data';
-import RestartGameEmoji from '../../components/Game/RestartGameEmoji/RestartGameEmoji';
-import { Select, Menu, MenuButton, MenuList, MenuItem } from '@chakra-ui/react';
-import { ReactComponent as Cursor } from './cursor.svg';
-import { ReactComponent as FlagIcon } from '../../components/Game/flag.svg';
-import { ReactComponent as HandLens } from '../../components/Game/hand-lens.svg';
-import { useState } from 'react';
+import { Select} from '@chakra-ui/react';
+import { useEffect, useState } from 'react';
 
 
 const generateResizeValues = () =>{
@@ -20,6 +17,8 @@ export default function MultiplayerGamePanel({gameField, colIndex, rowIndex, sel
     : 
     {gameField : Tile[][], colIndex: number, rowIndex: number, selectedOption: number}) 
 {
+    const game = useGameContext();
+
     const [selectedZoom, setSelectedZoom] = useState(26);
     const [currentGameData, setCurrentGameData] = useState<GameData>(new GameData({gameField: gameField, colStartIndex: colIndex, rowStartIndex: rowIndex}));
     const [selectedMode, setSelectedMode] = useState<number>(1);
@@ -36,6 +35,15 @@ export default function MultiplayerGamePanel({gameField, colIndex, rowIndex, sel
     };
 
     const resizeValues : number[] = generateResizeValues();
+
+    useEffect(() => {
+        const onGameFieldChange = () => {
+            console.warn("gamesield changed")
+            game?.setGameField(currentGameData.gameField);
+        };
+
+        onGameFieldChange();
+    }, [currentGameData, game]);
     
     return(
         <main className='flex flex-col ml-14'>
@@ -101,5 +109,4 @@ export default function MultiplayerGamePanel({gameField, colIndex, rowIndex, sel
             </div>
         </main>
     )
-    
 }

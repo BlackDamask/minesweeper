@@ -68,6 +68,13 @@ namespace Minesweeper.Services.PlayerService
             {
                 var player = await context.Users.FindAsync(playerId)
                               ?? throw new Exception("Player not found");
+
+                var existingGameParticipant =  context.GameParticipants.FirstOrDefault(p => p.PlayerId == playerId);
+                if (existingGameParticipant != null)
+                {
+
+                }
+
                 var existingQueueEntry = await context.MatchmakingQueue
                     .FirstOrDefaultAsync(q => q.PlayerId == player.Id);
 

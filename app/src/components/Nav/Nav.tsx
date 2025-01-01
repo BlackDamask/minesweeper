@@ -67,7 +67,7 @@ export default function Nav() {
         {
             routePath: "/single",
             options: null,
-            imagePath: "./spectaculate.png",
+            imagePath: "./spectaculate2.png",
             alt: "Play",
         }
     ];

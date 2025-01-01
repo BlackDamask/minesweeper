@@ -18,13 +18,13 @@ type TileColor = 'light-tile' | 'dark-tile';
 
 const tileColorMap: { [key in TileColor]: { default: string; clicked: string; withBomb: string } } = {
     'light-tile': {
-        default: '#28cc0a',
-        clicked: '#fdd08a',
+        default: '#A8B7CB',
+        clicked: '#ffe7ba',
         withBomb: '#bb8c44',
     },
     'dark-tile': {
-        default: '#39ff13',
-        clicked: '#caa66e',
+        default: '#8C9FcA',
+        clicked: '#E8B768',
         withBomb: '#bb8c44',
     },
 };
@@ -90,7 +90,7 @@ export default function Game(
     const showModalContent = (isWon: boolean): ReactElement => {
         if (isWon) {
             return (
-                <ModalContent backgroundColor="#28cc0a">
+                <ModalContent backgroundColor="#F1A10C">
                     <ModalHeader textAlign="center" fontSize="3xl" textColor={'#052e16'}  className="font-customFont">You won</ModalHeader>
                     <ModalBody pb={6} fontSize="2xl" textColor={'#052e16'}  className="font-customFont">
                         <p>{`Your time: ${currentGameData.time}`}</p>
@@ -100,7 +100,7 @@ export default function Game(
                         <Button colorScheme="green" color="white" borderColor="#000000" backgroundColor="#052e16" mr={5} onClick={() => { setCurrentGameData(new GameData({difficulty:selectedOption})); setStartTime(null); onClose(); }}>
                             Retry
                         </Button>
-                        <Button colorScheme="gray" onClick={onClose}>Show field</Button>
+                        <Button colorScheme="white" onClick={onClose}>Show field</Button>
                     </ModalFooter>
                 </ModalContent>
             );
