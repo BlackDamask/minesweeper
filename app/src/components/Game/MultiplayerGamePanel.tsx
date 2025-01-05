@@ -38,8 +38,7 @@ export default function MultiplayerGamePanel({gameField, colIndex, rowIndex, sel
 
     useEffect(() => {
         const onGameFieldChange = () => {
-            console.warn("gamesield changed")
-            game?.setGameField(currentGameData.gameField);
+            game?.setCurrentGameData(currentGameData);
         };
 
         onGameFieldChange();

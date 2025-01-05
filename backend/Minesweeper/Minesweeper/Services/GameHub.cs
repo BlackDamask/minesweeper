@@ -18,7 +18,7 @@ namespace Minesweeper.Services
 
         public async Task SendGameField()
         {
-            await Clients.All.SendAsync("RecieveGameField");
+            await Clients.All.SendAsync("ReceiveGameField");
         }
 
         public override async Task OnConnectedAsync()

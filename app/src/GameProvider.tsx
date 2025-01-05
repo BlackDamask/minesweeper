@@ -1,8 +1,8 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useEffect, useState, useRef } from "react";
 import * as signalR from "@microsoft/signalr";
 import { useToast } from "@chakra-ui/react";
 import { AuthContext } from "./AuthProvider";
-import { Tile } from "./components/Game/data";
+import { GameData, Tile } from "./components/Game/data";
 
 interface GameStartResponse {
   gameField: Tile[][],
@@ -21,8 +21,9 @@ interface GameContextType {
   playerProgress: number;
   enemyProgress: number;
   gameField: Tile[][];
-  setGameField : React.Dispatch<React.SetStateAction<Tile[][]>>;
+  setGameField: React.Dispatch<React.SetStateAction<Tile[][]>>;
   startCoordinates: StartCoordinates;
+  setCurrentGameData: React.Dispatch<React.SetStateAction<GameData | null>>;
 }
 
 export const GameContext = createContext<GameContextType | undefined>(undefined);
@@ -36,8 +37,12 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isGameEnded, setIsGameEnded] = useState(false);
   const [playerProgress, setPlayerProgress] = useState<number>(0);
   const [enemyProgress, setEnemyProgress] = useState<number>(0);
-  const [gameField, setGameField] = useState<Tile[][]>([[]] as Tile[][]);
+  const [gameField, setGameField] = useState<Tile[][]>([[]]);
+  const [currentGameData, setCurrentGameData] = useState<GameData | null>(null);
   const [startCoordinates, setStartCoordinates] = useState<StartCoordinates>({ colIndex: 0, rowIndex: 0 });
+
+  // Ref for the SignalR connection
+  const connectionRef = useRef<signalR.HubConnection | null>(null);
 
   useEffect(() => {
     const connection = new signalR.HubConnectionBuilder()
@@ -45,6 +50,8 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         accessTokenFactory: () => accessToken ?? "",
       })
       .build();
+
+    connectionRef.current = connection;
 
     connection.on("GameStarted", (response: GameStartResponse) => {
       console.log(response);
@@ -54,6 +61,15 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
       toast({
         title: "Game Started",
         status: "success",
+        isClosable: true,
+      });
+    });
+
+    connection.on("ReceiveGameField", () => {
+      toast({
+        title: "Game Field Received",
+        description: "",
+        status: "info",
         isClosable: true,
       });
     });
@@ -78,14 +94,17 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [accessToken, toast]);
 
   useEffect(() => {
-    const onGameFieldChange = () => {
-        console.log('Game field has changed!', gameField);
-    };
-    onGameFieldChange();
-}, [gameField]);
+    const connection = connectionRef.current;
+    if (connection) {
+      console.log("connection");
+      connection.invoke("SendGameField").catch((err) => {
+        console.error("Error sending game field:", err);
+      });
+    }
+  }, [currentGameData]);
 
   return (
-    <GameContext.Provider value={{ isGameStarted,isGameEnded, playerProgress, setGameField, enemyProgress, gameField, startCoordinates }}>
+    <GameContext.Provider value={{ isGameStarted, isGameEnded, playerProgress, setGameField, enemyProgress, gameField, startCoordinates, setCurrentGameData }}>
       {children}
     </GameContext.Provider>
   );
