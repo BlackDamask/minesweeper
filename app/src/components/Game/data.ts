@@ -16,7 +16,7 @@ export class GameData {
     public numberOfFlags: number = 0;
     public numberOfBombs: number = 0;
     public numberOfRevealedTiles: number = 0;
-    public maxNumberOfRevealedTile: number = 0; 
+    public maxNumberOfRevealedTiles: number = 0; 
 
     private isFirstClick: boolean = true;
     private isMultiplayerGame: boolean = false;
@@ -30,6 +30,7 @@ export class GameData {
     public time: string | null = null;
 
     constructor(config: { difficulty?: number; gameField?: Tile[][]; colStartIndex?: number; rowStartIndex?: number }) {
+        
         if (config.difficulty !== undefined) {
             this.SetDifficulty(config.difficulty);
             this.Generate();
@@ -44,7 +45,20 @@ export class GameData {
         }
     }
 
+    public countRevealedTiles(): number{
+        let revealedTiles = 0;
+        for (let i = 0; i < this.numberOfTilesY; i++) {
+            for (let j = 0; j < this.numberOfTilesX; j++) {
+                if(this.gameField[i][j].isRevealed){
+                    revealedTiles++;
+                }
+            }
+        }
+        return revealedTiles;
+    }
+
     public handleClickOnTile(colIndex: number, rowIndex: number): void {
+        console.warn(this.numberOfRevealedTiles);
         if (this.isFirstClick) {
             this.PlaceBombs(colIndex, rowIndex);
             this.isFirstClick = false;
@@ -57,7 +71,6 @@ export class GameData {
         }
 
         if(this.gameField[rowIndex][colIndex].isRevealed){
-            console.warn()
             this.handleSmartReveal(colIndex, rowIndex);
         }
         else{
@@ -87,7 +100,7 @@ export class GameData {
 
                     if (newRow >= 0 && newRow < this.numberOfTilesY && newCol >= 0 && newCol < this.numberOfTilesX) {
                         if (!this.gameField[newRow][newCol].isRevealed && !this.gameField[newRow][newCol].hasBomb) {
-                            this.handleClickOnTile(newCol, newRow);
+                            this.RevealTile(newCol, newRow);
                         }
                     }
                 }
@@ -100,28 +113,28 @@ export class GameData {
             case 1: // Beginner
                 this.numberOfTilesX = 9;
                 this.numberOfTilesY = 9;
-                this.maxNumberOfRevealedTile = 71;
+                this.maxNumberOfRevealedTiles = 71;
                 this.numberOfBombs = 10;
                 
                 break;
             case 2: // Intermediate
                 this.numberOfTilesX = 16;
                 this.numberOfTilesY = 16;
-                this.maxNumberOfRevealedTile = 216;
+                this.maxNumberOfRevealedTiles = 216;
                 this.numberOfBombs = 40;
 
                 break;
             case 3: // Expert
                 this.numberOfTilesX = 30;
                 this.numberOfTilesY = 16;
-                this.maxNumberOfRevealedTile = 381;
+                this.maxNumberOfRevealedTiles = 381;
                 this.numberOfBombs = 99;
 
                 break;
             default:
                 this.numberOfTilesX = 9;
                 this.numberOfTilesY = 9;
-                this.maxNumberOfRevealedTile = 71;
+                this.maxNumberOfRevealedTiles = 71;
                 this.numberOfBombs = 10;
 
                 console.warn(`Unknown difficulty level: ${difficulty}. Defaulting to 10 bombs.`);
@@ -152,6 +165,7 @@ export class GameData {
     }
 
     private GameOver(isWin: boolean): void {
+        console.error(this.numberOfRevealedTiles);
         this.isGameOver = true;
         this.isWin = isWin;
         this.endTime = Date.now();
@@ -173,7 +187,7 @@ export class GameData {
 
     private RevealTile(colIndex: number, rowIndex: number): void{
         this.gameField[rowIndex][colIndex].isRevealed = true;
-        this.numberOfRevealedTiles++;
+        this.numberOfRevealedTiles = this.numberOfRevealedTiles + 1;
         
         if (this.gameField[rowIndex][colIndex].hasBomb) {
             this.GameOver(false);

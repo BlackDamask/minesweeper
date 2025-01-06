@@ -47,7 +47,7 @@ namespace Minesweeper.Services.MatchmakingService
                 return;
             }
 
-            if (matchedPlayers[0].PlayerId == matchedPlayers[1].PlayerId)
+            if (matchedPlayers[0].PlayerId == matchedPlayers[1].PlayerId || matchedPlayers[0] is null || matchedPlayers[1] is null)
             {
                 var existingQueueEntry = await context.MatchmakingQueue
                     .FirstOrDefaultAsync(q => q.PlayerId == matchedPlayers[1].PlayerId);
@@ -86,18 +86,28 @@ namespace Minesweeper.Services.MatchmakingService
             Console.WriteLine($"Game {newGame.Id} created with {matchedPlayers.Count} players.");
 
             MinesweeperGame minesweeperGame = new MinesweeperGame(1);
+
+            string enemyName = context.Users
+                .Where(u => u.Id == matchedPlayers[1].PlayerId)
+                .Select(u => u.UserName) 
+                .FirstOrDefault() ?? throw new Exception("Player not found");
             GameBeginDTO response = new GameBeginDTO
             {
                 GameField = minesweeperGame.gameField,
                 ColBeginIndex = minesweeperGame.colStartIndex,
                 RowBeginIndex = minesweeperGame.rowStartIndex,
+                EnemyName = enemyName,
             };
-            Console.WriteLine(response.ColBeginIndex + response.RowBeginIndex);
 
-            foreach (var player in matchedPlayers)
-            {
-                await hubContext.Clients.User(player.PlayerId).SendAsync("GameStarted", response);
-            }
+            await hubContext.Clients.User(matchedPlayers[0].PlayerId).SendAsync("GameStarted", response);
+
+            enemyName = context.Users
+                .Where(u => u.Id == matchedPlayers[0].PlayerId)
+                .Select(u => u.UserName)
+                .FirstOrDefault() ?? throw new Exception("Player not found");
+            response.EnemyName = enemyName;
+
+            await hubContext.Clients.User(matchedPlayers[1].PlayerId).SendAsync("GameStarted", response);
         }
     }
 }

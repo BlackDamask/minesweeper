@@ -50,9 +50,9 @@ export default function MultiplayerGamePanel({gameField, colIndex, rowIndex, sel
                     <Select 
                         width={'7rem'} 
                         marginBottom={4} 
-                        color={'black'} 
-                        borderColor={"#1e9907"} 
-                        backgroundColor={"#28cc0a"}
+                        color={'white'} 
+                        borderColor={"#4a619b"} 
+                        bg='#4A619B' size='md' _hover={{backgroundColor: '#314167'}} 
                         onChange={handleSelectZoom}
                         value={selectedZoom}
                         defaultValue={26}
@@ -64,8 +64,9 @@ export default function MultiplayerGamePanel({gameField, colIndex, rowIndex, sel
                     <Select
                          width={'7rem'}
                          marginBottom={4}
-                         color={'black'}
-                         bg='#28cc0a' size='md' _hover={{backgroundColor: '#39ff13'}} 
+                         color={'white'} 
+                        borderColor={"#4a619b"} 
+                        bg='#4A619B' size='md' _hover={{backgroundColor: '#314167'}} 
                          variant='filled'
                          onChange={handleSelectMode}
                          value = {selectedMode}
@@ -81,8 +82,8 @@ export default function MultiplayerGamePanel({gameField, colIndex, rowIndex, sel
                 
                 </div>
                 
-                <div className="bg-[#1e9907] h-full w-full pt-3 border-t rounded-xl ">
-                <nav className='flex justify-between items-center text-black'>
+                <div className="bg-[#4A619B] h-full w-full pt-3 border-t rounded-xl ">
+                <nav className='flex justify-between items-center text-white'>
                         <div style={{width: `${selectedZoom*3}px`, height: `${selectedZoom*2}px`,fontSize: `${selectedZoom*1.2}px` }} className='flex justify-center items-center font-pixelFont'>
                             00:00
                         </div>
@@ -94,7 +95,7 @@ export default function MultiplayerGamePanel({gameField, colIndex, rowIndex, sel
                         </div>
 
                     </nav>
-                    <div className='h-3 w-full bg-[#1e9907]'></div>
+                    <div className='h-3 w-full bg-[#4A619B]'></div>
                     <Game 
                         currentGameData={currentGameData} 
                         setCurrentGameData = {setCurrentGameData} 

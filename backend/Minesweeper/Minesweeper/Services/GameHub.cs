@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
+using Minesweeper.data;
+using Minesweeper.models;
 using System;
 using System.Security.Claims;
 
@@ -8,17 +10,28 @@ namespace Minesweeper.Services
     [Authorize]
     public class GameHub : Hub, IDisposable
     {
+        private readonly ApplicationDbContext dbContext;
 
-        public async Task NotifyGameStarted(string playerId)
+        public GameHub(ApplicationDbContext context)
         {
-
-            await Clients.User(playerId).SendAsync("GameStarted");
-
+            this.dbContext = context;
         }
 
-        public async Task SendGameField()
+
+        public async Task SendProgress(int progress)
         {
-            await Clients.All.SendAsync("ReceiveGameField");
+            Console.WriteLine(progress);
+            string gameId = dbContext.GameParticipants
+                .Where(gp => gp.PlayerId == Context.UserIdentifier)
+                .Select(gp => gp.GameId)
+                .FirstOrDefault() ?? throw new Exception("Game not found");
+
+            string enemyId = dbContext.GameParticipants
+                .Where(gp => gp.GameId == gameId && gp.PlayerId != Context.UserIdentifier)
+                .Select(gp => gp.PlayerId)
+                .FirstOrDefault() ?? throw new Exception("Enemy not found");
+
+            await Clients.User(enemyId).SendAsync("ReceiveProgress", progress);
         }
 
         public override async Task OnConnectedAsync()

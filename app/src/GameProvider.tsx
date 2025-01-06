@@ -8,6 +8,7 @@ interface GameStartResponse {
   gameField: Tile[][],
   colBeginIndex: number;
   rowBeginIndex: number;
+  enemyName: string;
 }
 
 interface StartCoordinates {
@@ -18,12 +19,12 @@ interface StartCoordinates {
 interface GameContextType {
   isGameStarted: boolean;
   isGameEnded: boolean | undefined;
-  playerProgress: number;
   enemyProgress: number;
   gameField: Tile[][];
   setGameField: React.Dispatch<React.SetStateAction<Tile[][]>>;
   startCoordinates: StartCoordinates;
   setCurrentGameData: React.Dispatch<React.SetStateAction<GameData | null>>;
+  currentGameData: GameData | null;
 }
 
 export const GameContext = createContext<GameContextType | undefined>(undefined);
@@ -35,7 +36,6 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
   
   const [isGameStarted, setIsGameStarted] = useState(false);
   const [isGameEnded, setIsGameEnded] = useState(false);
-  const [playerProgress, setPlayerProgress] = useState<number>(0);
   const [enemyProgress, setEnemyProgress] = useState<number>(0);
   const [gameField, setGameField] = useState<Tile[][]>([[]]);
   const [currentGameData, setCurrentGameData] = useState<GameData | null>(null);
@@ -65,13 +65,8 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
       });
     });
 
-    connection.on("ReceiveGameField", () => {
-      toast({
-        title: "Game Field Received",
-        description: "",
-        status: "info",
-        isClosable: true,
-      });
+    connection.on("ReceiveProgress", (progress: number) => {
+      setEnemyProgress(progress);
     });
 
     connection.on("ReceiveSystemMessage", (message: string) => {
@@ -95,16 +90,21 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   useEffect(() => {
     const connection = connectionRef.current;
-    if (connection) {
-      console.log("connection");
-      connection.invoke("SendGameField").catch((err) => {
-        console.error("Error sending game field:", err);
-      });
+
+    const sendProgress = () =>{
+      if(currentGameData?.maxNumberOfRevealedTiles && connection){
+        const progress = currentGameData?.countRevealedTiles() / currentGameData?.maxNumberOfRevealedTiles * 100;
+        
+        connection.invoke("SendProgress",progress).catch((err) => {
+            console.error("Error sending game field:", err);
+        });
+      }
     }
+    sendProgress();
   }, [currentGameData]);
 
   return (
-    <GameContext.Provider value={{ isGameStarted, isGameEnded, playerProgress, setGameField, enemyProgress, gameField, startCoordinates, setCurrentGameData }}>
+    <GameContext.Provider value={{ isGameStarted, isGameEnded, setGameField, enemyProgress, gameField, startCoordinates ,setCurrentGameData, currentGameData }}>
       {children}
     </GameContext.Provider>
   );
