@@ -25,7 +25,7 @@ export default function MultiplayerGamePanel({gameField, colIndex, rowIndex, sel
     const [startTime, setStartTime] = useState<number | null>(null);
 
     const handleSelectMode = (event: any) => {
-        const selectedMode = Number(event.target.value); // Convert to number\
+        const selectedMode = Number(event.target.value); 
         setSelectedMode(selectedMode);
     };
 

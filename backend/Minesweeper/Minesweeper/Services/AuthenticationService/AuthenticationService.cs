@@ -33,7 +33,7 @@ namespace Minesweeper.Services.AuthenticationService
         public async Task<ServiceResponse<LoginPlayerResponseDTO>> Login(LoginPlayerDTO player)
         {
             var serviceResponse = new ServiceResponse<LoginPlayerResponseDTO>();
-            var loggedPlayer = await playerManager.FindByNameAsync(player.UserName);
+            var loggedPlayer = await playerManager.FindByEmailAsync(player.Email);
             if (loggedPlayer == null)
             {
                 serviceResponse.Success = false;

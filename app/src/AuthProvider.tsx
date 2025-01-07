@@ -33,9 +33,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
 
   // Login function
-  const login = async (username: string, password: string): Promise<{ success: boolean; message?: string }> => {
+  const login = async (email: string, password: string): Promise<{ success: boolean; message?: string }> => {
     try {
-      const response = await axios.post("/player/login", { userName: username, password });
+      const response = await axios.post("/player/login", { email: email, password });
       const { accessToken, refreshToken } = response.data.data;
       setAccessToken(accessToken);
       setRefreshToken(refreshToken);

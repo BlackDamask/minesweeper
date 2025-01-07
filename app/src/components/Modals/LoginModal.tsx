@@ -7,7 +7,7 @@ import { AuthContext } from '../../AuthProvider';
 export default function LoginModal({isOpen, onClose} : {isOpen: boolean, onClose: () => void}){
     const auth = useContext(AuthContext);
 
-    const [formData, setFormData] = useState({ username: '', password: '' });
+    const [formData, setFormData] = useState({ email: '', password: '' });
     const [isLoading, setLoading] = useState(false);
     const toast = useToast();
     
@@ -18,7 +18,7 @@ export default function LoginModal({isOpen, onClose} : {isOpen: boolean, onClose
       const handleSubmit = async () => {
         setLoading(true);
         try{
-            const result = await auth!.login(formData.username, formData.password);
+            const result = await auth!.login(formData.email, formData.password);
             if (!result.success) {
                 throw(result.message);
             }
@@ -57,11 +57,11 @@ export default function LoginModal({isOpen, onClose} : {isOpen: boolean, onClose
                             <InputLeftElement pointerEvents='none' className="text-gray-400" fontSize='1.2em'>
                                 <UserIcon className="w-5 fill-gray-400"/>
                             </InputLeftElement>
-                            <Input name="username"
-                                type='text'
+                            <Input name="email"
+                                type='email'
                                 onChange={handleChange}
-                                value={formData.username}
-                                placeholder='User name' 
+                                value={formData.email}
+                                placeholder='Email' 
                             />
                         </InputGroup>
                         <InputGroup bg={'#38393c'}>

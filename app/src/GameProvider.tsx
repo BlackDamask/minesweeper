@@ -54,7 +54,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     connectionRef.current = connection;
 
     connection.on("GameStarted", (response: GameStartResponse) => {
-      console.log(response);
+      console.warn(response.enemyName);
       setGameField(response.gameField);
       setStartCoordinates({ colIndex: response.colBeginIndex, rowIndex: response.rowBeginIndex });
       setIsGameStarted(true);
