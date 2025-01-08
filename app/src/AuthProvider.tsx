@@ -15,6 +15,7 @@ interface AuthContextType {
   login: (username: string, password: string) => Promise<{ success: boolean; message?: string }>;
   register: (username: string, email: string, password: string) => Promise<{ success: boolean; message?: string }>;
   logout: () => void;
+  changeUsername: (username: string) => Promise<{ success: boolean; message?: string }>
   accessToken: string | null;
   isLoggedIn: boolean;
 }
@@ -56,6 +57,32 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       return { success: false, message: error.response?.data?.message || "Login failed" };
     }
   };
+
+  const changeUsername = async (userName: string): Promise<{ success: boolean; message?: string }> => {
+    try {
+      const response = await axios.put(
+        `https://localhost:7036/api/player/change-username`,
+        null, // No body needed, as userName is sent as a query parameter
+        {
+          params: { userName: userName }, // Add userName as a query parameter
+          headers: { Authorization: `Bearer ${accessToken}` }
+        }
+      );
+      
+      const userProfile = await axios.get<ApiResponse<User>>("/player/profile", {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+      
+      setUser(userProfile.data.data);
+      return { success: true };
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.message || "Username change failed";
+      console.error("Error details:", JSON.stringify(error.response?.data, null, 2));
+      return { success: false, message: errorMessage };
+    }
+  };
+  
+  
 
   const register = async (
     username: string,
@@ -124,7 +151,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, [accessToken]);
 
   return (
-    <AuthContext.Provider value={{ user, login, register, logout, accessToken, isLoggedIn }}>
+    <AuthContext.Provider value={{ user, login, register, logout, changeUsername, accessToken, isLoggedIn }}>
       {children}
     </AuthContext.Provider>
   );

@@ -16,6 +16,9 @@ import {
     ModalFooter,
     Button,
     ModalOverlay,
+    InputGroup,
+    Input,
+    InputLeftElement,
 } from "@chakra-ui/react";
 import { ReactComponent as RegisterButton } from "./register-button.svg";
 import { ReactComponent as LoginButton } from "./login-button.svg";
@@ -23,6 +26,7 @@ import LoginModal from '../Modals/LoginModal';
 import RegisterModal from "../Modals/RegisterModal";
 import { AuthContext } from "../../AuthProvider";
 import { Link } from "react-router-dom";
+import ChangeUsernameModal from "../Modals/ChangeUsernameModal";
 
 export default function Nav() {
     const auth = useContext(AuthContext);
@@ -34,7 +38,9 @@ export default function Nav() {
         onOpen: onLoginOpen,
         onClose: onLoginClose,
       } = useDisclosure();
-      
+    
+    
+    
     const {
         isOpen: isRegisterOpen,
         onOpen: onRegisterOpen,
@@ -45,6 +51,11 @@ export default function Nav() {
         isOpen: isLogoutOpen,
         onOpen: onLogoutOpen,
         onClose: onLogoutClose,
+    } = useDisclosure();
+    const {
+        isOpen: isChangeUsernameOpen,
+        onOpen: onChangeUsernameOpen,
+        onClose: onChangeUsernameClose,
     } = useDisclosure();
 
     const buttons = [
@@ -147,12 +158,16 @@ export default function Nav() {
                                 </Avatar>
                             </PopoverTrigger>
                             <PopoverContent
-                                width={"40"}
+                                width={"56"}
                                 borderWidth={3}
                                 
                             >
                                 <PopoverBody padding={0} >
-                                    <Box className="h-[2.5em] text-xl flex items-center pl-3 filter brightness-100 hover:brightness-75 bg-slate-900"
+                                    <Box className="h-[2.5em] text-xl flex text-gray-100 items-center pl-3 filter brightness-100 hover:brightness-75 bg-slate-900"
+                                        onClick={onChangeUsernameOpen}>
+                                        Change Username
+                                    </Box>
+                                    <Box className="h-[2.5em] text-xl flex text-gray-100 items-center pl-3 filter brightness-100 hover:brightness-75 bg-slate-900"
                                         onClick={onLogoutOpen}>
                                         Log out
                                     </Box>
@@ -211,16 +226,17 @@ export default function Nav() {
             )}
             <LoginModal isOpen={isLoginOpen} onClose={onLoginClose} />
             <RegisterModal isOpen={isRegisterOpen} onClose={onRegisterClose} />
+            <ChangeUsernameModal isOpen={isChangeUsernameOpen} onClose={onChangeUsernameClose}/>
             <Modal isCentered isOpen={isLogoutOpen} onClose={onLoginClose}>
                 <ModalOverlay/>
                 <ModalContent>
-                <ModalHeader>Modal Title</ModalHeader>
-                <ModalCloseButton />
+                <ModalHeader>Log out</ModalHeader>
+                <ModalCloseButton onClick={onLogoutClose}/>
                 <ModalBody>
-                    <p>Custom backdrop filters!</p>
+                    <p>Do you want to log out?</p>
                 </ModalBody>
                 <ModalFooter>
-                    <Button onClick={auth?.logout}>Close</Button>
+                    <Button onClick={auth?.logout} marginRight={4}>Logout</Button>
                     <Button onClick={onLogoutClose}>Close</Button>
                 </ModalFooter>
                 </ModalContent>

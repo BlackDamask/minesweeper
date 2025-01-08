@@ -129,6 +129,27 @@ namespace Minesweeper.Services.PlayerService
             }
             return serviceResponse;
         }
+
+        public async Task<ServiceResponse<string>> ChangeUserName(string playerId, string userName)
+        {
+            var serviceResponse = new ServiceResponse<string>();
+
+            try
+            {
+                var player = await context.Users.FirstOrDefaultAsync(p => p.Id == playerId) ?? throw new Exception("Player not found");
+                player.UserName = userName;
+                await context.SaveChangesAsync();
+                serviceResponse.Data = player.UserName;
+                serviceResponse.Success = true;
+
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.Message = ex.Message;
+                serviceResponse.Success = false;
+            }
+            return serviceResponse;
+        }   
     }
 
 }
