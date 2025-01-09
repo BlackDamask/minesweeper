@@ -12,5 +12,6 @@ namespace Minesweeper.Services.PlayerService
         Task<ServiceResponse<string>> AddPlayerToQueue(string playerId);
         Task<ServiceResponse<string>> RemovePlayerFromQueue(string playerId);
         Task<ServiceResponse<int>> ChangePoints(string playerId, int pointsChange);
+        Task<ServiceResponse<string>> ChangeUserName(string playerId, string userName);
     }
 }

@@ -43,10 +43,10 @@ export default function Layout() {
               </div>
             </div>
           </Link>
-          <div className='flex ml-14 h-24 w-full lg:w-[60%] xl:w-[70%] 2xl: rounded-lg text-white bg-[#1072d6] hover:bg-[#0d5bab] border-b-[3px] border-[#0d5bab] cursor-pointer'
+          <div className='flex ml-14 h-24 w-full lg:w-[60%] xl:w-[70%] 2xl:w-[50%] rounded-lg text-white bg-[#1072d6] hover:bg-[#0d5bab] border-b-[3px] border-[#0d5bab] cursor-pointer'
             onClick={handlePvpButtonClick}>
-            <div className='w-1/5 h-full p-3'>
-              <img alt='' src="./pvp.png" className='h-full aspect-square' />
+            <div className='w-1/5 h-[95%] p-3 flex items-center'>
+              <img alt='' src="./shovel-pvp.svg" className='h-full aspect-square' />
             </div>
             <div className='w-4/5 flex flex-col p-4  '>
               <h1 className='text-2xl'>PvP</h1>

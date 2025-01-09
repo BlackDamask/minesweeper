@@ -25,6 +25,7 @@ interface GameContextType {
   startCoordinates: StartCoordinates;
   setCurrentGameData: React.Dispatch<React.SetStateAction<GameData | null>>;
   currentGameData: GameData | null;
+  enemyName: string;
 }
 
 export const GameContext = createContext<GameContextType | undefined>(undefined);
@@ -36,6 +37,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
   
   const [isGameStarted, setIsGameStarted] = useState(false);
   const [isGameEnded, setIsGameEnded] = useState(false);
+  const [enemyName, setEnemyName] = useState("Opponent");
   const [enemyProgress, setEnemyProgress] = useState<number>(0);
   const [gameField, setGameField] = useState<Tile[][]>([[]]);
   const [currentGameData, setCurrentGameData] = useState<GameData | null>(null);
@@ -54,7 +56,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     connectionRef.current = connection;
 
     connection.on("GameStarted", (response: GameStartResponse) => {
-      console.warn(response.enemyName);
+      setEnemyName(response.enemyName);
       setGameField(response.gameField);
       setStartCoordinates({ colIndex: response.colBeginIndex, rowIndex: response.rowBeginIndex });
       setIsGameStarted(true);
@@ -104,7 +106,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [currentGameData]);
 
   return (
-    <GameContext.Provider value={{ isGameStarted, isGameEnded, setGameField, enemyProgress, gameField, startCoordinates ,setCurrentGameData, currentGameData }}>
+    <GameContext.Provider value={{ isGameStarted, isGameEnded, setGameField, enemyProgress, gameField, startCoordinates ,setCurrentGameData, currentGameData, enemyName }}>
       {children}
     </GameContext.Provider>
   );
