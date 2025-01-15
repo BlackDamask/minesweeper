@@ -96,7 +96,6 @@ namespace Minesweeper.Services.PlayerService
 
                     serviceResponse.Data = response;
                     serviceResponse.Message = "Player is already in game";
-                    Console.WriteLine("!!!!!!!!!!PLAYER IS ALREADY IN GAME!!!!!!!!");
                     return serviceResponse;
                 }
 
