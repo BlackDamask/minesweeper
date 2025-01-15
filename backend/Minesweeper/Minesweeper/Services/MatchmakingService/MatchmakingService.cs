@@ -114,7 +114,6 @@ namespace Minesweeper.Services.MatchmakingService
                 response.EnemyName = enemyName;
 
                 await hubContext.Clients.User(matchedPlayers[1].PlayerId).SendAsync("GameStarted", response);
-
             }
             catch(Exception ex)
             {
