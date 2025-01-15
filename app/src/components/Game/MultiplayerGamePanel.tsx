@@ -20,7 +20,9 @@ export default function MultiplayerGamePanel({gameField, colIndex, rowIndex, sel
     const game = useGameContext();
 
     const [selectedZoom, setSelectedZoom] = useState(26);
-    const [currentGameData, setCurrentGameData] = useState<GameData>(new GameData({gameField: gameField, colStartIndex: colIndex, rowStartIndex: rowIndex}));
+    const [currentGameData, setCurrentGameData] = useState<GameData>(
+        new GameData({ gameField: gameField, colStartIndex: colIndex, rowStartIndex: rowIndex })
+    );
     const [selectedMode, setSelectedMode] = useState<number>(1);
     const [startTime, setStartTime] = useState<number | null>(null);
 

@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Validations;
 using Minesweeper.data;
 using Minesweeper.DTOs;
+using Minesweeper.DTOs.GameDTO;
 using Minesweeper.DTOs.PlayerDTO;
 using Minesweeper.models;
 using System;
@@ -61,18 +62,42 @@ namespace Minesweeper.Services.PlayerService
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<string>> AddPlayerToQueue(string playerId)
+        public async Task<ServiceResponse<GameBeginDTO>> AddPlayerToQueue(string playerId)
         {
-            var serviceResponse = new ServiceResponse<string>();
+            var serviceResponse = new ServiceResponse<GameBeginDTO>();
             try
             {
                 var player = await context.Users.FindAsync(playerId)
                               ?? throw new Exception("Player not found");
 
                 var existingGameParticipant =  context.GameParticipants.FirstOrDefault(p => p.PlayerId == playerId);
+
                 if (existingGameParticipant != null)
                 {
+                    var game = context.Games.FirstOrDefault(g => g.Id == existingGameParticipant.GameId);
+                    var enemy = context.GameParticipants
+                        .Where(g => g.GameId == game.Id)
+                        .Where(g => g.PlayerId != existingGameParticipant.PlayerId)
+                        .FirstOrDefault() ?? throw new Exception("Enemy not found");
 
+                    var enemyName = context.Users
+                        .Where(u => u.Id == enemy.PlayerId)
+                        .Select(u => u.UserName)
+                        .FirstOrDefault() ?? throw new Exception("Enemy name not found");
+
+                    var response = new GameBeginDTO
+                    {
+                        ColBeginIndex = game.ColBeginIndex,
+                        RowBeginIndex = game.RowBeginIndex,
+                        GameField = game.GameField,
+                        EnemyName = enemyName,
+                        EnemyProgress = enemy.Progress,
+                    };
+
+                    serviceResponse.Data = response;
+                    serviceResponse.Message = "Player is already in game";
+                    Console.WriteLine("!!!!!!!!!!PLAYER IS ALREADY IN GAME!!!!!!!!");
+                    return serviceResponse;
                 }
 
                 var existingQueueEntry = await context.MatchmakingQueue
@@ -85,7 +110,6 @@ namespace Minesweeper.Services.PlayerService
                     await context.SaveChangesAsync();
                 }
 
-                // Add the player to the queue
                 context.MatchmakingQueue.Add(
                     new MatchmakingQueue
                     {
@@ -96,9 +120,8 @@ namespace Minesweeper.Services.PlayerService
 
                 await context.SaveChangesAsync();
 
-                // Prepare success response
                 
-                serviceResponse.Data = player.Id;
+                serviceResponse.Data = null;
             }
             catch (Exception ex)
             {

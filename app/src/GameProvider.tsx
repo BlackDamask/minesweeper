@@ -3,7 +3,7 @@ import * as signalR from "@microsoft/signalr";
 import { useToast } from "@chakra-ui/react";
 import { AuthContext } from "./AuthProvider";
 import { GameData, Tile } from "./components/Game/data";
-
+ 
 interface GameStartResponse {
   gameField: Tile[][],
   colBeginIndex: number;
@@ -23,7 +23,11 @@ interface GameContextType {
   gameField: Tile[][];
   setGameField: React.Dispatch<React.SetStateAction<Tile[][]>>;
   startCoordinates: StartCoordinates;
+  setIsGameStarted: React.Dispatch<React.SetStateAction<boolean>>;
   setCurrentGameData: React.Dispatch<React.SetStateAction<GameData | null>>;
+  setStartCoordinates: React.Dispatch<React.SetStateAction<StartCoordinates>>;
+  setEnemyProgress: React.Dispatch<React.SetStateAction<number>>;
+  setEnemyName: React.Dispatch<React.SetStateAction<string>>;
   currentGameData: GameData | null;
   enemyName: string;
 }
@@ -106,7 +110,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [currentGameData]);
 
   return (
-    <GameContext.Provider value={{ isGameStarted, isGameEnded, setGameField, enemyProgress, gameField, startCoordinates ,setCurrentGameData, currentGameData, enemyName }}>
+    <GameContext.Provider value={{ isGameStarted, isGameEnded, setGameField, enemyProgress, setEnemyProgress, gameField, startCoordinates ,setCurrentGameData, setStartCoordinates, setIsGameStarted, currentGameData, enemyName, setEnemyName }}>
       {children}
     </GameContext.Provider>
   );

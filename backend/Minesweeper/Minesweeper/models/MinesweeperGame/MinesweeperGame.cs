@@ -2,7 +2,7 @@
 {
     public class MinesweeperGame
     {
-        public Tile[,]? gameField  { get; set; } 
+        public Tile[][]? gameField { get; set; }
 
         public int colStartIndex { get; set; }
         public int rowStartIndex { get; set; }
@@ -12,9 +12,9 @@
         private int numberOfTilesY;
         private int numberOfBombs;
         private bool isStarted = false;
-        
+
         public MinesweeperGame(int difficulty)
-        { 
+        {
             this.difficulty = difficulty;
             Generate();
         }
@@ -41,14 +41,15 @@
                     break;
             }
 
-            gameField = new Tile[numberOfTilesY, numberOfTilesX];
+            gameField = new Tile[numberOfTilesY][];
 
             for (int i = 0; i < numberOfTilesY; i++)
             {
+                gameField[i] = new Tile[numberOfTilesX];
                 for (int j = 0; j < numberOfTilesX; j++)
                 {
                     string color = (i + j) % 2 == 0 ? "light-tile" : "dark-tile";
-                    gameField[i, j] = new Tile
+                    gameField[i][j] = new Tile
                     {
                         Color = color,
                         HasBomb = false,
@@ -58,10 +59,10 @@
                     };
                 }
             }
-            Random rnd  = new Random();
 
+            Random rnd = new Random();
             int rowIndex = rnd.Next(0, numberOfTilesY);
-            int colIndex  = rnd.Next(0, numberOfTilesX);
+            int colIndex = rnd.Next(0, numberOfTilesX);
             this.colStartIndex = colIndex;
             this.rowStartIndex = rowIndex;
             PlaceBombs(colIndex, rowIndex);
@@ -115,11 +116,11 @@
 
                 if (
                     (randomCol != colIndex || randomRow != rowIndex) &&
-                    !gameField[randomRow, randomCol].HasBomb &&
+                    !gameField[randomRow][randomCol].HasBomb &&
                     !exclusionZone.Contains($"{randomRow},{randomCol}")
                 )
                 {
-                    gameField[randomRow, randomCol].HasBomb = true;
+                    gameField[randomRow][randomCol].HasBomb = true;
                     bombsPlaced++;
                 }
             }
@@ -129,7 +130,7 @@
             {
                 for (int j = 0; j < numberOfTilesX; j++)
                 {
-                    if (gameField[i, j].HasBomb) continue;
+                    if (gameField[i][j].HasBomb) continue;
 
                     int nearbyBombs = 0;
 
@@ -144,14 +145,14 @@
 
                             if (newRow >= 0 && newRow < numberOfTilesY && newCol >= 0 && newCol < numberOfTilesX)
                             {
-                                if (gameField[newRow, newCol].HasBomb)
+                                if (gameField[newRow][newCol].HasBomb)
                                 {
                                     nearbyBombs++;
                                 }
                             }
                         }
                     }
-                    gameField[i, j].NearbyBombs = nearbyBombs;
+                    gameField[i][j].NearbyBombs = nearbyBombs;
                 }
             }
         }
