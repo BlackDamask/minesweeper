@@ -72,7 +72,7 @@ namespace Minesweeper.Services.PlayerService
                 var existingGameParticipant =  context.GameParticipants.FirstOrDefault(p => p.PlayerId == playerId);
                 if (existingGameParticipant != null)
                 {
-
+                    var game = await context.G
                 }
 
                 var existingQueueEntry = await context.MatchmakingQueue

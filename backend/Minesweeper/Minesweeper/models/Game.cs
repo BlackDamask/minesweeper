@@ -11,11 +11,13 @@ namespace Minesweeper.models
         public DateTime EndTime { get; set; }
         public string? GameFieldSerialized { get; set; }
         [NotMapped]
-        public Tile[][]? GameField
+        public Tile[,]? GameField
         {
-            get => GameFieldSerialized == null ? null : JsonSerializer.Deserialize<Tile[][]>(GameFieldSerialized);
+            get => GameFieldSerialized == null ? null : JsonSerializer.Deserialize<Tile[,]>(GameFieldSerialized);
             set => GameFieldSerialized = value == null ? null : JsonSerializer.Serialize(value);
         }
+        public required int ColBeginIndex { get; set; }
+        public required int RowBeginIndex { get; set; }
         public required string Status { get; set; }
         public string? GameType { get; set; }
     }

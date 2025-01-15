@@ -32,7 +32,7 @@ namespace Minesweeper.Migrations
                 table: "Games");
 
             migrationBuilder.AddColumn<string>(
-                name: "GameFieldSerialized",
+                name: "GameFi        public required int ColBeginIndex { get; set; }\r\n        public required int RowBeginIndex { get; set; }eldSerialized",
                 schema: "identity",
                 table: "GameParticipants",
                 type: "nvarchar(max)",
