@@ -30,6 +30,7 @@ interface GameContextType {
   setEnemyName: React.Dispatch<React.SetStateAction<string>>;
   currentGameData: GameData | null;
   enemyName: string;
+  isWon: boolean;
 }
 
 export const GameContext = createContext<GameContextType | undefined>(undefined);
@@ -46,8 +47,9 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [gameField, setGameField] = useState<Tile[][]>([[]]);
   const [currentGameData, setCurrentGameData] = useState<GameData | null>(null);
   const [startCoordinates, setStartCoordinates] = useState<StartCoordinates>({ colIndex: 0, rowIndex: 0 });
-
+  const [isWon, setIsWon] = useState<boolean>(false);
   const connectionRef = useRef<signalR.HubConnection | null>(null);
+
 
   useEffect(() => {
     const connection = new signalR.HubConnectionBuilder()
@@ -84,27 +86,17 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         isClosable: true,
       });
     });
+
+    
+
     connection.on("GameWon", () => {
-      console.log("Game won");
-      toast(
-        {
-          title: "Game Won",
-          description: "Game Won",
-          status: "info",
-          isClosable: true,
-        }
-      )
+      setIsGameEnded(true);
+      setIsWon(true);
     });
+    
     connection.on("GameLost", () => {
-      console.log("Game lost");
-      toast(
-        {
-          title: "Game Lost",
-          description: "Game Won",
-          status: "info",
-          isClosable: true,
-        }
-      )
+      setIsGameEnded(true);
+      setIsWon(false);
     });
 
     connection.start().catch((err) => console.error("SignalR Connection Error:", err));
@@ -132,7 +124,22 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [currentGameData]);
 
   return (
-    <GameContext.Provider value={{ isGameStarted, isGameEnded, setGameField, enemyProgress, setEnemyProgress, gameField, startCoordinates ,setCurrentGameData, setStartCoordinates, setIsGameStarted, currentGameData, enemyName, setEnemyName }}>
+    <GameContext.Provider value={{ 
+      isGameStarted,
+      isGameEnded,
+      setGameField,
+      enemyProgress,
+      setEnemyProgress,
+      gameField,
+      startCoordinates,
+      setCurrentGameData,
+      setStartCoordinates, 
+      setIsGameStarted, 
+      currentGameData, 
+      enemyName, 
+      setEnemyName,
+      isWon 
+      }}>
       {children}
     </GameContext.Provider>
   );

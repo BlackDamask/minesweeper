@@ -39,6 +39,7 @@ export class GameData {
             this.gameField = config.gameField;
             this.isMultiplayerGame = true;
             this.isFirstClick = false;
+            this.isMultiplayerGame = true;
             this.RevealTile(config.colStartIndex, config.rowStartIndex);
         } else {
             throw new Error("Invalid constructor arguments for GameData");
@@ -188,14 +189,16 @@ export class GameData {
     private RevealTile(colIndex: number, rowIndex: number): void{
         this.gameField[rowIndex][colIndex].isRevealed = true;
         this.numberOfRevealedTiles = this.numberOfRevealedTiles + 1;
-        
-        if (this.gameField[rowIndex][colIndex].hasBomb) {
-            this.GameOver(false);
-        }
+        if(!this.isMultiplayerGame){
+            if (this.gameField[rowIndex][colIndex].hasBomb) {
+                this.GameOver(false);
+            }
 
-        if (this.numberOfRevealedTiles === (this.numberOfTilesX * this.numberOfTilesY) - this.numberOfBombs) {
-            this.GameOver(true);
+            else if (this.numberOfRevealedTiles === (this.numberOfTilesX * this.numberOfTilesY) - this.numberOfBombs) {
+                this.GameOver(true);
+            }
         }
+        
         this.checkEmptyTiles(colIndex, rowIndex);
     }
 

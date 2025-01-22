@@ -51,6 +51,7 @@ export default function Multiplayer() {
             <SearchingForGame></SearchingForGame>
           </div>
         )}
+        
       </div>
     </main>
   );
