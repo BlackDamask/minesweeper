@@ -71,6 +71,7 @@ namespace Minesweeper.Services.MatchmakingService
                     GameField = minesweeperGame.gameField,
                     ColBeginIndex = minesweeperGame.colStartIndex,
                     RowBeginIndex = minesweeperGame.rowStartIndex,
+                    Difficulty = 1,
                 };
 
                 await context.Games.AddAsync(newGame);
@@ -97,6 +98,7 @@ namespace Minesweeper.Services.MatchmakingService
                     .Where(u => u.Id == matchedPlayers[1].PlayerId)
                     .Select(u => u.UserName) 
                     .FirstOrDefault() ?? throw new Exception("Player not found");
+
                 GameBeginDTO response = new GameBeginDTO
                 {
                     GameField = minesweeperGame.gameField,

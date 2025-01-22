@@ -12,8 +12,8 @@ using Minesweeper.data;
 namespace Minesweeper.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250115083539_RepairMigration")]
-    partial class RepairMigration
+    [Migration("20250122073846_DifficultyFieldAdded")]
+    partial class DifficultyFieldAdded
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -165,6 +165,9 @@ namespace Minesweeper.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("ColBeginIndex")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Difficulty")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("EndTime")

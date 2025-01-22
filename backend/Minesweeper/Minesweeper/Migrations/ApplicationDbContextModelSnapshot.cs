@@ -164,6 +164,9 @@ namespace Minesweeper.Migrations
                     b.Property<int>("ColBeginIndex")
                         .HasColumnType("int");
 
+                    b.Property<int>("Difficulty")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("EndTime")
                         .HasColumnType("datetime2");
 

@@ -10,6 +10,7 @@ namespace Minesweeper.models
         public required string Id { get; set; }
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
+        public int Difficulty { get; set; }
         public required int ColBeginIndex { get; set; }
         public required int RowBeginIndex { get; set; }
         public string? GameFieldSerialized { get; set; }

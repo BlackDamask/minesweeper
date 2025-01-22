@@ -47,7 +47,6 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [currentGameData, setCurrentGameData] = useState<GameData | null>(null);
   const [startCoordinates, setStartCoordinates] = useState<StartCoordinates>({ colIndex: 0, rowIndex: 0 });
 
-  // Ref for the SignalR connection
   const connectionRef = useRef<signalR.HubConnection | null>(null);
 
   useEffect(() => {
@@ -73,6 +72,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     connection.on("ReceiveProgress", (progress: number) => {
       setEnemyProgress(progress);
+
     });
 
     connection.on("ReceiveSystemMessage", (message: string) => {
@@ -83,6 +83,28 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         status: "info",
         isClosable: true,
       });
+    });
+    connection.on("GameWon", () => {
+      console.log("Game won");
+      toast(
+        {
+          title: "Game Won",
+          description: "Game Won",
+          status: "info",
+          isClosable: true,
+        }
+      )
+    });
+    connection.on("GameLost", () => {
+      console.log("Game lost");
+      toast(
+        {
+          title: "Game Lost",
+          description: "Game Won",
+          status: "info",
+          isClosable: true,
+        }
+      )
     });
 
     connection.start().catch((err) => console.error("SignalR Connection Error:", err));

@@ -5,21 +5,13 @@
 namespace Minesweeper.Migrations
 {
     /// <inheritdoc />
-    public partial class RepairMigration : Migration
+    public partial class DifficultyFieldAdded : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<int>(
-                name: "ColBeginIndex",
-                schema: "identity",
-                table: "Games",
-                type: "int",
-                nullable: false,
-                defaultValue: 0);
-
-            migrationBuilder.AddColumn<int>(
-                name: "RowBeginIndex",
+                name: "Difficulty",
                 schema: "identity",
                 table: "Games",
                 type: "int",
@@ -31,12 +23,7 @@ namespace Minesweeper.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "ColBeginIndex",
-                schema: "identity",
-                table: "Games");
-
-            migrationBuilder.DropColumn(
-                name: "RowBeginIndex",
+                name: "Difficulty",
                 schema: "identity",
                 table: "Games");
         }
