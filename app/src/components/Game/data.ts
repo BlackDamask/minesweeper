@@ -37,7 +37,6 @@ export class GameData {
         } else if (config.gameField !== undefined && config.colStartIndex !== undefined && config.rowStartIndex !== undefined) {
             this.SetDifficulty(1);
             this.gameField = config.gameField;
-            this.isMultiplayerGame = true;
             this.isFirstClick = false;
             this.isMultiplayerGame = true;
             this.RevealTile(config.colStartIndex, config.rowStartIndex);

@@ -1,8 +1,9 @@
 import { useGameContext } from '../../GameProvider';
 import Game from '../../components/Game/Game';
 import { GameData, Tile } from '../../components/Game/data';
-import { Select} from '@chakra-ui/react';
+import { Select, useDisclosure} from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
+import MultiplayerGameEnd from '../Modals/MultipalyerGameEnd';
 
 
 const generateResizeValues = () =>{
@@ -25,6 +26,9 @@ export default function MultiplayerGamePanel({gameField, colIndex, rowIndex, sel
     );
     const [selectedMode, setSelectedMode] = useState<number>(1);
     const [startTime, setStartTime] = useState<number | null>(null);
+    const [isWon, setIsWon] = useState<boolean>(false);
+    const [isGameEnded, setIsGameEnded] = useState<boolean>(false)
+    const { isOpen, onOpen, onClose } = useDisclosure();
 
     const handleSelectMode = (event: any) => {
         const selectedMode = Number(event.target.value); 
@@ -42,9 +46,19 @@ export default function MultiplayerGamePanel({gameField, colIndex, rowIndex, sel
         const onGameFieldChange = () => {
             game?.setCurrentGameData(currentGameData);
         };
-
+        
+        const onIsGameEndedChange = () => {
+            console.log("Game Ended:", game?.isGameEnded);
+            console.log("Game Won:", game?.isWon);
+            if (game?.isGameEnded ) {
+                onOpen();
+            }
+        };
+    
         onGameFieldChange();
-    }, [currentGameData, game]);
+        onIsGameEndedChange();
+    }, [currentGameData, game, onOpen]);
+    
     
     return(
         <main className='flex flex-col ml-14'>
@@ -109,6 +123,7 @@ export default function MultiplayerGamePanel({gameField, colIndex, rowIndex, sel
                     />
                 </div>
             </div>
+            <MultiplayerGameEnd isOpen = {isOpen} onClose={onClose} />
         </main>
     )
 }
