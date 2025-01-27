@@ -17,8 +17,16 @@ export default function MultiplayerGameEnd({isOpen, onClose} : {isOpen: boolean,
                         
                     </ModalHeader>
                     <ModalBody pb={6} backgroundColor="#262421" fontSize="2xl" textColor={'white'} className="font-customFont">
-                            <section className="flex justify-center">
-                                <Avatar name="fdasf"></Avatar>vs
+                            <section className="flex justify-center mt-4">
+                                <div className="w-20 flex-col flex items-center ">
+                                    <Avatar boxShadow="0 0 15px #00FF00" name="dasf"></Avatar>
+                                    <p className="w-full text-ellipsis overflow-hidden text-ellipsis text-base text-gray-200 font-ubuntuFont">Namenamename</p>
+                                </div>
+                                <p className = "mx-4">vs</p>
+                                <div className="w-20 flex-col flex items-center ">
+                                    <Avatar name="dasf"></Avatar>
+                                    <p className=" w-full text-ellipsis overflow-hidden text-base text-gray-200 font-ubuntuFont">Namenamenamedgshsdfgsdfg </p>
+                                </div>
                             </section>
                             
                             <section>
