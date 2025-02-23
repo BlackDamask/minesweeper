@@ -3,6 +3,7 @@ import { ReactComponent as Trophy } from "./trophy.svg";
 import { ReactElement, useContext } from "react";
 import { useGameContext } from "../../GameProvider";
 import { AuthContext } from "../../AuthProvider";
+import { getMaxListeners } from "process";
 
 export default function MultiplayerGameEnd({isOpen, onClose} : {isOpen: boolean, onClose: () => void}) {
     const game = useGameContext();
@@ -44,7 +45,7 @@ export default function MultiplayerGameEnd({isOpen, onClose} : {isOpen: boolean,
                             
                     </ModalBody>
                     <ModalFooter>
-                        <Button colorScheme="green"  mr={5} onClick={() => { }}>
+                        <Button colorScheme="green"  mr={5} onClick={() => { game?.setIsGameStarted(false); }}>
                             New Game 
                         </Button>
                         <Button colorScheme="white" onClick={onClose}>Show field</Button>
@@ -84,7 +85,7 @@ export default function MultiplayerGameEnd({isOpen, onClose} : {isOpen: boolean,
                             
                     </ModalBody>
                     <ModalFooter>
-                        <Button colorScheme="green"  mr={5} onClick={() => { }}>
+                        <Button colorScheme="green"  mr={5} onClick={() => { game?.setIsGameStarted(false); }}>
                             New Game 
                         </Button>
                         <Button colorScheme="white" onClick={onClose}>Show field</Button>

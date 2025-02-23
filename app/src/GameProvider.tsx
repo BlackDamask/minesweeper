@@ -92,6 +92,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     connection.on("GameWon", () => {
       setIsGameEnded(true);
       setIsWon(true);
+
     });
     
     connection.on("GameLost", () => {
@@ -122,6 +123,10 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
     sendProgress();
   }, [currentGameData]);
+
+  function ReturnToQueue(){
+    setIsGameStarted(false);
+  }
 
   return (
     <GameContext.Provider value={{ 

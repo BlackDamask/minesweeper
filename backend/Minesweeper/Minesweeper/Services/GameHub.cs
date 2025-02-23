@@ -36,17 +36,24 @@ namespace Minesweeper.Services
                     .Select(gp => gp.GameId)
                     .FirstOrDefault() ?? throw new Exception("Game not found");
 
-                string enemyId = dbContext.GameParticipants
+                var enemy = dbContext.GameParticipants
                     .Where(gp => gp.GameId == gameId && gp.PlayerId != Context.UserIdentifier)
-                    .Select(gp => gp.PlayerId)
                     .FirstOrDefault() ?? throw new Exception("Enemy not found");
 
-                await Clients.User(enemyId).SendAsync("ReceiveProgress", progress);
+                await Clients.User(enemy.PlayerId).SendAsync("ReceiveProgress", progress);
 
                 if (progress == 100)
                 {
+                    var game = dbContext.Games
+                        .Where(g => g.Id == gameId)
+                        .FirstOrDefault() ?? throw new Exception("Game not found");
+                    game.IsActive = false;
                     await Clients.User(Context.UserIdentifier).SendAsync("GameWon");
-                    await Clients.User(enemyId).SendAsync("GameLost");
+                    await Clients.User(enemy.PlayerId).SendAsync("GameLost");
+                    dbContext.GameParticipants.Remove(enemy);
+                    dbContext.GameParticipants.Remove(player);
+                    
+                    dbContext.SaveChanges();
                     Console.WriteLine("GameEnded");
                 }
             }

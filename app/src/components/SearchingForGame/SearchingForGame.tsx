@@ -26,6 +26,7 @@ export default function SearchingForGame() {
     useEffect(() => {
         if (isMounted.current) return; 
         isMounted.current = true;
+        game?.setCurrentGameData(null);
 
         axios.post<GameStartResponse>(
             "/player/add-to-queue",

@@ -67,11 +67,11 @@ namespace Minesweeper.Services.MatchmakingService
                 {
                     Id = Guid.NewGuid().ToString(),
                     StartTime = DateTime.UtcNow,
-                    Status = "active",
                     GameField = minesweeperGame.gameField,
                     ColBeginIndex = minesweeperGame.colStartIndex,
                     RowBeginIndex = minesweeperGame.rowStartIndex,
                     Difficulty = 1,
+
                 };
 
                 await context.Games.AddAsync(newGame);

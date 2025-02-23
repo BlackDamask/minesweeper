@@ -21,7 +21,7 @@ namespace Minesweeper.models
             get => GameFieldSerialized == null ? null : JsonSerializer.Deserialize<Tile[][]>(GameFieldSerialized);
             set => GameFieldSerialized = value == null ? null : JsonSerializer.Serialize(value);
         }
-        public required string Status { get; set; }
+        public bool IsActive { get; set; } = true;
         public string? GameType { get; set; }
     }
 }
