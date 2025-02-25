@@ -65,6 +65,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setGameField(response.gameField);
       setStartCoordinates({ colIndex: response.colBeginIndex, rowIndex: response.rowBeginIndex });
       setIsGameStarted(true);
+      setIsGameEnded(false);
       toast({
         title: "Game Started",
         status: "success",
@@ -92,12 +93,13 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     connection.on("GameWon", () => {
       setIsGameEnded(true);
       setIsWon(true);
-
+      currentGameData!.isGameOver = true;
     });
     
     connection.on("GameLost", () => {
       setIsGameEnded(true);
       setIsWon(false);
+      currentGameData!.isGameOver = true;
     });
 
     connection.start().catch((err) => console.error("SignalR Connection Error:", err));

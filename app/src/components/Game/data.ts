@@ -9,7 +9,13 @@ export interface Tile {
 export class GameData {
     public gameField: Tile[][] = [[]];
 
-    public isGameOver: boolean = false;
+    private _isGameOver: boolean = false;
+    public get isGameOver(): boolean {
+        return this._isGameOver;
+    }
+    public set isGameOver(value: boolean) {
+        this._isGameOver = value;
+    }
     public isWin: boolean = true;
     public isStarted: boolean = false; 
     
@@ -65,7 +71,7 @@ export class GameData {
             this.startTime = Date.now(); // Start the timer
         }
         if (this.gameField[rowIndex][colIndex].isFlagged ||
-            this.isGameOver ) {
+            this._isGameOver ) {
             console.warn("returned");
             return;
         }
@@ -80,7 +86,7 @@ export class GameData {
     }
 
     public setFlaggedTile(colIndex: number, rowIndex: number): void {
-        if (!this.gameField[rowIndex][colIndex].isRevealed && !this.isGameOver) {
+        if (!this.gameField[rowIndex][colIndex].isRevealed && !this._isGameOver) {
             this.gameField[rowIndex][colIndex].isFlagged = !this.gameField[rowIndex][colIndex].isFlagged;
             if(this.gameField[rowIndex][colIndex].isFlagged)
                 this.numberOfFlags++;

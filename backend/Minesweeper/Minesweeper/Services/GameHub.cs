@@ -24,12 +24,15 @@ namespace Minesweeper.Services
 
         public async Task SendProgress(int progress)
         {
+
             try
             {
                 Console.WriteLine(progress);
-                var player = dbContext.GameParticipants
-                    .Where(p => p.PlayerId == Context.UserIdentifier)
+                var player = dbContext.Users
+                    .Where(p => p.Id == Context.UserIdentifier)
                     .FirstOrDefault() ?? throw new Exception("Player not found");
+
+                Console.WriteLine("Received progress: " + Convert.ToString(progress) + " from user: " + player.UserName);
 
                 string gameId = dbContext.GameParticipants
                     .Where(gp => gp.PlayerId == Context.UserIdentifier)
@@ -47,13 +50,19 @@ namespace Minesweeper.Services
                     var game = dbContext.Games
                         .Where(g => g.Id == gameId)
                         .FirstOrDefault() ?? throw new Exception("Game not found");
+                    var playerGp = dbContext.GameParticipants
+                        .Where(p => p.PlayerId == Context.UserIdentifier)
+                        .FirstOrDefault() ?? throw new Exception("PlayerGP not found");
+
                     game.IsActive = false;
+
                     await Clients.User(Context.UserIdentifier).SendAsync("GameWon");
                     await Clients.User(enemy.PlayerId).SendAsync("GameLost");
+
                     dbContext.GameParticipants.Remove(enemy);
-                    dbContext.GameParticipants.Remove(player);
-                    
+                    dbContext.GameParticipants.Remove(playerGp);
                     dbContext.SaveChanges();
+
                     Console.WriteLine("GameEnded");
                 }
             }
