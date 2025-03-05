@@ -31,11 +31,11 @@ export default function Multiplayer() {
           <div>
           <div className="w-full h-fit my-5 pl-14 flex">
           <div className="w-1/2 h-fit pr-4">
-           { game.isExploaded ? <h1 className="text-xl my-2 text-gray-300">💥{auth?.user?.userName}</h1> : <h1 className="text-xl my-2 text-gray-300">{auth?.user?.userName}</h1>}
+           { game.currentGameData?.isExploaded ? <h1 className="text-xl my-2 text-gray-300">💥{auth?.user?.userName}</h1> : <h1 className="text-xl my-2 text-gray-300">{auth?.user?.userName}</h1>}
             <Progress className="rounded-md" colorScheme="green" value={showCurrentGameProgress()} hasStripe></Progress>
           </div>
           <div className="w-1/2 h-fit pr-4">
-            <h1 className="text-xl my-2 text-gray-300">{game?.enemyName}</h1>
+            { game.isEnemyExploaded ? <h1 className="text-xl my-2 text-gray-300">💥{game?.enemyName}</h1> : <h1 className="text-xl my-2 text-gray-300">{game?.enemyName}</h1>}
             <Progress className="rounded-md" value={game.enemyProgress} colorScheme="pink" hasStripe></Progress>
           </div>
         </div>

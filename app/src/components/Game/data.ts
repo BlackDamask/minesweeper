@@ -19,7 +19,18 @@ export class GameData {
     public isWin: boolean = true;
     public isStarted: boolean = false; 
     public bombTimer: number = 0; 
-    public isExploaded: boolean = false;
+
+    private _isExploaded: boolean = false;
+    public set isExploaded(value: boolean) {
+        this._isExploaded = value;
+    }
+    public get isExploaded(): boolean {
+        return this._isExploaded;
+    }
+    public updateIsExploaded(value: boolean) {
+        this.isExploaded = value;
+      }
+    
     
     public numberOfFlags: number = 0;
     public numberOfBombs: number = 0;
@@ -52,7 +63,6 @@ export class GameData {
             throw new Error("Invalid constructor arguments for GameData");
         }
     }
-
     public countRevealedTiles(): number{
         let revealedTiles = 0;
         for (let i = 0; i < this.numberOfTilesY; i++) {
@@ -66,7 +76,8 @@ export class GameData {
     }
 
     public handleClickOnTile(colIndex: number, rowIndex: number): void {
-        if(!this.isExploaded){
+        console.warn("handle vlick:"+this._isExploaded)
+        if(!this._isExploaded){
             console.warn(this.numberOfRevealedTiles);
             if (this.isFirstClick) {
                 this.PlaceBombs(colIndex, rowIndex);
@@ -194,34 +205,24 @@ export class GameData {
         return `${minutes}m ${seconds}s`;
     }
 
-    private RevealTile(colIndex: number, rowIndex: number): void{
+    private RevealTile(colIndex: number, rowIndex: number): void {
         this.gameField[rowIndex][colIndex].isRevealed = true;
         this.numberOfRevealedTiles = this.numberOfRevealedTiles + 1;
-        if(!this.isMultiplayerGame){
+    
+        if (!this.isMultiplayerGame) {
             if (this.gameField[rowIndex][colIndex].hasBomb) {
                 this.GameOver(false);
-            }
-
-            else if (this.numberOfRevealedTiles === (this.numberOfTilesX * this.numberOfTilesY) - this.numberOfBombs) {
+            } else if (this.numberOfRevealedTiles === (this.numberOfTilesX * this.numberOfTilesY) - this.numberOfBombs) {
                 this.GameOver(true);
             }
-        }
-        else{
+        } else {
             if (this.gameField[rowIndex][colIndex].hasBomb) {
-                this.bombTimer = 5;
-                this.isExploaded = true;
-                const interval = setInterval(() => {
-                    this.bombTimer--;
-
-                    if (this.bombTimer <= 0) {
-                    clearInterval(interval);
-                    this.isExploaded = false;
-                    }
-                }, 1000);
-            }
+                this._isExploaded = true;
+            } 
         }
         this.checkEmptyTiles(colIndex, rowIndex);
     }
+    
 
     private PlaceBombs(colIndex: number, rowIndex: number): void {
         this.isStarted = true;

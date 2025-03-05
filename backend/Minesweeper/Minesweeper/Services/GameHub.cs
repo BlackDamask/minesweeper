@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.OpenApi.Validations;
 using Minesweeper.data;
+using Minesweeper.DTOs.GameDTO;
 using Minesweeper.models;
 using Minesweeper.models.MinesweeperGame;
 using System;
@@ -22,17 +23,17 @@ namespace Minesweeper.Services
         }
 
 
-        public async Task SendProgress(int progress)
+        public async Task SendProgress(ReceiveProgressDTO response)
         {
 
             try
             {
-                Console.WriteLine(progress);
+                Console.WriteLine(response.Progress);
                 var player = dbContext.Users
                     .Where(p => p.Id == Context.UserIdentifier)
                     .FirstOrDefault() ?? throw new Exception("Player not found");
 
-                Console.WriteLine("Received progress: " + Convert.ToString(progress) + " from user: " + player.UserName);
+                Console.WriteLine("Received progress: " + Convert.ToString(response.Progress)+ Convert.ToString(response.IsExploaded) + " from user: " + player.UserName);
 
                 string gameId = dbContext.GameParticipants
                     .Where(gp => gp.PlayerId == Context.UserIdentifier)
@@ -43,9 +44,25 @@ namespace Minesweeper.Services
                     .Where(gp => gp.GameId == gameId && gp.PlayerId != Context.UserIdentifier)
                     .FirstOrDefault() ?? throw new Exception("Enemy not found");
 
-                await Clients.User(enemy.PlayerId).SendAsync("ReceiveProgress", progress);
+                var sendResponse = new SendProgressDTO { IsExploaded = response.IsExploaded, Progress = response.Progress };
 
-                if (progress == 100)
+
+                await Clients.User(enemy.PlayerId).SendAsync("ReceiveProgress", sendResponse);
+
+                if (response.IsExploaded)
+                {
+                    Console.WriteLine("Explosion detected, starting 5-second timer...");
+
+                    // Wait for 5 seconds
+                    await Task.Delay(5000);
+
+                    Console.WriteLine("Timer expired, sending progress with isExploaded = false");
+
+                    await Clients.User(Context.UserIdentifier).SendAsync("SetNotIsExploaded");
+                    await Clients.User(enemy.PlayerId).SendAsync("ReceiveProgress", response.Progress, false);
+                }
+
+                if (response.Progress == 100)
                 {
                     var game = dbContext.Games
                         .Where(g => g.Id == gameId)

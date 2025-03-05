@@ -10,6 +10,14 @@ interface GameStartResponse {
   rowBeginIndex: number;
   enemyName: string;
 }
+interface ReceiveProgressResponse {
+  progress: number; 
+  isEnemyExploaded:boolean;
+}
+interface SendProgressResponse {
+  progress: number; 
+  isExploaded:boolean;
+}
 
 interface StartCoordinates {
   colIndex: number;
@@ -45,7 +53,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
   
   const [isGameStarted, setIsGameStarted] = useState(false);
   const [isGameEnded, setIsGameEnded] = useState(false);
-  const [isExploaded, setIsExploaded] = useState(true);
+  const [isExploaded, setIsExploaded] = useState(false);
   const [isEnemyExploaded, setIsEnemyExploaded] = useState(true);
   const [enemyName, setEnemyName] = useState("Opponent");
   const [enemyProgress, setEnemyProgress] = useState<number>(0);
@@ -78,11 +86,15 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
       });
     });
 
-    connection.on("ReceiveProgress", (progress: number) => {
-      setEnemyProgress(progress);
+    connection.on("SetNotIsExploaded", () => {
+      console.warn("ReceivedSetNotIsExploaded");
+      
     });
-    connection.on("ReceiveExploaded", (isEnemyExploaded: boolean) => {
-      setIsEnemyExploaded(isEnemyExploaded);
+    
+
+    connection.on("ReceiveProgress", (response: ReceiveProgressResponse) => {
+      setEnemyProgress(response.progress);
+      setIsEnemyExploaded(response.isEnemyExploaded);
     });
 
     connection.on("ReceiveSystemMessage", (message: string) => {
@@ -122,20 +134,23 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const connection = connectionRef.current;
 
     const sendProgress = () =>{
-      if(currentGameData?.maxNumberOfRevealedTiles && connection){
+      if(currentGameData?.maxNumberOfRevealedTiles && connection && !currentGameData.isExploaded){
         const progress = currentGameData?.countRevealedTiles() / currentGameData?.maxNumberOfRevealedTiles * 100;
-        
-        connection.invoke("SendProgress",progress).catch((err) => {
+
+        const progressData: SendProgressResponse = {
+          progress: progress,
+          isExploaded: true,
+        };
+        console.warn(isExploaded);
+        connection.invoke("SendProgress", progressData)
+          .catch((err) => {
             console.error("Error sending game field:", err);
-        });
+          });
       }
     }
     sendProgress();
   }, [currentGameData]);
 
-  function ReturnToQueue(){
-    setIsGameStarted(false);
-  }
 
   return (
     <GameContext.Provider value={{ 
