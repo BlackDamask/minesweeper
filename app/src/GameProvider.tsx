@@ -21,9 +21,12 @@ interface GameContextType {
   isGameEnded: boolean | undefined;
   enemyProgress: number;
   gameField: Tile[][];
+  isExploaded: boolean;
+  isEnemyExploaded: boolean;
   setGameField: React.Dispatch<React.SetStateAction<Tile[][]>>;
   startCoordinates: StartCoordinates;
   setIsGameStarted: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsExploaded: React.Dispatch<React.SetStateAction<boolean>>;
   setCurrentGameData: React.Dispatch<React.SetStateAction<GameData | null>>;
   setStartCoordinates: React.Dispatch<React.SetStateAction<StartCoordinates>>;
   setEnemyProgress: React.Dispatch<React.SetStateAction<number>>;
@@ -42,6 +45,8 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
   
   const [isGameStarted, setIsGameStarted] = useState(false);
   const [isGameEnded, setIsGameEnded] = useState(false);
+  const [isExploaded, setIsExploaded] = useState(true);
+  const [isEnemyExploaded, setIsEnemyExploaded] = useState(true);
   const [enemyName, setEnemyName] = useState("Opponent");
   const [enemyProgress, setEnemyProgress] = useState<number>(0);
   const [gameField, setGameField] = useState<Tile[][]>([[]]);
@@ -75,7 +80,9 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     connection.on("ReceiveProgress", (progress: number) => {
       setEnemyProgress(progress);
-
+    });
+    connection.on("ReceiveExploaded", (isEnemyExploaded: boolean) => {
+      setIsEnemyExploaded(isEnemyExploaded);
     });
 
     connection.on("ReceiveSystemMessage", (message: string) => {
@@ -135,6 +142,9 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
       isGameStarted,
       isGameEnded,
       setGameField,
+      isExploaded,
+      isEnemyExploaded,
+      setIsExploaded,
       enemyProgress,
       setEnemyProgress,
       gameField,

@@ -18,6 +18,8 @@ export class GameData {
     }
     public isWin: boolean = true;
     public isStarted: boolean = false; 
+    public bombTimer: number = 0; 
+    public isExploaded: boolean = false;
     
     public numberOfFlags: number = 0;
     public numberOfBombs: number = 0;
@@ -64,25 +66,26 @@ export class GameData {
     }
 
     public handleClickOnTile(colIndex: number, rowIndex: number): void {
-        console.warn(this.numberOfRevealedTiles);
-        if (this.isFirstClick) {
-            this.PlaceBombs(colIndex, rowIndex);
-            this.isFirstClick = false;
-            this.startTime = Date.now(); // Start the timer
-        }
-        if (this.gameField[rowIndex][colIndex].isFlagged ||
-            this._isGameOver ) {
-            console.warn("returned");
-            return;
-        }
+        if(!this.isExploaded){
+            console.warn(this.numberOfRevealedTiles);
+            if (this.isFirstClick) {
+                this.PlaceBombs(colIndex, rowIndex);
+                this.isFirstClick = false;
+                this.startTime = Date.now(); // Start the timer
+            }
+            if (this.gameField[rowIndex][colIndex].isFlagged ||
+                this._isGameOver ) {
+                console.warn("returned");
+                return;
+            }
 
-        if(this.gameField[rowIndex][colIndex].isRevealed){
-            this.handleSmartReveal(colIndex, rowIndex);
-        }
-        else{
-            this.RevealTile(colIndex, rowIndex);
-        }
-        
+            if(this.gameField[rowIndex][colIndex].isRevealed){
+                this.handleSmartReveal(colIndex, rowIndex);
+            }
+            else{
+                this.RevealTile(colIndex, rowIndex);
+            }
+        }   
     }
 
     public setFlaggedTile(colIndex: number, rowIndex: number): void {
@@ -203,7 +206,20 @@ export class GameData {
                 this.GameOver(true);
             }
         }
-        
+        else{
+            if (this.gameField[rowIndex][colIndex].hasBomb) {
+                this.bombTimer = 5;
+                this.isExploaded = true;
+                const interval = setInterval(() => {
+                    this.bombTimer--;
+
+                    if (this.bombTimer <= 0) {
+                    clearInterval(interval);
+                    this.isExploaded = false;
+                    }
+                }, 1000);
+            }
+        }
         this.checkEmptyTiles(colIndex, rowIndex);
     }
 

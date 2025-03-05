@@ -26,8 +26,7 @@ export default function MultiplayerGamePanel({gameField, colIndex, rowIndex, sel
     );
     const [selectedMode, setSelectedMode] = useState<number>(1);
     const [startTime, setStartTime] = useState<number | null>(null);
-    const [isWon, setIsWon] = useState<boolean>(false);
-    const [isGameEnded, setIsGameEnded] = useState<boolean>(false)
+    const [isExploaded, setIsExploaded] = useState<boolean>(false);
     const { isOpen, onOpen, onClose } = useDisclosure();
 
     const handleSelectMode = (event: any) => {
