@@ -20,16 +20,10 @@ export class GameData {
     public isStarted: boolean = false; 
     public bombTimer: number = 0; 
 
-    private _isExploaded: boolean = false;
-    public set isExploaded(value: boolean) {
-        this._isExploaded = value;
-    }
-    public get isExploaded(): boolean {
-        return this._isExploaded;
-    }
-    public updateIsExploaded(value: boolean) {
-        this.isExploaded = value;
-      }
+    public colStartIndex: number = 0;
+    public rowStartIndex: number = 0;
+
+    public isExploaded: boolean | undefined = false;
     
     
     public numberOfFlags: number = 0;
@@ -48,16 +42,21 @@ export class GameData {
     private endTime: number | null = null;
     public time: string | null = null;
 
-    constructor(config: { difficulty?: number; gameField?: Tile[][]; colStartIndex?: number; rowStartIndex?: number }) {
+    constructor(config: { difficulty?: number; gameField?: Tile[][]; colStartIndex?: number; rowStartIndex?: number; isExploaded?: boolean }) {
         
-        if (config.difficulty !== undefined) {
+        if (config.difficulty !== undefined && this.isExploaded !==undefined) {
             this.SetDifficulty(config.difficulty);
             this.Generate();
         } else if (config.gameField !== undefined && config.colStartIndex !== undefined && config.rowStartIndex !== undefined) {
             this.SetDifficulty(1);
+            if(config.isExploaded !== undefined ){
+                this.isExploaded = config.isExploaded
+            }
             this.gameField = config.gameField;
             this.isFirstClick = false;
             this.isMultiplayerGame = true;
+            this.colStartIndex = config.colStartIndex;
+            this.rowStartIndex = config.rowStartIndex;
             this.RevealTile(config.colStartIndex, config.rowStartIndex);
         } else {
             throw new Error("Invalid constructor arguments for GameData");
@@ -76,31 +75,28 @@ export class GameData {
     }
 
     public handleClickOnTile(colIndex: number, rowIndex: number): void {
-        console.warn("handle vlick:"+this._isExploaded)
-        if(!this._isExploaded){
-            console.warn(this.numberOfRevealedTiles);
-            if (this.isFirstClick) {
-                this.PlaceBombs(colIndex, rowIndex);
-                this.isFirstClick = false;
-                this.startTime = Date.now(); // Start the timer
-            }
-            if (this.gameField[rowIndex][colIndex].isFlagged ||
-                this._isGameOver ) {
-                console.warn("returned");
-                return;
-            }
+        if (this.isFirstClick) {
+            this.PlaceBombs(colIndex, rowIndex);
+            this.isFirstClick = false;
+            this.startTime = Date.now(); // Start the timer
+        }
+        if (this.gameField[rowIndex][colIndex].isFlagged ||
+            this._isGameOver ) {
+            console.warn("returned");
+            return;
+        }
 
-            if(this.gameField[rowIndex][colIndex].isRevealed){
-                this.handleSmartReveal(colIndex, rowIndex);
-            }
-            else{
-                this.RevealTile(colIndex, rowIndex);
-            }
-        }   
+        if(this.gameField[rowIndex][colIndex].isRevealed){
+            this.handleSmartReveal(colIndex, rowIndex);
+        }
+        else{
+            this.RevealTile(colIndex, rowIndex);
+        }
+        
     }
 
     public setFlaggedTile(colIndex: number, rowIndex: number): void {
-        if (!this.gameField[rowIndex][colIndex].isRevealed && !this._isGameOver) {
+        if (!this.gameField[rowIndex][colIndex].isRevealed ) {
             this.gameField[rowIndex][colIndex].isFlagged = !this.gameField[rowIndex][colIndex].isFlagged;
             if(this.gameField[rowIndex][colIndex].isFlagged)
                 this.numberOfFlags++;
@@ -215,14 +211,9 @@ export class GameData {
             } else if (this.numberOfRevealedTiles === (this.numberOfTilesX * this.numberOfTilesY) - this.numberOfBombs) {
                 this.GameOver(true);
             }
-        } else {
-            if (this.gameField[rowIndex][colIndex].hasBomb) {
-                this._isExploaded = true;
-            } 
-        }
+        } 
         this.checkEmptyTiles(colIndex, rowIndex);
     }
-    
 
     private PlaceBombs(colIndex: number, rowIndex: number): void {
         this.isStarted = true;

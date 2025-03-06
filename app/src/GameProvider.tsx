@@ -88,7 +88,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     connection.on("SetNotIsExploaded", () => {
       console.warn("ReceivedSetNotIsExploaded");
-      
+      setIsExploaded(false);
     });
     
 
@@ -134,22 +134,24 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const connection = connectionRef.current;
 
     const sendProgress = () =>{
-      if(currentGameData?.maxNumberOfRevealedTiles && connection && !currentGameData.isExploaded){
+      if(currentGameData?.maxNumberOfRevealedTiles && connection ){
         const progress = currentGameData?.countRevealedTiles() / currentGameData?.maxNumberOfRevealedTiles * 100;
-
-        const progressData: SendProgressResponse = {
-          progress: progress,
-          isExploaded: true,
-        };
-        console.warn(isExploaded);
-        connection.invoke("SendProgress", progressData)
-          .catch((err) => {
-            console.error("Error sending game field:", err);
-          });
+        if(currentGameData.isExploaded !== undefined){
+          const progressData: SendProgressResponse = {
+            progress: progress,
+            isExploaded: isExploaded,
+          };
+        
+          console.warn(currentGameData.isExploaded);
+          connection.invoke("SendProgress", progressData)
+            .catch((err) => {
+              console.error("Error sending game field:", err);
+            });
+        }
       }
     }
     sendProgress();
-  }, [currentGameData]);
+  }, [currentGameData, isExploaded]);
 
 
   return (

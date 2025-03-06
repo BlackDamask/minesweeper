@@ -1,7 +1,8 @@
 import { useState, ReactElement, useEffect } from "react";
 import { GameData } from './data';
 import { ReactComponent as FlagIcon } from './flag.svg';
-import { Button, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, useDisclosure } from "@chakra-ui/react";
+import { Button, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Spinner, useDisclosure } from "@chakra-ui/react";
+import { useGameContext } from "../../GameProvider";
 
 const textColorMap: { [key: number]: string } = {
     1: 'text-blue-700',
@@ -39,10 +40,21 @@ const showBombCount = (bombCount: number | null): ReactElement => {
 };
 
 export default function Game(
-        { currentGameData, setCurrentGameData, selectedOption, selectedMode,selectedZoom, setStartTime, startTime}: 
-        { currentGameData: GameData, setCurrentGameData:  React.Dispatch<React.SetStateAction<GameData>>, setStartTime: React.Dispatch<React.SetStateAction<number | null>>, startTime: number | null, selectedOption: number, selectedMode: number, selectedZoom: number}
+        { currentGameData, setCurrentGameData, selectedOption, selectedMode,selectedZoom, setStartTime, startTime, isExploaded, setIsExploaded}: 
+        { 
+            currentGameData: GameData,
+            setCurrentGameData:  React.Dispatch<React.SetStateAction<GameData>>, 
+            setStartTime: React.Dispatch<React.SetStateAction<number | null>>, 
+            startTime: number | null, 
+            selectedOption: number, 
+            selectedMode: number, 
+            selectedZoom: number, 
+            isExploaded: boolean | undefined,
+            setIsExploaded: React.Dispatch<React.SetStateAction<boolean>> | undefined
+        }
     ) 
 {
+    const game = useGameContext();
     const { isOpen, onOpen, onClose } = useDisclosure();
 
     useEffect(() => {
@@ -50,7 +62,7 @@ export default function Game(
             onOpen();
             setStartTime(null);
         }
-    }, [currentGameData.isGameOver, onOpen]);
+    }, [currentGameData.isGameOver, onOpen, setStartTime]);
 
     const setFlaggedTile = (rowIndex: number, colIndex: number) => {
         currentGameData.setFlaggedTile(rowIndex, colIndex);
@@ -59,32 +71,43 @@ export default function Game(
     } 
     const setRevealedTile = (colIndex: number, rowIndex: number) => {
         if (!currentGameData.gameField[rowIndex][colIndex].isFlagged) {
-            
-            currentGameData.handleClickOnTile(colIndex, rowIndex);
-            setCurrentGameData(Object.assign(Object.create(Object.getPrototypeOf(currentGameData)), currentGameData));
+            if(currentGameData.gameField[rowIndex][colIndex].hasBomb && isExploaded !== undefined && setIsExploaded !== undefined){
+                currentGameData.setFlaggedTile(colIndex,rowIndex);
+                setIsExploaded(true);
+                
+            }
+            else{
+                currentGameData.handleClickOnTile(colIndex, rowIndex);
+                setCurrentGameData(Object.assign(Object.create(Object.getPrototypeOf(currentGameData)), currentGameData));
+            }
         }
     }
 
     const handleClick = (rowIndex: number, colIndex: number) => {
-        if(!startTime){
-            setStartTime(Date.now());
-        }
-        if(selectedMode === 1){
-            setRevealedTile(colIndex, rowIndex);
-        }
-        else{
-            setFlaggedTile(colIndex, rowIndex);
+        if(!isExploaded){
+            if(!startTime){
+                setStartTime(Date.now());
+            }
+            if(selectedMode === 1){
+                setRevealedTile(colIndex, rowIndex);
+            }
+            else{
+                setFlaggedTile(colIndex, rowIndex);
+            }
         }
     };
 
     const handleRightClick = (e: React.MouseEvent, rowIndex: number, colIndex: number) => {
-        e.preventDefault();
-        if(selectedMode === 1){
-            setFlaggedTile(colIndex, rowIndex);
+        if(!isExploaded){
+            e.preventDefault();
+            if(selectedMode === 1){
+                setFlaggedTile(colIndex, rowIndex);
+            }
+            else{
+                setRevealedTile(colIndex ,rowIndex );
+            }
         }
-        else{
-            setRevealedTile(colIndex ,rowIndex );
-        }
+        
     };
 
     const showModalContent = (isWon: boolean): ReactElement => {
@@ -125,7 +148,7 @@ export default function Game(
     };
 
     return (
-        <div>
+        <div style={{ filter: game?.isExploaded ? 'invert(1)' : 'none' }}>
             
             {currentGameData.gameField.map((row, rowIndex) => (
                 <div className={`flex w-fit h-fit text-xl`} key={rowIndex} >
@@ -194,6 +217,7 @@ export default function Game(
                 {showModalContent(currentGameData.isWin)}
             </Modal>
         </div>
+        
     );
 }
 

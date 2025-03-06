@@ -136,13 +136,15 @@ export default function GamePanel()
                     </nav>
                     <div className='h-3 w-full bg-[#5D789CX]'></div>
                     <Game 
-                        currentGameData={currentGameData} 
+                        currentGameData = {currentGameData} 
                         setCurrentGameData = {setCurrentGameData} 
                         selectedOption = {selectedOption} 
                         selectedMode = {selectedMode}
                         selectedZoom = {selectedZoom}
                         setStartTime = {setStartTime}
-                        startTime={startTime}
+                        startTime = {startTime}
+                        isExploaded = {undefined}
+                        setIsExploaded = {undefined}
                     />
                 </div>
             </div>

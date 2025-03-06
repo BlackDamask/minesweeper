@@ -29,6 +29,34 @@ export default function MultiplayerGamePanel({gameField, colIndex, rowIndex, sel
     const [isExploaded, setIsExploaded] = useState<boolean>(false);
     const { isOpen, onOpen, onClose } = useDisclosure();
 
+    const [timer, setTimer] = useState("00:00");
+
+    
+
+    useEffect(() => {
+        const getTime = () => {
+            if(startTime){
+                const time = Date.now() - startTime;
+                let minutes = String(Math.floor((time / 1000 / 60) % 60));
+                let seconds = String(Math.floor((time / 1000) % 60));
+                if(minutes.length === 1){
+                    minutes = "0"+minutes
+                }
+                if(seconds.length === 1){
+                    seconds = "0"+seconds
+                }
+                setTimer(minutes+":"+ seconds);
+            }
+            else{
+                setTimer("00:00");
+            }
+            
+          };
+        const interval = setInterval(() => getTime(), 1000);
+        
+        return () => clearInterval(interval);
+      }, [startTime]);
+
     const handleSelectMode = (event: any) => {
         const selectedMode = Number(event.target.value); 
         setSelectedMode(selectedMode);
@@ -92,15 +120,14 @@ export default function MultiplayerGamePanel({gameField, colIndex, rowIndex, sel
                 </div>
             <div className='h-fit w-fit'>
                 
-                <div className='flex'>
-                    
-                
-                </div>
+            <div className={`flex mt-5 ${game?.isExploaded ? 'text-white' : 'text-transparent'} text-xl `}>
+                <p>You Exploaded</p>
+            </div>
                 
                 <div className="bg-[#4A619B] h-full w-full pt-3 border-t rounded-xl ">
                 <nav className='flex justify-between items-center text-white'>
-                        <div style={{width: `${selectedZoom*3}px`, height: `${selectedZoom*2}px`,fontSize: `${selectedZoom*1.2}px` }} className='flex justify-center items-center font-pixelFont'>
-                            00:00
+                <div style={{width: `${selectedZoom*3}px`, height: `${selectedZoom*2}px`,fontSize: `${selectedZoom*1.2}px`, color:"white" }} className='flex justify-center items-center font-pixelFont'>
+                            {timer}
                         </div>
                         <div className="flex h-full justify-center items-center" style={{width: `${selectedZoom*2}px`}}>
 
@@ -112,13 +139,15 @@ export default function MultiplayerGamePanel({gameField, colIndex, rowIndex, sel
                     </nav>
                     <div className='h-3 w-full bg-[#4A619B]'></div>
                     <Game 
-                        currentGameData={currentGameData} 
+                        currentGameData = {currentGameData} 
                         setCurrentGameData = {setCurrentGameData} 
                         selectedOption = {selectedOption} 
                         selectedMode = {selectedMode}
                         selectedZoom = {selectedZoom}
-                        setStartTime={setStartTime}
-                        startTime={startTime}
+                        setStartTime = {setStartTime}
+                        startTime = {startTime}
+                        isExploaded = {game?.isExploaded}
+                        setIsExploaded={game?.setIsExploaded}
                     />
                 </div>
             </div>
