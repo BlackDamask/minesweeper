@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect, ReactNode } from "react";
 import axios from "./api/axios";
+import { errorMonitor } from "events";
 
 interface ApiResponse<T> {
   data: T;
@@ -37,6 +38,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const login = async (email: string, password: string): Promise<{ success: boolean; message?: string }> => {
     try {
       const response = await axios.post("/player/login", { email: email, password });
+      if(!response.data.success){
+        return { success: false, message:response.data.message };
+      }
       const { accessToken, refreshToken } = response.data.data;
       setAccessToken(accessToken);
       setRefreshToken(refreshToken);
@@ -47,14 +51,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const userProfile = await axios.get<ApiResponse<User>>("/player/profile", {
         headers: { Authorization: `Bearer ${accessToken}` },
       });
+
       setUser(userProfile.data.data);
       setIsLoggedIn(true);
 
       return { success: true };
     } catch (error: any) {
-      console.error(error);
       setIsLoggedIn(false);
-      return { success: false, message: error.response?.data?.message || "Login failed" };
+      const errorMessage = error.response?.data?.message || error.message || "Login failed";
+      return { success: false, message: errorMessage };
     }
   };
 

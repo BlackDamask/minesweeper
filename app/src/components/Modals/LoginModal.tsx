@@ -17,10 +17,15 @@ export default function LoginModal({isOpen, onClose} : {isOpen: boolean, onClose
       };
       const handleSubmit = async () => {
         setLoading(true);
+        const result = await auth!.login(formData.email, formData.password);
         try{
-            const result = await auth!.login(formData.email, formData.password);
             if (!result.success) {
-                throw(result.message);
+                toast({
+                    title: "Login failed",
+                    description: `${result.message}`,
+                    status: 'error',
+                    isClosable: true,
+                });
             }
             else{
                 toast({
@@ -34,7 +39,7 @@ export default function LoginModal({isOpen, onClose} : {isOpen: boolean, onClose
         catch(error){
             toast({
                 title: "Login failed",
-                description: `${error}`,
+                description: `${result.message}`,
                 status: 'error',
                 isClosable: true,
             });

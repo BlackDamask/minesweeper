@@ -40,6 +40,12 @@ namespace Minesweeper.Services.AuthenticationService
                 serviceResponse.Message = "User not found";
                 return serviceResponse;
             }
+            if (!await playerManager.IsEmailConfirmedAsync(loggedPlayer))
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = "Email is not confirmed";
+                return serviceResponse;
+            }
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, loggedPlayer.Id),
