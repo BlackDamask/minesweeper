@@ -128,7 +128,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         .then(() => console.log("SignalR Connection Stopped"))
         .catch((err) => console.error("Error stopping SignalR connection:", err));
     };
-  }, [accessToken, toast]);
+  }, [accessToken, currentGameData, toast]);
 
   useEffect(() => {
     const connection = connectionRef.current;
