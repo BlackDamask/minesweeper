@@ -83,8 +83,10 @@ namespace Minesweeper.Services.AuthenticationService
             var result = await playerManager.CreateAsync(player, newPlayer.Password);
             if (result.Succeeded)
             {
+                var token = playerManager.GenerateEmailConfirmationTokenAsync(player);
                 serviceResponse.Message = "Registration succeeded";
                 serviceResponse.Success = true;
+
             }
             else
             {

@@ -12,6 +12,7 @@ using Minesweeper.Services.MatchmakingService;
 using Minesweeper.Services;
 using Minesweeper.Services.AuthenticationService;
 using Minesweeper.Services.GameService;
+using Minesweeper.Services.EmailService;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -74,6 +75,9 @@ builder.Services.AddCors(options =>
                         .AllowAnyMethod()
                         .AllowCredentials());
 });
+
+builder.Services.AddSingleton<EmailService>();
+
 
 
 
