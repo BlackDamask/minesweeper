@@ -59,7 +59,8 @@ namespace Minesweeper.Services
                     Console.WriteLine("Timer expired, sending progress with isExploaded = false");
 
                     await Clients.User(Context.UserIdentifier).SendAsync("SetNotIsExploaded");
-                    await Clients.User(enemy.PlayerId).SendAsync("ReceiveProgress", response.Progress, false);
+                    sendResponse.IsExploaded = false;
+                    await Clients.User(enemy.PlayerId).SendAsync("ReceiveProgress", sendResponse);
                 }
 
                 if (response.Progress == 100)

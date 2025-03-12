@@ -23,6 +23,9 @@ export class GameData {
     public colStartIndex: number = 0;
     public rowStartIndex: number = 0;
 
+    public numberOfTilesX: number = 0;
+    public numberOfTilesY: number = 0;
+
     public isExploaded: boolean | undefined = false;
     
     
@@ -34,8 +37,7 @@ export class GameData {
     private isFirstClick: boolean = true;
     private isMultiplayerGame: boolean = false;
 
-    private numberOfTilesX: number = 0;
-    private numberOfTilesY: number = 0;
+    
     
 
     private startTime: number | null = null;

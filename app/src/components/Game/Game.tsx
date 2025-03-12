@@ -71,10 +71,54 @@ export default function Game(
     } 
     const setRevealedTile = (colIndex: number, rowIndex: number) => {
         if (!currentGameData.gameField[rowIndex][colIndex].isFlagged) {
-            if(currentGameData.gameField[rowIndex][colIndex].hasBomb && isExploaded !== undefined && setIsExploaded !== undefined){
-                currentGameData.setFlaggedTile(colIndex,rowIndex);
-                setIsExploaded(true);
+            if(isExploaded !== undefined && setIsExploaded !== undefined){
+                if(currentGameData.gameField[rowIndex][colIndex].hasBomb){
+                    currentGameData.setFlaggedTile(colIndex,rowIndex);
+                    setIsExploaded(true);
+                }
+                else if(currentGameData.gameField[rowIndex][colIndex].isRevealed){
+                    let nearbyFlags = 0;
+                    for (let x = -1; x <= 1; x++) {
+                        for (let y = -1; y <= 1; y++) {
+                            if (x === 0 && y === 0) continue; // Skip the current tile
                 
+                            const newRow = rowIndex + x;
+                            const newCol = colIndex + y;
+                
+                            if (newRow >= 0 && newRow < currentGameData.numberOfTilesY && newCol >= 0 && newCol < currentGameData.numberOfTilesX) {
+                                if (currentGameData.gameField[newRow][newCol].isFlagged) {
+                                    nearbyFlags++;
+                                }
+                            }
+                        }
+                    }
+                    if(currentGameData.gameField[rowIndex][colIndex].nearbyBombs === nearbyFlags){
+                        for (let x = -1; x <= 1; x++) {
+                            for (let y = -1; y <= 1; y++) {
+                                if (x === 0 && y === 0) continue; 
+                    
+                                const newRow = rowIndex + x;
+                                const newCol = colIndex + y;
+                    
+                                if (newRow >= 0 && newRow < currentGameData.numberOfTilesY && newCol >= 0 && newCol < currentGameData.numberOfTilesX) {
+                                    if (currentGameData.gameField[newRow][newCol].hasBomb && !currentGameData.gameField[newRow][newCol].isFlagged) {
+                                            currentGameData.setFlaggedTile(newRow,newCol);
+                                            setIsExploaded(true);
+                                    }
+                                    else if(!currentGameData.gameField[newRow][newCol].isFlagged && !currentGameData.gameField[newRow][newCol].isRevealed){
+                                        currentGameData.handleClickOnTile(colIndex, rowIndex);
+                                        
+                                        setCurrentGameData(Object.assign(Object.create(Object.getPrototypeOf(currentGameData)), currentGameData));
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                else{
+                    currentGameData.handleClickOnTile(colIndex, rowIndex);
+                    setCurrentGameData(Object.assign(Object.create(Object.getPrototypeOf(currentGameData)), currentGameData));
+                }
             }
             else{
                 currentGameData.handleClickOnTile(colIndex, rowIndex);
