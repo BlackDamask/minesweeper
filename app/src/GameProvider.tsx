@@ -12,7 +12,7 @@ interface GameStartResponse {
 }
 interface ReceiveProgressResponse {
   progress: number; 
-  isEnemyExploaded:boolean;
+  isExploaded:boolean;
 }
 interface SendProgressResponse {
   progress: number; 
@@ -69,7 +69,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
       .withUrl("https://localhost:7036/game", {
         accessTokenFactory: () => accessToken ?? "",
       })
-      .build();
+      .build(); 
 
     connectionRef.current = connection;
 
@@ -94,17 +94,11 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     connection.on("ReceiveProgress", (response: ReceiveProgressResponse) => {
       setEnemyProgress(response.progress);
-      setIsEnemyExploaded(response.isEnemyExploaded);
+      setIsEnemyExploaded(response.isExploaded);
     });
 
     connection.on("ReceiveSystemMessage", (message: string) => {
       console.log("System message received:", message);
-      toast({
-        title: "System Message",
-        description: message,
-        status: "info",
-        isClosable: true,
-      });
     });
 
     
