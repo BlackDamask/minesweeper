@@ -1,12 +1,15 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.IdentityModel.Tokens;
 using Minesweeper.data;
 using Minesweeper.DTOs.PlayerDTO;
 using Minesweeper.models;
+using Minesweeper.Services.EmailService;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Text.Encodings.Web;
 
 namespace Minesweeper.Services.AuthenticationService
 {
@@ -16,6 +19,7 @@ namespace Minesweeper.Services.AuthenticationService
         private readonly IMapper mapper;
         private readonly IConfiguration configuration;
         private readonly ApplicationDbContext context;
+        private readonly IEmailService emailService;
 
         public AuthenticationService(
             UserManager<Player> playerManager,
@@ -83,10 +87,17 @@ namespace Minesweeper.Services.AuthenticationService
             var result = await playerManager.CreateAsync(player, newPlayer.Password);
             if (result.Succeeded)
             {
-                var token = playerManager.GenerateEmailConfirmationTokenAsync(player);
-                serviceResponse.Message = "Registration succeeded";
-                serviceResponse.Success = true;
+                var token = await playerManager.GenerateEmailConfirmationTokenAsync(player);
 
+                var encodedToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
+
+                var confirmationLink = $"https://localhost:7036/api/auth/confirm-email?userId={player.Id}&token={encodedToken}";
+
+                await emailService.SendEmailAsync(player.Email, "Confirm Your Email",
+                    $"Please confirm your email by clicking <a href='{confirmationLink}'>here</a>.");
+
+                serviceResponse.Message = "Registration succeeded! Please check your email for confirmation.";
+                serviceResponse.Success = true;
             }
             else
             {
@@ -97,7 +108,8 @@ namespace Minesweeper.Services.AuthenticationService
             return serviceResponse;
         }
 
-        
+
+
 
         public async Task<ServiceResponse<string>> RefreshToken(string refreshToken)
         {

@@ -3,8 +3,10 @@ using MailKit.Security;
 using MimeKit;
 using Microsoft.Extensions.Configuration;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using Minesweeper.Services.EmailService;
 
-public class EmailService
+public class EmailService : IEmailService
 {
     private readonly IConfiguration _config;
 

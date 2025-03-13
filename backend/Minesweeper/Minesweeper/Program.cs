@@ -17,7 +17,6 @@ using Minesweeper.Services.EmailService;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 
 builder.Services.AddControllers();
 
@@ -60,7 +59,10 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddSignalR().AddNewtonsoftJsonProtocol();
 
-builder.Services.AddIdentityCore<Player>()
+builder.Services.AddIdentityCore<Player>(options =>
+{
+    options.SignIn.RequireConfirmedEmail = true;
+})
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddApiEndpoints();
 
