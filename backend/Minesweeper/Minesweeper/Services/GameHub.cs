@@ -28,7 +28,6 @@ namespace Minesweeper.Services
 
             try
             {
-                Console.WriteLine(response.Progress);
                 var player = dbContext.Users
                     .Where(p => p.Id == Context.UserIdentifier)
                     .FirstOrDefault() ?? throw new Exception("Player not found");

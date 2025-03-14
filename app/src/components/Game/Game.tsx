@@ -40,7 +40,7 @@ const showBombCount = (bombCount: number | null): ReactElement => {
 };
 
 export default function Game(
-        { currentGameData, setCurrentGameData, selectedOption, selectedMode,selectedZoom, setStartTime, startTime, isExploaded, setIsExploaded}: 
+        { currentGameData, setCurrentGameData, selectedOption, selectedMode,selectedZoom, setStartTime, startTime, isExploaded, playerExploaded}: 
         { 
             currentGameData: GameData,
             setCurrentGameData:  React.Dispatch<React.SetStateAction<GameData>>, 
@@ -50,7 +50,7 @@ export default function Game(
             selectedMode: number, 
             selectedZoom: number, 
             isExploaded: boolean | undefined,
-            setIsExploaded: React.Dispatch<React.SetStateAction<boolean>> | undefined
+            playerExploaded: (() => void) | undefined
         }
     ) 
 {
@@ -64,17 +64,17 @@ export default function Game(
         }
     }, [currentGameData.isGameOver, onOpen, setStartTime]);
 
-    const setFlaggedTile = (rowIndex: number, colIndex: number) => {
-        currentGameData.setFlaggedTile(rowIndex, colIndex);
+    const setFlaggedTile = (colIndex: number, rowIndex: number) => {
+        currentGameData.setFlaggedTile(colIndex, rowIndex);
         setCurrentGameData(Object.assign(Object.create(Object.getPrototypeOf(currentGameData)), currentGameData));
     
     } 
     const setRevealedTile = (colIndex: number, rowIndex: number) => {
         if (!currentGameData.gameField[rowIndex][colIndex].isFlagged) {
-            if(isExploaded !== undefined && setIsExploaded !== undefined){
+            if(isExploaded !== undefined && playerExploaded !== undefined){
                 if(currentGameData.gameField[rowIndex][colIndex].hasBomb){
-                    currentGameData.setFlaggedTile(colIndex,rowIndex);
-                    setIsExploaded(true);
+                    setFlaggedTile(colIndex,rowIndex);
+                    playerExploaded();
                 }
                 else if(currentGameData.gameField[rowIndex][colIndex].isRevealed){
                     let nearbyFlags = 0;
@@ -102,8 +102,8 @@ export default function Game(
                     
                                 if (newRow >= 0 && newRow < currentGameData.numberOfTilesY && newCol >= 0 && newCol < currentGameData.numberOfTilesX) {
                                     if (currentGameData.gameField[newRow][newCol].hasBomb && !currentGameData.gameField[newRow][newCol].isFlagged) {
-                                            currentGameData.setFlaggedTile(newRow,newCol);
-                                            setIsExploaded(true);
+                                        setFlaggedTile(colIndex,rowIndex);
+                                        playerExploaded();
                                     }
                                     else if(!currentGameData.gameField[newRow][newCol].isFlagged && !currentGameData.gameField[newRow][newCol].isRevealed){
                                         currentGameData.handleClickOnTile(colIndex, rowIndex);
@@ -128,6 +128,7 @@ export default function Game(
     }
 
     const handleClick = (rowIndex: number, colIndex: number) => {
+        console.log(isExploaded)
         if(!isExploaded){
             if(!startTime){
                 setStartTime(Date.now());

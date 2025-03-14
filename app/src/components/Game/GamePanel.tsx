@@ -144,7 +144,7 @@ export default function GamePanel()
                         setStartTime = {setStartTime}
                         startTime = {startTime}
                         isExploaded = {undefined}
-                        setIsExploaded = {undefined}
+                        playerExploaded = {undefined}
                     />
                 </div>
             </div>

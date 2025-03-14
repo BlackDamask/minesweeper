@@ -147,7 +147,7 @@ export default function MultiplayerGamePanel({gameField, colIndex, rowIndex, sel
                         setStartTime = {setStartTime}
                         startTime = {startTime}
                         isExploaded = {game?.isExploaded}
-                        setIsExploaded={game?.setIsExploaded}
+                        playerExploaded = {game?.playerExploaded}
                     />
                 </div>
             </div>

@@ -35,6 +35,7 @@ interface GameContextType {
   startCoordinates: StartCoordinates;
   setIsGameStarted: React.Dispatch<React.SetStateAction<boolean>>;
   setIsExploaded: React.Dispatch<React.SetStateAction<boolean>>;
+  playerExploaded:() => void;
   setCurrentGameData: React.Dispatch<React.SetStateAction<GameData | null>>;
   setStartCoordinates: React.Dispatch<React.SetStateAction<StartCoordinates>>;
   setEnemyProgress: React.Dispatch<React.SetStateAction<number>>;
@@ -63,6 +64,15 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isWon, setIsWon] = useState<boolean>(false);
   const connectionRef = useRef<signalR.HubConnection | null>(null);
 
+  const playerExploaded = () =>
+    {
+      console.log("set to true");
+      setIsExploaded(true);
+      setTimeout(() => {
+        console.log("set to false");
+        setIsExploaded(false);
+      }, 5000); 
+    }
 
   useEffect(() => {
     const connection = new signalR.HubConnectionBuilder()
@@ -99,6 +109,12 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     connection.on("ReceiveSystemMessage", (message: string) => {
       console.log("System message received:", message);
+      toast({
+        title: "System Message",
+        description: message,
+        status: "info",
+        isClosable: true,
+      });
     });
 
     
@@ -126,6 +142,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   useEffect(() => {
     const connection = connectionRef.current;
+    
 
     const sendProgress = () =>{
       if(currentGameData?.maxNumberOfRevealedTiles && connection ){
@@ -156,6 +173,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
       isExploaded,
       isEnemyExploaded,
       setIsExploaded,
+      playerExploaded,
       enemyProgress,
       setEnemyProgress,
       gameField,
