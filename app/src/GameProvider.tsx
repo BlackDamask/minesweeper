@@ -91,8 +91,8 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     const connection = connectionRef.current
     if(connection){
-      connection.start()
-        .then(() => {
+      if(connection.state !== "Connected")
+        connection.start().catch((e) => "Failed to connect to websocket: " + e);
           connection.on("GameStarted", (response: GameStartResponse) => {
             setEnemyName(response.enemyName);
             setGameField(response.gameField);
@@ -140,8 +140,6 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
             setIsWon(false);
             currentGameData!.isGameOver = true;
           });
-        })
-        .catch(e => console.warn('Connection failed: ',e))
     }
   }, [connectionRef,currentGameData, toast]); 
 
@@ -150,9 +148,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     const sendProgress = () =>{
       if(connection)
-        connection.start()
-          .then(() =>
-          {
+
             if(currentGameData?.maxNumberOfRevealedTiles){
               const progress = currentGameData?.countRevealedTiles() / currentGameData?.maxNumberOfRevealedTiles * 100;
               if(currentGameData.isExploaded !== undefined){
@@ -167,10 +163,6 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
                     } 
             }
           }
-        ).catch((err) => {
-          console.error("Error sending game field:", err);
-        });
-    }
     sendProgress();
   }, [currentGameData, isExploaded]);
 

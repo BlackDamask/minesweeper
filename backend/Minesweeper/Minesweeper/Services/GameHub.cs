@@ -48,19 +48,6 @@ namespace Minesweeper.Services
 
                 await Clients.User(enemy.PlayerId).SendAsync("ReceiveProgress", sendResponse);
 
-                if (response.IsExploaded)
-                {
-                    Console.WriteLine("Explosion detected, starting 5-second timer...");
-
-                    // Wait for 5 seconds
-                    await Task.Delay(5000);
-
-                    Console.WriteLine("Timer expired, sending progress with isExploaded = false");
-
-                    await Clients.User(Context.UserIdentifier).SendAsync("SetNotIsExploaded");
-                    sendResponse.IsExploaded = false;
-                    await Clients.User(enemy.PlayerId).SendAsync("ReceiveProgress", sendResponse);
-                }
 
                 if (response.Progress == 100)
                 {
@@ -97,6 +84,7 @@ namespace Minesweeper.Services
 
             await Clients.All.SendAsync("ReceiveSystemMessage",
                 $"{Context.UserIdentifier} joined.");
+            Console.WriteLine(Clients.ToString());
 
         }
     }
