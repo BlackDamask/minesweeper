@@ -79,87 +79,97 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
       .withUrl("https://localhost:7036/game", {
         accessTokenFactory: () => accessToken ?? "",
       })
+      .withAutomaticReconnect()
       .build(); 
 
     connectionRef.current = connection;
 
-    connection.on("GameStarted", (response: GameStartResponse) => {
-      setEnemyName(response.enemyName);
-      setGameField(response.gameField);
-      setStartCoordinates({ colIndex: response.colBeginIndex, rowIndex: response.rowBeginIndex });
-      setIsGameStarted(true);
-      setIsGameEnded(false);
-      toast({
-        title: "Game Started",
-        status: "success",
-        isClosable: true,
-      });
-    });
-
-    connection.on("SetNotIsExploaded", () => {
-      console.warn("ReceivedSetNotIsExploaded");
-      setIsExploaded(false);
-    });
     
 
-    connection.on("ReceiveProgress", (response: ReceiveProgressResponse) => {
-      setEnemyProgress(response.progress);
-      setIsEnemyExploaded(response.isExploaded);
-    });
+  }, [accessToken,connectionRef]);
 
-    connection.on("ReceiveSystemMessage", (message: string) => {
-      console.log("System message received:", message);
-      toast({
-        title: "System Message",
-        description: message,
-        status: "info",
-        isClosable: true,
-      });
-    });
-
-    
-
-    connection.on("GameWon", () => {
-      setIsGameEnded(true);
-      setIsWon(true);
-      currentGameData!.isGameOver = true;
-    });
-    
-    connection.on("GameLost", () => {
-      setIsGameEnded(true);
-      setIsWon(false);
-      currentGameData!.isGameOver = true;
-    });
-
-    connection.start().catch((err) => console.error("SignalR Connection Error:", err));
-
-    return () => {
-      connection.stop()
-        .then(() => console.log("SignalR Connection Stopped"))
-        .catch((err) => console.error("Error stopping SignalR connection:", err));
-    };
-  }, [accessToken, currentGameData, toast]);
+  useEffect(() => {
+    const connection = connectionRef.current
+    if(connection){
+      connection.start()
+        .then(() => {
+          connection.on("GameStarted", (response: GameStartResponse) => {
+            setEnemyName(response.enemyName);
+            setGameField(response.gameField);
+            setStartCoordinates({ colIndex: response.colBeginIndex, rowIndex: response.rowBeginIndex });
+            setIsGameStarted(true);
+            setIsGameEnded(false);
+            toast({
+              title: "Game Started",
+              status: "success",
+              isClosable: true,
+            });
+          });
+      
+          connection.on("SetNotIsExploaded", () => {
+            console.warn("ReceivedSetNotIsExploaded");
+            setIsExploaded(false);
+          });
+          
+      
+          connection.on("ReceiveProgress", (response: ReceiveProgressResponse) => {
+            setEnemyProgress(response.progress);
+            setIsEnemyExploaded(response.isExploaded);
+          });
+      
+          connection.on("ReceiveSystemMessage", (message: string) => {
+            console.log("System message received:", message);
+            toast({
+              title: "System Message",
+              description: message,
+              status: "info",
+              isClosable: true,
+            });
+          });
+      
+          
+      
+          connection.on("GameWon", () => {
+            setIsGameEnded(true);
+            setIsWon(true);
+            currentGameData!.isGameOver = true;
+          });
+          
+          connection.on("GameLost", () => {
+            setIsGameEnded(true);
+            setIsWon(false);
+            currentGameData!.isGameOver = true;
+          });
+        })
+        .catch(e => console.warn('Connection failed: ',e))
+    }
+  }, [connectionRef,currentGameData, toast]); 
 
   useEffect(() => {
     const connection = connectionRef.current;
-    
 
     const sendProgress = () =>{
-      if(currentGameData?.maxNumberOfRevealedTiles && connection ){
-        const progress = currentGameData?.countRevealedTiles() / currentGameData?.maxNumberOfRevealedTiles * 100;
-        if(currentGameData.isExploaded !== undefined){
-          const progressData: SendProgressResponse = {
-            progress: progress,
-            isExploaded: isExploaded,
-          };
-        
-          console.warn(currentGameData.isExploaded);
-          connection.invoke("SendProgress", progressData)
-            .catch((err) => {
-              console.error("Error sending game field:", err);
-            });
-        }
-      }
+      if(connection)
+        connection.start()
+          .then(() =>
+          {
+            if(currentGameData?.maxNumberOfRevealedTiles){
+              const progress = currentGameData?.countRevealedTiles() / currentGameData?.maxNumberOfRevealedTiles * 100;
+              if(currentGameData.isExploaded !== undefined){
+                const progressData: SendProgressResponse = {
+                  progress: progress,
+                  isExploaded: isExploaded,
+                };
+              
+                console.warn(currentGameData.isExploaded);
+                
+                      connection.invoke("SendProgress", progressData)
+                    } 
+            }
+          }
+        ).catch((err) => {
+          console.error("Error sending game field:", err);
+        });
     }
     sendProgress();
   }, [currentGameData, isExploaded]);
