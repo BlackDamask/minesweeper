@@ -1,12 +1,8 @@
 import Game from '../../components/Game/Game';
 import { GameData } from '../../components/Game/data';
 import RestartGameEmoji from '../../components/Game/RestartGameEmoji/RestartGameEmoji';
-import { Select, Menu, MenuButton, MenuList, MenuItem, AspectRatio } from '@chakra-ui/react';
-import { ReactComponent as Cursor } from './cursor.svg';
-import { ReactComponent as FlagIcon } from '../../components/Game/flag.svg';
-import { ReactComponent as HandLens } from '../../components/Game/hand-lens.svg';
+import { Select } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
-import { start } from 'repl';
 
 const generateResizeValues = () =>{
     let resizeValues = [];
@@ -45,26 +41,27 @@ export default function GamePanel()
     const resizeValues : number[] = generateResizeValues();
     const [timer, setTimer] = useState("00:00");
 
-    const getTime = () => {
-        if(startTime){
-            const time = Date.now() - startTime;
-            let minutes = String(Math.floor((time / 1000 / 60) % 60));
-            let seconds = String(Math.floor((time / 1000) % 60));
-            if(minutes.length === 1){
-                minutes = "0"+minutes
-            }
-            if(seconds.length === 1){
-                seconds = "0"+seconds
-            }
-            setTimer(minutes+":"+ seconds);
-        }
-        else{
-            setTimer("00:00");
-        }
-        
-      };
+    
 
     useEffect(() => {
+        const getTime = () => {
+            if(startTime){
+                const time = Date.now() - startTime ;
+                let minutes = String(Math.floor((time / 1000 / 60) % 60));
+                let seconds = String(Math.floor((time / 1000) % 60));
+                if(minutes.length === 1){
+                    minutes = "0"+minutes
+                }
+                if(seconds.length === 1){
+                    seconds = "0"+seconds
+                }
+                setTimer(minutes+":"+ seconds);
+            }
+            else{
+                setTimer("00:00");
+            }
+            
+        };
         const interval = setInterval(() => getTime(), 1000);
         
         return () => clearInterval(interval);

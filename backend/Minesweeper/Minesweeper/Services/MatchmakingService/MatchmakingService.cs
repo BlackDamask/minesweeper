@@ -71,6 +71,7 @@ namespace Minesweeper.Services.MatchmakingService
                     ColBeginIndex = minesweeperGame.colStartIndex,
                     RowBeginIndex = minesweeperGame.rowStartIndex,
                     Difficulty = 1,
+                    StartTimeNumeric = (int)DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
 
                 };
 
@@ -105,6 +106,8 @@ namespace Minesweeper.Services.MatchmakingService
                     ColBeginIndex = minesweeperGame.colStartIndex,
                     RowBeginIndex = minesweeperGame.rowStartIndex,
                     EnemyName = enemyName,
+                    EnemyProgress = minesweeperGame.CountProgress(),
+                    StartTime = newGame.StartTimeNumeric
                 };
 
                 await hubContext.Clients.User(matchedPlayers[0].PlayerId).SendAsync("GameStarted", response);

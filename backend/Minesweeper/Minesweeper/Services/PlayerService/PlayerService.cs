@@ -67,6 +67,9 @@ namespace Minesweeper.Services.PlayerService
             var serviceResponse = new ServiceResponse<GameBeginDTO>();
             try
             {
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("Received add to queue request");
+                Console.ResetColor();
                 var player = await context.Users.FindAsync(playerId)
                               ?? throw new Exception("Player not found");
 
@@ -92,6 +95,7 @@ namespace Minesweeper.Services.PlayerService
                         GameField = game.GameField,
                         EnemyName = enemyName,
                         EnemyProgress = enemy.Progress,
+                        StartTime = game.StartTimeNumeric
                     };
 
                     serviceResponse.Data = response;
@@ -116,6 +120,10 @@ namespace Minesweeper.Services.PlayerService
                         PlayerId = player.Id,
                         QueeuedAt = DateTime.UtcNow,
                     });
+
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("added to queue "+ player.UserName);
+                Console.ResetColor();
 
                 await context.SaveChangesAsync();
 

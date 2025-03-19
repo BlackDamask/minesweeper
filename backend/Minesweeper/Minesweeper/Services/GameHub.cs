@@ -45,8 +45,14 @@ namespace Minesweeper.Services
 
                 var sendResponse = new SendProgressDTO { IsExploaded = response.IsExploaded, Progress = response.Progress };
 
-
                 await Clients.User(enemy.PlayerId).SendAsync("ReceiveProgress", sendResponse);
+
+                var playerGp = dbContext.GameParticipants
+                        .Where(p => p.PlayerId == Context.UserIdentifier)
+                        .FirstOrDefault() ?? throw new Exception("PlayerGP not found");
+                playerGp.Progress = response.Progress;
+
+                await dbContext.SaveChangesAsync();
 
 
                 if (response.Progress == 100)
@@ -54,9 +60,7 @@ namespace Minesweeper.Services
                     var game = dbContext.Games
                         .Where(g => g.Id == gameId)
                         .FirstOrDefault() ?? throw new Exception("Game not found");
-                    var playerGp = dbContext.GameParticipants
-                        .Where(p => p.PlayerId == Context.UserIdentifier)
-                        .FirstOrDefault() ?? throw new Exception("PlayerGP not found");
+                    
 
                     game.IsActive = false;
 

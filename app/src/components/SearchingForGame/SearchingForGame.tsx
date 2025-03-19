@@ -12,6 +12,7 @@ interface GameStartResponse {
         rowBeginIndex: number;
         enemyName: string;
         enemyProgress: number;
+        startTime: number;
     };
     message:string;
     success:boolean;
@@ -47,23 +48,11 @@ export default function SearchingForGame() {
                 game?.setGameField(data.gameField);
                 game?.setStartCoordinates({ colIndex: data.colBeginIndex, rowIndex: data.rowBeginIndex });
                 game?.setIsGameStarted(true);
+                game?.setStartTime(data.startTime)
             }
         }).catch(error => {
             console.error("Error adding to queue:", error);
         });
-
-        return () => {
-            axios.delete(
-                "/player/remove-from-queue",
-                {
-                    headers: { Authorization: `Bearer ${auth?.accessToken}` },
-                }
-            ).then(response => {
-                console.log("Removed from queue:", response.data);
-            }).catch(error => {
-                console.error("Error removing from queue:", error);
-            });
-        };
     }, [auth, toast, game]);
 
     return (

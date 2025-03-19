@@ -9,6 +9,8 @@ interface GameStartResponse {
   colBeginIndex: number;
   rowBeginIndex: number;
   enemyName: string;
+  enemyProgress: number;
+  startTime: number;
 }
 interface ReceiveProgressResponse {
   progress: number; 
@@ -27,22 +29,28 @@ interface StartCoordinates {
 interface GameContextType {
   isGameStarted: boolean;
   isGameEnded: boolean | undefined;
-  enemyProgress: number;
-  gameField: Tile[][];
   isExploaded: boolean;
-  isEnemyExploaded: boolean;
-  setGameField: React.Dispatch<React.SetStateAction<Tile[][]>>;
+  isWon: boolean;
+
+  currentGameData: GameData | null;
+  gameField: Tile[][];
   startCoordinates: StartCoordinates;
+  startTime: number;
+  
+  isEnemyExploaded: boolean;
+  enemyProgress: number;
+  enemyName: string;
+  
+  playerExploaded:() => void;
+
+  setGameField: React.Dispatch<React.SetStateAction<Tile[][]>>;
   setIsGameStarted: React.Dispatch<React.SetStateAction<boolean>>;
   setIsExploaded: React.Dispatch<React.SetStateAction<boolean>>;
-  playerExploaded:() => void;
   setCurrentGameData: React.Dispatch<React.SetStateAction<GameData | null>>;
   setStartCoordinates: React.Dispatch<React.SetStateAction<StartCoordinates>>;
+  setStartTime: React.Dispatch<React.SetStateAction<number>>;
   setEnemyProgress: React.Dispatch<React.SetStateAction<number>>;
   setEnemyName: React.Dispatch<React.SetStateAction<string>>;
-  currentGameData: GameData | null;
-  enemyName: string;
-  isWon: boolean;
 }
 
 export const GameContext = createContext<GameContextType | undefined>(undefined);
@@ -55,12 +63,13 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isGameStarted, setIsGameStarted] = useState(false);
   const [isGameEnded, setIsGameEnded] = useState(false);
   const [isExploaded, setIsExploaded] = useState(false);
-  const [isEnemyExploaded, setIsEnemyExploaded] = useState(true);
+  const [isEnemyExploaded, setIsEnemyExploaded] = useState(false);
   const [enemyName, setEnemyName] = useState("Opponent");
   const [enemyProgress, setEnemyProgress] = useState<number>(0);
   const [gameField, setGameField] = useState<Tile[][]>([[]]);
   const [currentGameData, setCurrentGameData] = useState<GameData | null>(null);
   const [startCoordinates, setStartCoordinates] = useState<StartCoordinates>({ colIndex: 0, rowIndex: 0 });
+  const [startTime, setStartTime] = useState<number>(0);
   const [isWon, setIsWon] = useState<boolean>(false);
   const connectionRef = useRef<signalR.HubConnection | null>(null);
 
@@ -89,7 +98,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [accessToken,connectionRef]);
 
   useEffect(() => {
-    const connection = connectionRef.current
+    const connection = connectionRef.current;
     if(connection){
       if(connection.state !== "Connected")
         connection.start().catch((e) => "Failed to connect to websocket: " + e);
@@ -97,13 +106,11 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
             setEnemyName(response.enemyName);
             setGameField(response.gameField);
             setStartCoordinates({ colIndex: response.colBeginIndex, rowIndex: response.rowBeginIndex });
+            setEnemyProgress(response.enemyProgress);
+            setStartTime(response.startTime);
             setIsGameStarted(true);
             setIsGameEnded(false);
-            toast({
-              title: "Game Started",
-              status: "success",
-              isClosable: true,
-            });
+            console.log(response);
           });
       
           connection.on("SetNotIsExploaded", () => {
@@ -147,7 +154,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const connection = connectionRef.current;
 
     const sendProgress = () =>{
-      if(connection)
+      if(connection && connection.state === "Connected")
 
             if(currentGameData?.maxNumberOfRevealedTiles){
               const progress = currentGameData?.countRevealedTiles() / currentGameData?.maxNumberOfRevealedTiles * 100;
@@ -176,10 +183,12 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
       isEnemyExploaded,
       setIsExploaded,
       playerExploaded,
+      setStartTime,
       enemyProgress,
       setEnemyProgress,
       gameField,
       startCoordinates,
+      startTime,
       setCurrentGameData,
       setStartCoordinates, 
       setIsGameStarted, 

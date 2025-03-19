@@ -25,8 +25,6 @@ export default function MultiplayerGamePanel({gameField, colIndex, rowIndex, sel
         new GameData({ gameField: gameField, colStartIndex: colIndex, rowStartIndex: rowIndex })
     );
     const [selectedMode, setSelectedMode] = useState<number>(1);
-    const [startTime, setStartTime] = useState<number | null>(null);
-    const [isExploaded, setIsExploaded] = useState<boolean>(false);
     const { isOpen, onOpen, onClose } = useDisclosure();
 
     const [timer, setTimer] = useState("00:00");
@@ -35,8 +33,8 @@ export default function MultiplayerGamePanel({gameField, colIndex, rowIndex, sel
 
     useEffect(() => {
         const getTime = () => {
-            if(startTime){
-                const time = Date.now() - startTime;
+            if(game?.startTime){
+                const time = Date.now() - game?.startTime - 52*60000 - 3000;
                 let minutes = String(Math.floor((time / 1000 / 60) % 60));
                 let seconds = String(Math.floor((time / 1000) % 60));
                 if(minutes.length === 1){
@@ -55,7 +53,7 @@ export default function MultiplayerGamePanel({gameField, colIndex, rowIndex, sel
         const interval = setInterval(() => getTime(), 1000);
         
         return () => clearInterval(interval);
-      }, [startTime]);
+      }, [game]);
 
     const handleSelectMode = (event: any) => {
         const selectedMode = Number(event.target.value); 
@@ -144,8 +142,8 @@ export default function MultiplayerGamePanel({gameField, colIndex, rowIndex, sel
                         selectedOption = {selectedOption} 
                         selectedMode = {selectedMode}
                         selectedZoom = {selectedZoom}
-                        setStartTime = {setStartTime}
-                        startTime = {startTime}
+                        setStartTime = {null}
+                        startTime = {null}
                         isExploaded = {game?.isExploaded}
                         playerExploaded = {game?.playerExploaded}
                     />

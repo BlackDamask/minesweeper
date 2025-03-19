@@ -1,7 +1,7 @@
-import { useState, ReactElement, useEffect } from "react";
+import {  ReactElement, useEffect } from "react";
 import { GameData } from './data';
 import { ReactComponent as FlagIcon } from './flag.svg';
-import { Button, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Spinner, useDisclosure } from "@chakra-ui/react";
+import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, ModalOverlay,  useDisclosure, useToast } from "@chakra-ui/react";
 import { useGameContext } from "../../GameProvider";
 
 const textColorMap: { [key: number]: string } = {
@@ -44,7 +44,7 @@ export default function Game(
         { 
             currentGameData: GameData,
             setCurrentGameData:  React.Dispatch<React.SetStateAction<GameData>>, 
-            setStartTime: React.Dispatch<React.SetStateAction<number | null>>, 
+            setStartTime: React.Dispatch<React.SetStateAction<number | null>> | null, 
             startTime: number | null, 
             selectedOption: number, 
             selectedMode: number, 
@@ -56,13 +56,24 @@ export default function Game(
 {
     const game = useGameContext();
     const { isOpen, onOpen, onClose } = useDisclosure();
+    const toast = useToast();
 
     useEffect(() => {
-        if (currentGameData.isGameOver) {
+
+        toast({
+            title: "Game Started",
+            status: "success",
+            isClosable: true,
+        });
+    }, [toast]);
+
+    useEffect(() => {
+        if (currentGameData.isGameOver && setStartTime) {
             onOpen();
             setStartTime(null);
         }
     }, [currentGameData.isGameOver, onOpen, setStartTime]);
+
 
     const setFlaggedTile = (colIndex: number, rowIndex: number) => {
         currentGameData.setFlaggedTile(colIndex, rowIndex);
@@ -102,13 +113,16 @@ export default function Game(
                     
                                 if (newRow >= 0 && newRow < currentGameData.numberOfTilesY && newCol >= 0 && newCol < currentGameData.numberOfTilesX) {
                                     if (currentGameData.gameField[newRow][newCol].hasBomb && !currentGameData.gameField[newRow][newCol].isFlagged) {
-                                        setFlaggedTile(colIndex,rowIndex);
+                                        setFlaggedTile(newCol,newRow);
                                         playerExploaded();
                                     }
-                                    else if(!currentGameData.gameField[newRow][newCol].isFlagged && !currentGameData.gameField[newRow][newCol].isRevealed){
-                                        currentGameData.handleClickOnTile(colIndex, rowIndex);
+                                    else if(!currentGameData.gameField[newRow][newCol].isFlagged && !currentGameData.gameField[newRow][newCol].isRevealed && !currentGameData.gameField[newRow][newCol].hasBomb){
+                                        currentGameData.handleClickOnTile(newCol, newRow);
                                         
                                         setCurrentGameData(Object.assign(Object.create(Object.getPrototypeOf(currentGameData)), currentGameData));
+                                    }
+                                    else if(currentGameData.gameField[newRow][newCol].isFlagged && !currentGameData.gameField[newRow][newCol].hasBomb){
+                                        setFlaggedTile(newCol,newRow);
                                     }
                                 }
                             }
@@ -130,7 +144,7 @@ export default function Game(
     const handleClick = (rowIndex: number, colIndex: number) => {
         console.log(isExploaded)
         if(!isExploaded){
-            if(!startTime){
+            if(!startTime && setStartTime){
                 setStartTime(Date.now());
             }
             if(selectedMode === 1){
@@ -165,7 +179,14 @@ export default function Game(
                         <p>Your record:</p>
                     </ModalBody>
                     <ModalFooter>
-                        <Button colorScheme="green" color="white" borderColor="#000000" backgroundColor="#052e16" mr={5} onClick={() => { setCurrentGameData(new GameData({difficulty:selectedOption})); setStartTime(null); onClose(); }}>
+                        <Button colorScheme="green" color="white" borderColor="#000000" backgroundColor="#052e16" mr={5} onClick={
+                            () => 
+                            { 
+                                setCurrentGameData(new GameData({difficulty:selectedOption}));
+                                if(setStartTime)
+                                    setStartTime(null);
+                                onClose(); 
+                            }}>
                             Retry
                         </Button>
                         <Button colorScheme="white" onClick={onClose}>Show field</Button>
@@ -182,7 +203,14 @@ export default function Game(
                         {`Your time: ${currentGameData.time}`}
                     </ModalBody>
                     <ModalFooter>
-                        <Button colorScheme="gray" borderColor="#000000" textColor={'#000000'} backgroundColor="#ceffff" mr={5} onClick={() => { setCurrentGameData(new GameData({difficulty:selectedOption})); setStartTime(null); onClose(); }}>
+                        <Button colorScheme="gray" borderColor="#000000" textColor={'#000000'} backgroundColor="#ceffff" mr={5} onClick={
+                            () => 
+                            { 
+                                setCurrentGameData(new GameData({difficulty:selectedOption})); 
+                                if(setStartTime)
+                                    setStartTime(null); 
+                                onClose(); 
+                            }}>
                             Retry
                         </Button>
                         <Button colorScheme="blue" color={'white'} backgroundColor={'#032448'} onClick={onClose}>Show field</Button>

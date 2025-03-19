@@ -67,6 +67,22 @@
             this.rowStartIndex = rowIndex;
             PlaceBombs(colIndex, rowIndex);
         }
+        public int CountProgress()
+        {
+            int revealedTiles = 0;
+            for (int i = 0; i < numberOfTilesY; i++)
+            {
+                for (int j = 0; j < numberOfTilesX; j++)
+                {
+                    if (gameField!= null && gameField[i][j].IsRevealed)
+                    {
+                        revealedTiles++;
+                    }
+                }
+            }
+            return revealedTiles / (numberOfTilesY * numberOfTilesX) * 100;
+        }
+
 
         public void PlaceBombs(int colIndex, int rowIndex)
         {
