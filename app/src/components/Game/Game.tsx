@@ -228,16 +228,14 @@ export default function Game(
                    {row.map((tile, colIndex) => {
                     const tileColor = tile.color as TileColor;
 
-                    // Determine the background color for the tile
                     let backgroundColor = tile.isRevealed
                         ? tile.hasBomb
                             ? tileColorMap[tileColor].withBomb
                             : tileColorMap[tileColor].clicked
                         : tileColorMap[tileColor].default;
 
-                    // Set hover effect darker only if the tile is revealed
                     const hoverStyle = tile.isRevealed
-                        ? { filter: 'brightness(100%)' } // Darken the tile on hover
+                        ? { filter: 'brightness(100%)' } 
                         : {};
 
                     return (
@@ -249,16 +247,16 @@ export default function Game(
                                 height: `${selectedZoom}px`,
                                 fontSize: `${selectedZoom}px`,
                                 backgroundColor,
-                                ...hoverStyle, // Apply hover style dynamically
+                                ...hoverStyle, 
                             }}
-                            onClick={() => handleClick(rowIndex, colIndex)} // Left click
-                            onContextMenu={(e) => handleRightClick(e, rowIndex, colIndex)} // Right click
+                            onClick={() => handleClick(rowIndex, colIndex)}
+                            onContextMenu={(e) => handleRightClick(e, rowIndex, colIndex)} 
                             onMouseOver={(e) => {
                                 if (tile.isRevealed) e.currentTarget.style.filter = 'brightness(90%)';
-                            }} // Add dark effect on hover
+                            }} 
                             onMouseOut={(e) => {
                                 if (tile.isRevealed) e.currentTarget.style.filter = 'none';
-                            }} // Reset dark effect when mouse leaves
+                            }} 
                         >
                             {tile.isRevealed && !tile.isFlagged
                                 ? showBombCount(tile.nearbyBombs)

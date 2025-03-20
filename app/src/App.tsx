@@ -1,11 +1,11 @@
 import './App.css';
-import background_mixed from '../public/mixed1920_1080.png'
-import { ReactDOM } from 'react';
 import { BrowserRouter, Routes, Route } from "react-router-dom"
 import Layout from './pages/Layout/Layout';
 import { ChakraProvider, extendTheme } from '@chakra-ui/react'
 import SinglePlayer from './pages/SinglePlayer/SinglePlayer';
 import Multiplayer from './pages/Multiplayer/Multiplayer';
+import Login from './pages/Login/Login';
+import ProtectedRoute from './ProtectedRoute';
 
 const theme = extendTheme({
   styles: {
@@ -28,7 +28,13 @@ function App() {
           <Route path="/" element={<Layout />}>
           </Route>
           <Route path="/single" element={<SinglePlayer></SinglePlayer>}/>
-          <Route path="/multiplayer" element={<Multiplayer></Multiplayer>}/>
+
+          <Route path="/multiplayer" element={
+            <ProtectedRoute>
+              <Multiplayer></Multiplayer>
+            </ProtectedRoute>
+          }/>
+          <Route path='/login' element={<Login></Login>}></Route>
         </Routes>
       </BrowserRouter>
     </ChakraProvider> 

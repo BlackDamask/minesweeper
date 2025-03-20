@@ -1,6 +1,5 @@
 import React, { createContext, useState, useEffect, ReactNode } from "react";
 import axios from "./api/axios";
-import { errorMonitor } from "events";
 
 interface ApiResponse<T> {
   data: T;
@@ -65,7 +64,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const changeUsername = async (userName: string): Promise<{ success: boolean; message?: string }> => {
     try {
-      const response = await axios.put(
+      await axios.put(
         `https://localhost:7036/api/player/change-username`,
         null, // No body needed, as userName is sent as a query parameter
         {
@@ -104,19 +103,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  const refreshAccessToken = async (): Promise<string | null> => {
-    try {
-      const response = await axios.post("/player/refresh-token", { refreshToken });
-      const newAccessToken = response.data.data;
-      setAccessToken(newAccessToken);
-      localStorage.setItem("accessToken", newAccessToken);
-      return newAccessToken;
-    } catch (error) {
-      console.error("Failed to refresh token", error);
-      logout();
-      return null;
-    }
-  };
+  
 
   const logout = (): void => {
     setUser(null);
@@ -129,6 +116,19 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   useEffect(() => {
+    const refreshAccessToken = async (): Promise<string | null> => {
+      try {
+        const response = await axios.post("/player/refresh-token", { refreshToken });
+        const newAccessToken = response.data.data;
+        setAccessToken(newAccessToken);
+        localStorage.setItem("accessToken", newAccessToken);
+        return newAccessToken;
+      } catch (error) {
+        console.error("Failed to refresh token", error);
+        logout();
+        return null;
+      }
+    };
     if (accessToken) {
       axios
         .get<ApiResponse<User>>("/player/profile", {
@@ -153,7 +153,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           }
         });
     }
-  }, [accessToken]);
+  }, [accessToken, refreshToken]);
 
   return (
     <AuthContext.Provider value={{ user, login, register, logout, changeUsername, accessToken, isLoggedIn }}>
