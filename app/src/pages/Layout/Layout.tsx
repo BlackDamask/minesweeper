@@ -25,16 +25,16 @@ export default function Layout() {
     <main className='w-screen h-screen flex flex-row bg-slate-900'>
       
       <Nav/>
-      <div className="w-[100%] max-w-sm ">
+      <div className="w-[100%]">
         
-        <h1 className='ml-14 my-6 text-3xl text-gray-300'>
+        <h1 className='ml-14 sm:ml-24 my-6 text-3xl text-gray-300'>
           Start a new game
         </h1>
         
         <div className='flex flex-col space-y-5'>
           <Link to="/single">
-            <div className='flex ml-2 sm:ml-10 h-24 w-full lg:w-[60%] xl:w-[70%] 2xl:w-[50%] bg-green-700 hover:bg-green-800 rounded-lg border-b-[3px] border-green-900  cursor-pointer'>
-              <div className='w-1/5 h-full p-3'>
+            <div className='flex ml-5 sm:ml-24 h-24 w-full lg:w-[80%] bg-green-700 hover:bg-green-800 rounded-lg border-b-[3px] border-green-900  cursor-pointer'>
+              <div className='w-1/3 sm:w-1/5 h-full p-3 '>
                 <img alt='' src="./bomb-shape.png" className='h-full aspect-square' />
               </div>
               <div className='w-4/5 flex flex-col p-4  '>
@@ -43,9 +43,9 @@ export default function Layout() {
               </div>
             </div>
           </Link>
-          <div className='flex ml-5 h-24 w-full lg:w-[60%] xl:w-[70%] 2xl:w-[50%] rounded-lg text-white bg-[#1072d6] hover:bg-[#0d5bab] border-b-[3px] border-[#0d5bab] cursor-pointer'
+          <div className='flex ml-5 sm:ml-24 h-24 w-full lg:w-[80%] rounded-lg text-white bg-[#1072d6] hover:bg-[#0d5bab] border-b-[3px] border-[#0d5bab] cursor-pointer'
             onClick={handlePvpButtonClick}>
-            <div className='w-1/5 h-[95%] p-3 flex items-center'>
+            <div className='w-1/3 sm:w-1/5 h-full p-3 '>
               <img alt='' src="./shovel-pvp.svg" className='h-full aspect-square' />
             </div>
             <div className='w-4/5 flex flex-col p-4  '>
@@ -53,9 +53,9 @@ export default function Layout() {
               <span className='flex cursor-pointer'><p><u>Beginner 9x9</u> <u>Indermediate 16x16</u> <u>Expert 30x16</u></p> </span>
             </div>
           </div>
-          <div className="flex h-24 w-full lg:w-[60%] xl:w-[70%] 2xl:w-[50%] bg-fuchsia-700 hover:bg-fuchsia-800 rounded-lg border-b-[3px] border-fuchsia-900 cursor-pointer ml-5">
+          <div className="flex ml-5 sm:ml-24 h-24 w-full lg:w-[80%] bg-fuchsia-700 hover:bg-fuchsia-800 rounded-lg border-b-[3px] border-fuchsia-900 cursor-pointer">
 
-            <div className='w-1/5 h-full p-3'>
+            <div className='w-1/3 sm:w-1/5 h-full p-3 '>
               <img alt='' src="./coop-game.png" className='h-full aspect-square' />
             </div>
             <div className='w-4/5 flex flex-col p-4  '>
