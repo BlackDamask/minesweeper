@@ -1,4 +1,4 @@
-import React, { useState, useRef, useContext } from "react";
+import React, { useState, useRef, useContext, useEffect } from "react";
 import {
     Avatar,
     Box,
@@ -16,10 +16,9 @@ import {
     ModalFooter,
     Button,
     ModalOverlay,
-    InputGroup,
-    Input,
-    InputLeftElement,
+    IconButton,
 } from "@chakra-ui/react";
+import { HamburgerIcon } from "@chakra-ui/icons";
 import { ReactComponent as RegisterButton } from "./register-button.svg";
 import { ReactComponent as LoginButton } from "./login-button.svg";
 import LoginModal from '../Modals/LoginModal';
@@ -32,14 +31,14 @@ export default function Nav() {
     const auth = useContext(AuthContext);
     const [isHovered, setIsHovered] = useState(false);
     const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-    const hoverTimeout = useRef<NodeJS.Timeout | null>(null); // To manage hover delays
+    const hoverTimeout = useRef<NodeJS.Timeout | null>(null); 
+    const [isSmallScreen, setIsSmallScreen] = useState(false);
+
     const {
         isOpen: isLoginOpen,
         onOpen: onLoginOpen,
         onClose: onLoginClose,
       } = useDisclosure();
-    
-    
     
     const {
         isOpen: isRegisterOpen,
@@ -52,11 +51,25 @@ export default function Nav() {
         onOpen: onLogoutOpen,
         onClose: onLogoutClose,
     } = useDisclosure();
+
     const {
         isOpen: isChangeUsernameOpen,
         onOpen: onChangeUsernameOpen,
         onClose: onChangeUsernameClose,
     } = useDisclosure();
+
+    useEffect(() => {
+        const checkScreenSize = () => {
+            setIsSmallScreen(window.innerWidth < 640); 
+        };
+
+        checkScreenSize();
+        window.addEventListener("resize", checkScreenSize);
+
+        return () => {
+            window.removeEventListener("resize", checkScreenSize);
+        };
+    }, []);
 
     const buttons = [
         {
@@ -107,9 +120,24 @@ export default function Nav() {
             setHoveredIndex(null);
         }, 200); 
     };
+
+    if(isSmallScreen)
+        return (
+            <Box className="absolute top-0 left-0 w-fit h-fit p-2">
+                <IconButton
+                    icon={<HamburgerIcon />}
+                    aria-label="Menu"
+                    variant="ghost"
+                    colorScheme="white "
+                    fontSize={'2xl'}
+                    className="text-white absolute"
+                />
+            </Box>
+        );
+
     return (
         <>
-            <div className="bg-slate-950 fixed left-0 h-screen w-20 flex flex-col items-center justify-between">
+            <div className="bg-slate-950  left-0 h-screen w-20 flex flex-col items-center justify-between">
                 <Link to="/">
                 <Box
                     width={"100%"}

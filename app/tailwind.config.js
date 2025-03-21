@@ -17,6 +17,11 @@ module.exports = {
         // Add more custom font families as needed
       },
     },
+    variants: {
+      extend: {
+        margin: ["responsive"], // Ensure margin supports responsiveness
+      },
+    },
   },
   plugins: [],
 }

@@ -1,7 +1,53 @@
-import { Input, Button, Checkbox, IconButton, Image } from "@chakra-ui/react";
+import { Input, Button, Checkbox, IconButton, Image, useToast } from "@chakra-ui/react";
+import { useContext, useState } from "react";
 import { FaApple, FaGoogle, FaFacebook } from "react-icons/fa";
+import { AuthContext } from "../../AuthProvider";
+import { Navigate, useNavigate } from "react-router-dom";
 
 export default function Login(){
+    const auth = useContext(AuthContext);
+    const navigate = useNavigate();
+  
+    const [formData, setFormData] = useState({ email: '', password: '' });
+    const [isLoading, setLoading] = useState(false);
+    const toast = useToast();
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const { name, value } = e.target;
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    };
+    const handleSubmit = async () => {
+      setLoading(true);
+      const result = await auth!.login(formData.email, formData.password);
+      try{
+          if (!result.success) {
+              toast({
+                  title: "Login failed",
+                  description: `${result.message}`,
+                  status: 'error',
+                  isClosable: true,
+              });
+          }
+          else{
+              toast({
+                  title: "Login successed",
+                  status: 'success',
+                  isClosable: true,
+              });
+              navigate("/multiplayer");
+          }
+      }
+      catch(error){
+          toast({
+              title: "Login failed",
+              description: `${result.message}`,
+              status: 'error',
+              isClosable: true,
+          });
+      }
+      finally{
+          setLoading(false);
+      }
+    };
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900">
             <Image
@@ -17,22 +63,28 @@ export default function Login(){
     
             <div className="space-y-4">
               <Input
-                placeholder="Username, Phone, or Email"
+                name="email"
+                placeholder="Email"
                 size="lg"
                 variant="filled"
-                className="bg-gray-700 text-white"
+                onChange={handleChange} 
+                value={formData.email}
+                className="bg-gray-700 text-black"
               />
               <Input
+                name="password"
                 placeholder="Password"
                 size="lg"
                 type="password"
                 variant="filled"
+                onChange={handleChange} 
+                value={formData.password}
                 className="bg-gray-700 text-white"
               />
               
     
-              <Button colorScheme="green" size="lg" width="full">
-                Log In
+              <Button colorScheme="green" size="lg" width="full" onClick={handleSubmit}>
+                {isLoading ? 'Loading...' : 'Log In'}
               </Button>
             </div>
     
