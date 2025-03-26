@@ -1,4 +1,4 @@
-import {  ReactElement, useEffect } from "react";
+import {  ReactElement, useEffect, useState } from "react";
 import { GameData } from './data';
 import { ReactComponent as FlagIcon } from './flag.svg';
 import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, ModalOverlay,  useDisclosure, useToast } from "@chakra-ui/react";
@@ -169,6 +169,7 @@ export default function Game(
         
     };
 
+
     const showModalContent = (isWon: boolean): ReactElement => {
         if (isWon) {
             return (
@@ -220,6 +221,7 @@ export default function Game(
         }
     };
 
+
     return (
         <div style={{ filter: game?.isExploaded ? 'invert(1)' : 'none' }}>
             
@@ -237,6 +239,7 @@ export default function Game(
                     const hoverStyle = tile.isRevealed
                         ? { filter: 'brightness(100%)' } 
                         : {};
+                        
 
                     return (
                         <div
@@ -257,6 +260,7 @@ export default function Game(
                             onMouseOut={(e) => {
                                 if (tile.isRevealed) e.currentTarget.style.filter = 'none';
                             }} 
+
                         >
                             {tile.isRevealed && !tile.isFlagged
                                 ? showBombCount(tile.nearbyBombs)

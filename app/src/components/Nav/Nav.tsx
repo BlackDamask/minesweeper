@@ -152,7 +152,7 @@ export default function Nav() {
 
         return (
                 <>
-                    <div className="bg-slate-950 fixed left-0 h-screen w-14 sm:w-20 flex flex-col items-center justify-between">
+                    <div className="bg-slate-950 fixed left-0 h-screen w-14 sm:w-20 flex flex-col items-center justify-between z-50">
                         <Link to="/">
                             <Box
                                 width="100%"

@@ -59,10 +59,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddSignalR().AddNewtonsoftJsonProtocol();
 
-builder.Services.AddIdentityCore<Player>(options =>
-{
-    options.SignIn.RequireConfirmedEmail = true;
-})
+builder.Services.AddIdentityCore<Player>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddApiEndpoints();
 

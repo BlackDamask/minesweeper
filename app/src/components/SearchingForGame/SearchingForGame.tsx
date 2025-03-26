@@ -87,15 +87,17 @@ export default function SearchingForGame() {
 
     if (isSmallScreen) {
         return (
-            <main className=" h-2/3 flex flex-col items-center justify-evenly">
-                <h1 className="text-2xl text-white text-center">
-                Searching for game
-            </h1>
-            <Spinner color="#d1d5db" size="xl" thickness="4px" />
-            <h2 className="text-2xl  text-white">
-                {formatTime(timeElapsed)}
-            </h2>
-            </main>
+            <div className="h-full w-full flex flex-col justify-center bg-slate-950">
+                <main className=" h-2/3 flex flex-col items-center justify-evenly">
+                    <h1 className="text-2xl text-white text-center">
+                    Searching for game
+                </h1>
+                <Spinner color="#d1d5db" size="xl" thickness="4px" />
+                <h2 className="text-2xl  text-white">
+                    {formatTime(timeElapsed)}
+                </h2>
+                </main>
+            </div>
         );
     }
 
