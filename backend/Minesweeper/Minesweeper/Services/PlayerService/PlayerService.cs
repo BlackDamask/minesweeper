@@ -139,10 +139,6 @@ namespace Minesweeper.Services.PlayerService
             return serviceResponse;
         }
 
-
-
-        
-
         public async Task<ServiceResponse<string>> RemovePlayerFromQueue(string playerId)
         {
             var serviceResponse = new ServiceResponse<string>();

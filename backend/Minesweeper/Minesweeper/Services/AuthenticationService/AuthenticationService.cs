@@ -1,12 +1,16 @@
 ﻿using AutoMapper;
+using Azure.Core;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.IdentityModel.Tokens;
 using Minesweeper.data;
 using Minesweeper.DTOs.PlayerDTO;
+using Minesweeper.Migrations;
 using Minesweeper.models;
 using Minesweeper.Services.EmailService;
 using System.IdentityModel.Tokens.Jwt;
+using System.Numerics;
+using System.Runtime.InteropServices;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Encodings.Web;
@@ -34,10 +38,46 @@ namespace Minesweeper.Services.AuthenticationService
             this.context = context;
         }
 
-        public async Task<ServiceResponse<LoginPlayerResponseDTO>> Login(LoginPlayerDTO player)
+        private ServiceResponse<LoginPlayerResponseDTO> CreateGuest()
         {
             var serviceResponse = new ServiceResponse<LoginPlayerResponseDTO>();
-            var loggedPlayer = await playerManager.FindByEmailAsync(player.Email);
+
+            Random random = new Random();
+            int number = random.Next(10000, 99999); 
+            string guestName = "Guest_" + number;
+
+            var player = new Player { IsGuest = true, UserName = guestName };
+
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.NameIdentifier, player.Id),
+                new Claim(ClaimTypes.Name, player.UserName!)
+            };
+
+            var accessToken = GenerateAccessToken(claims);
+            var refreshToken = GenerateRefreshToken(claims);
+
+            serviceResponse.Success = true;
+            serviceResponse.Data = new LoginPlayerResponseDTO
+            {
+                AccessToken = accessToken,
+                RefreshToken = refreshToken
+            };
+
+            var result = playerManager.CreateAsync(player);
+
+            return serviceResponse;
+
+        }
+
+        public async Task<ServiceResponse<LoginPlayerResponseDTO>> Login(LoginPlayerDTO player)
+        {
+            if (player.IsGuest)
+            {
+                return CreateGuest();
+            }
+            var serviceResponse = new ServiceResponse<LoginPlayerResponseDTO>();
+            var loggedPlayer = await playerManager.FindByEmailAsync(player.Email!);
             if (loggedPlayer == null)
             {
                 serviceResponse.Success = false;
@@ -107,9 +147,6 @@ namespace Minesweeper.Services.AuthenticationService
             }
             return serviceResponse;
         }
-
-
-
 
         public async Task<ServiceResponse<string>> RefreshToken(string refreshToken)
         {
