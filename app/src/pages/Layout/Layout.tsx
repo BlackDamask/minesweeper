@@ -5,6 +5,7 @@ import { AuthContext } from '../../AuthProvider';
 import { useContext } from 'react';
 import { useDisclosure } from '@chakra-ui/react';
 import LoginModal from '../../components/Modals/LoginModal';
+import NotAuthorizedModal from '../../components/Modals/NotAuthorizedModal';
 
 export default function Layout() {
   const auth = useContext(AuthContext);
@@ -68,7 +69,7 @@ export default function Layout() {
       <div className='w-[calc(30%-5rem)]'>
 
       </div>
-       <LoginModal isOpen={isOpen} onClose={onClose} />
+       <NotAuthorizedModal isOpen={isOpen} onClose={onClose} />
     </main>
   );
 }
