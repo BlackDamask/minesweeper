@@ -2,7 +2,7 @@ import { Input, Button, Checkbox, IconButton, Image, useToast } from "@chakra-ui
 import { useContext, useState } from "react";
 import { FaApple, FaGoogle, FaFacebook } from "react-icons/fa";
 import { AuthContext } from "../../AuthProvider";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Navigate, useNavigate,Link } from "react-router-dom";
 
 export default function Login(){
     const auth = useContext(AuthContext);
@@ -79,7 +79,7 @@ export default function Login(){
                 variant="filled"
                 onChange={handleChange} 
                 value={formData.password}
-                className="bg-gray-700 text-white"
+                className="bg-gray-700 text-black"
               />
               
     
@@ -105,7 +105,7 @@ export default function Login(){
             </div>
     
             <p className="text-center text-gray-400 mt-6 text-sm">
-              New? <a href="#" className="text-green-400 hover:underline">Sign up - and start playing minesweeper!</a>
+              New? <Link to='/register'  className="text-green-400 hover:underline">Sign up - and start playing minesweeper!</Link>
             </p>
           </div>
         </div>

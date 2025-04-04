@@ -16,9 +16,8 @@ import {
     ModalFooter,
     Button,
     ModalOverlay,
-    IconButton,
 } from "@chakra-ui/react";
-import { HamburgerIcon } from "@chakra-ui/icons";
+
 import { ReactComponent as RegisterButton } from "./register-button.svg";
 import { ReactComponent as LoginButton } from "./login-button.svg";
 import LoginModal from '../Modals/LoginModal';
@@ -35,7 +34,6 @@ export default function Nav() {
     const [isSmallScreen, setIsSmallScreen] = useState(false);
     const [isClicked, setIsClicked] = useState(false);
     
-    // Ref to track the options box
     const optionsBoxRef = useRef<HTMLDivElement | null>(null);
 
     const {
@@ -75,11 +73,10 @@ export default function Nav() {
         };
     }, []);
 
-    // Add click event listener to close options when clicking outside of options box
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (optionsBoxRef.current && !optionsBoxRef.current.contains(event.target as Node)) {
-                setIsClicked(false); // Close the options if clicked outside
+                setIsClicked(false); 
             }
             else if(isSmallScreen){
                 setIsClicked(false);
@@ -134,8 +131,8 @@ export default function Nav() {
     };
     
     const handleClickButton = (index: number) => {
-        setIsClicked(!isClicked);  // Toggle visibility on click
-        setHoveredIndex(index);    // Make sure the clicked button is tracked
+        setIsClicked(!isClicked);
+        setHoveredIndex(index);
     };
 
     const handleMouseEnterOptionsBox = () => {

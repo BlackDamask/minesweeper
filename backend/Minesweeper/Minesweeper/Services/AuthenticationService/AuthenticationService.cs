@@ -122,19 +122,26 @@ namespace Minesweeper.Services.AuthenticationService
         public async Task<ServiceResponse<string>> Register(RegisterPlayerDTO newPlayer)
         {
             var serviceResponse = new ServiceResponse<string>();
+
+            var existingPlayer = await playerManager.FindByEmailAsync(newPlayer.Email);
+            if (existingPlayer != null)
+            {
+                serviceResponse.Message = "This email is already in use. Please choose another email.";
+                serviceResponse.Success = false;
+                return serviceResponse;
+            }
+
             var player = mapper.Map<Player>(newPlayer);
 
             var result = await playerManager.CreateAsync(player, newPlayer.Password);
+
             if (result.Succeeded)
             {
-                var token = await playerManager.GenerateEmailConfirmationTokenAsync(player);
-
-                var encodedToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
-
-                var confirmationLink = $"https://localhost:7036/api/auth/confirm-email?userId={player.Id}&token={encodedToken}";
-
-                await emailService.SendEmailAsync(player.Email, "Confirm Your Email",
-                    $"Please confirm your email by clicking <a href='{confirmationLink}'>here</a>.");
+                //var token = await playerManager.GenerateEmailConfirmationTokenAsync(player);
+                //var encodedToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
+                //var confirmationLink = $"https://localhost:7036/api/auth/confirm-email?userId={player.Id}&token={encodedToken}";
+                //await emailService.SendEmailAsync(player.Email, "Confirm Your Email",
+                //    $"Please confirm your email by clicking <a href='{confirmationLink}'>here</a>.");
 
                 serviceResponse.Message = "Registration succeeded! Please check your email for confirmation.";
                 serviceResponse.Success = true;
@@ -145,8 +152,10 @@ namespace Minesweeper.Services.AuthenticationService
                 serviceResponse.Message = errors;
                 serviceResponse.Success = false;
             }
+
             return serviceResponse;
         }
+
 
         public async Task<ServiceResponse<string>> RefreshToken(string refreshToken)
         {

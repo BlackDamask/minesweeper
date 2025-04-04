@@ -97,7 +97,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       const response = await axios.post("/player/register-user", { userName: username, email, password });
       console.warn(response.data)
-      return { success: true, message: response.data.message };
+      return { success: response.data.success, message: response.data.message };
     } catch (error: any) {
       console.error(error);
       return { success: false, message: error.response?.data?.message || "Registration failed" };

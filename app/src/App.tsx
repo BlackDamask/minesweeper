@@ -6,6 +6,7 @@ import SinglePlayer from './pages/SinglePlayer/SinglePlayer';
 import Multiplayer from './pages/Multiplayer/Multiplayer';
 import Login from './pages/Login/Login';
 import ProtectedRoute from './ProtectedRoute';
+import Register from './pages/Register/Register';
 
 const theme = extendTheme({
   styles: {
@@ -35,6 +36,7 @@ function App() {
             </ProtectedRoute>
           }/>
           <Route path='/login' element={<Login></Login>}></Route>
+          <Route path='/register' element={<Register></Register>}></Route>
         </Routes>
       </BrowserRouter>
     </ChakraProvider> 
