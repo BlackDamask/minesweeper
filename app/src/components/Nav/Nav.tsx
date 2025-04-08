@@ -188,7 +188,7 @@ export default function Nav() {
                             {auth?.isLoggedIn ? (
                                 <Popover placement="right">
                                     <PopoverTrigger>
-                                        <Avatar name={auth.user?.userName} />
+                                        <Avatar name={auth.user?.playerName} />
                                     </PopoverTrigger>
                                     <PopoverContent width="56" borderWidth={3}>
                                         <PopoverBody padding={0}>

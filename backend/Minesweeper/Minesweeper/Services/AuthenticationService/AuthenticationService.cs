@@ -29,13 +29,15 @@ namespace Minesweeper.Services.AuthenticationService
             UserManager<Player> playerManager,
             IMapper mapper,
             IConfiguration configuration,
-            ApplicationDbContext context
+            ApplicationDbContext context,
+            IEmailService emailService
         )
         {
             this.playerManager = playerManager;
             this.mapper = mapper;
             this.configuration = configuration;
             this.context = context;
+            this.emailService = emailService;
         }
 
         private ServiceResponse<LoginPlayerResponseDTO> CreateGuest()
@@ -137,11 +139,20 @@ namespace Minesweeper.Services.AuthenticationService
 
             if (result.Succeeded)
             {
-                //var token = await playerManager.GenerateEmailConfirmationTokenAsync(player);
-                //var encodedToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
-                //var confirmationLink = $"https://localhost:7036/api/auth/confirm-email?userId={player.Id}&token={encodedToken}";
-                //await emailService.SendEmailAsync(player.Email, "Confirm Your Email",
-                //    $"Please confirm your email by clicking <a href='{confirmationLink}'>here</a>.");
+                var token = await playerManager.GenerateEmailConfirmationTokenAsync(player);
+                var encodedToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
+                var confirmationLink = $"https://localhost:7036/api/player/confirm-email?userId={player.Id}&token={encodedToken}";
+
+                if (emailService == null)
+                    throw new Exception("emailService is null");
+                if (player == null)
+                    throw new Exception("player is null");
+                if (string.IsNullOrEmpty(player.Email))
+                    throw new Exception("player.Email is null or empty");
+
+
+                await emailService.SendEmailAsync(player.Email, "Confirm Your Email",
+                    $"Please confirm your email by clicking <a href='{confirmationLink}'>here</a>.");
 
                 serviceResponse.Message = "Registration succeeded! Please check your email for confirmation.";
                 serviceResponse.Success = true;

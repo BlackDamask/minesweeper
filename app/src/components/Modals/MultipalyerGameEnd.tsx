@@ -22,8 +22,8 @@ export default function MultiplayerGameEnd({isOpen, onClose} : {isOpen: boolean,
                     <ModalBody pb={6} backgroundColor="#262421" fontSize="2xl" textColor={'white'} className="font-customFont">
                             <section className="flex justify-center mt-4 ">
                                 <div className="w-20 flex-col flex items-center ">
-                                    <Avatar boxShadow="0 0 15px #00FF00" name={auth?.user?.userName}></Avatar>
-                                    <p className="w-full text-ellipsis overflow-hidden  text-base text-gray-200 font-ubuntuFont text-center mt-2">{auth?.user?.userName}</p>
+                                    <Avatar boxShadow="0 0 15px #00FF00" name={auth?.user?.playerName}></Avatar>
+                                    <p className="w-full text-ellipsis overflow-hidden  text-base text-gray-200 font-ubuntuFont text-center mt-2">{auth?.user?.playerName}</p>
                                 </div>
                                 <p className = "mx-4">vs</p>
                                 <div className="w-20 flex-col flex items-center ">
@@ -62,8 +62,8 @@ export default function MultiplayerGameEnd({isOpen, onClose} : {isOpen: boolean,
                     <ModalBody pb={6} backgroundColor="#262421" fontSize="2xl" textColor={'white'} className="font-customFont">
                             <section className="flex justify-center mt-4 ">
                                 <div className="w-20 flex-col flex items-center ">
-                                    <Avatar boxShadow="0 0 15px #FF0000" name={auth?.user?.userName}></Avatar>
-                                    <p className="w-full text-ellipsis overflow-hidden  text-base text-gray-200 font-ubuntuFont text-center mt-2">{auth?.user?.userName}</p>
+                                    <Avatar boxShadow="0 0 15px #FF0000" name={auth?.user?.playerName}></Avatar>
+                                    <p className="w-full text-ellipsis overflow-hidden  text-base text-gray-200 font-ubuntuFont text-center mt-2">{auth?.user?.playerName}</p>
                                 </div>
                                 <p className = "mx-4">vs</p>
                                 <div className="w-20 flex-col flex items-center ">

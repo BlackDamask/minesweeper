@@ -39,6 +39,7 @@ builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 builder.Services.AddScoped<IPlayerService, PlayerService>();
 builder.Services.AddScoped<IMatchmakingService, MatchmakingService>();
 builder.Services.AddScoped<IGameService, GameService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddHostedService<MatchmakingBackgroundService>();
 builder.Services.AddAuthorization();
 

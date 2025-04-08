@@ -6,7 +6,7 @@ interface ApiResponse<T> {
 }
 
 interface User {
-  userName: string;
+  playerName: string;
   points: number;
 }
 
@@ -95,7 +95,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     password: string
   ): Promise<{ success: boolean; message?: string }> => {
     try {
-      const response = await axios.post("/player/register-user", { userName: username, email, password });
+      const response = await axios.post("/player/register-user", { playerName: username, email, password });
       console.warn(response.data)
       return { success: response.data.success, message: response.data.message };
     } catch (error: any) {

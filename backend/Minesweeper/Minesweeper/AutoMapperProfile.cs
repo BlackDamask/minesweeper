@@ -9,7 +9,9 @@ namespace Minesweeper
         public AutoMapperProfile()
         {
             CreateMap<RegisterPlayerDTO, Player>()
-                .ForMember(dest => dest.PasswordHash, opt => opt.MapFrom(src => src.Password));
+                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.Email))
+                .ForMember(dest => dest.PasswordHash, opt => opt.MapFrom(src => src.Password))
+                .ForMember(dest => dest.PlayerName, opt => opt.MapFrom(src => src.PlayerName));
             CreateMap<Player, GetPlayerDTO>();
         }
     }

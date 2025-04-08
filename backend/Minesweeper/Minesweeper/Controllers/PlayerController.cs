@@ -3,6 +3,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using Minesweeper.DTOs.PlayerDTO;
 using Minesweeper.models;
@@ -10,6 +11,7 @@ using Minesweeper.Services.AuthenticationService;
 using Minesweeper.Services.PlayerService;
 using System.Reflection.Metadata.Ecma335;
 using System.Security.Claims;
+using System.Text;
 
 namespace Minesweeper.Controllers
 {
@@ -41,6 +43,21 @@ namespace Minesweeper.Controllers
         {
             return Ok(await authenticationService.Register(newPlayer));
         }
+
+        [HttpGet("confirm-email")]
+        public async Task<IActionResult> ConfirmEmail(string userId, string token)
+        {
+            var user = await playerManager.FindByIdAsync(userId);
+            if (user == null) return BadRequest("Invalid user");
+
+            var decodedToken = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(token));
+
+            var result = await playerManager.ConfirmEmailAsync(user, decodedToken);
+            if (!result.Succeeded) return BadRequest("Email confirmation failed");
+
+            return Ok("Email confirmed successfully!");
+        }
+
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginPlayerDTO player)
         {
