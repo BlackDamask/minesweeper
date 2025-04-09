@@ -64,6 +64,7 @@ export default function LoginModal({isOpen, onClose} : {isOpen: boolean, onClose
                             </InputLeftElement>
                             <Input name="email"
                                 type='email'
+                                color = "white"
                                 onChange={handleChange}
                                 value={formData.email}
                                 placeholder='Email' 
@@ -76,6 +77,7 @@ export default function LoginModal({isOpen, onClose} : {isOpen: boolean, onClose
                             <Input 
                                 name='password'
                                 type='password' 
+                                color = "white"
                                 placeholder='Password' 
                                 onChange={handleChange} 
                                 value={formData.password}

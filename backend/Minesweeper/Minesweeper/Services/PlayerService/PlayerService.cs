@@ -47,21 +47,6 @@ namespace Minesweeper.Services.PlayerService
             serviceResponse.Success = true;
             return serviceResponse;
         }
-
-        public async Task<ServiceResponse<int>> ChangePoints(string playerId, int pointsChange)
-        {
-            var serviceResponse = new ServiceResponse<int>();
-
-            var player = await context.Users.FindAsync(playerId);
-            player!.Points = player.Points + pointsChange;
-
-            serviceResponse.Data = player.Points;
-            serviceResponse.Success = true;
-
-            await context.SaveChangesAsync();
-            return serviceResponse;
-        }
-
         public async Task<ServiceResponse<GameBeginDTO>> AddPlayerToQueue(string playerId)
         {
             var serviceResponse = new ServiceResponse<GameBeginDTO>();
@@ -85,7 +70,7 @@ namespace Minesweeper.Services.PlayerService
 
                     var enemyName = context.Users
                         .Where(u => u.Id == enemy.PlayerId)
-                        .Select(u => u.UserName)
+                        .Select(u => u.PlayerName)
                         .FirstOrDefault() ?? throw new Exception("Enemy name not found");
 
                     var response = new GameBeginDTO

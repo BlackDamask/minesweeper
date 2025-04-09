@@ -81,17 +81,7 @@ namespace Minesweeper.Controllers
             }
             return Ok(await playerService.GetProfile(playerId));
         }
-        [Authorize]
-        [HttpPut("change-points")]
-        public async Task<IActionResult> ChangePoints(int pointsChange)
-        {
-            var playerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (playerId is null)
-            {
-                return BadRequest();
-            }
-            return Ok(await playerService.ChangePoints(playerId, pointsChange));
-        }
+    
         [Authorize]
         [HttpPut("change-username")]
         public async Task<IActionResult> ChangeUsername(string userName)

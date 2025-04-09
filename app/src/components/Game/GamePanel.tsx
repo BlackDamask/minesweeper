@@ -104,9 +104,9 @@ export default function GamePanel()
                         variant='filled'
                         onChange={handleSelectChange}
                         value={selectedOption}>
-                            <option value={1}>Beginner</option>
-                            <option value={2}>Indermediate</option>
-                            <option value={3}>Expert</option>
+                            <option className='text-black' value={1}>Beginner</option>
+                            <option className='text-black' value={2}>Indermediate</option>
+                            <option className='text-black' value={3}>Expert</option>
                     </Select>
                     
                 </div>

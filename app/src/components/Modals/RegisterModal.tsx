@@ -71,6 +71,7 @@ import {
                 <Input
                   name="username"
                   type="text"
+                  color = "white"
                   placeholder="User name"
                   onChange={handleChange}
                   value={formData.username}
@@ -83,6 +84,7 @@ import {
                 <Input
                   name="email"
                   type="email"
+                  color = "white"
                   placeholder="Email"
                   onChange={handleChange}
                   value={formData.email}
@@ -95,6 +97,7 @@ import {
                 <Input
                   name="password"
                   type="password"
+                  color = "white"
                   placeholder="Password"
                   onChange={handleChange}
                   value={formData.password}

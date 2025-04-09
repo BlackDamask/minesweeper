@@ -97,7 +97,7 @@ namespace Minesweeper.Services.MatchmakingService
 
                 string enemyName = context.Users
                     .Where(u => u.Id == matchedPlayers[1].PlayerId)
-                    .Select(u => u.UserName) 
+                    .Select(u => u.PlayerName) 
                     .FirstOrDefault() ?? throw new Exception("Player not found");
 
                 GameBeginDTO response = new GameBeginDTO
@@ -114,7 +114,7 @@ namespace Minesweeper.Services.MatchmakingService
 
                 enemyName = context.Users
                     .Where(u => u.Id == matchedPlayers[0].PlayerId)
-                    .Select(u => u.UserName)
+                    .Select(u => u.PlayerName)
                     .FirstOrDefault() ?? throw new Exception("Player not found");
                 response.EnemyName = enemyName;
 
