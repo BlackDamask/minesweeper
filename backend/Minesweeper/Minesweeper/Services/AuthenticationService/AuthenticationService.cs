@@ -24,59 +24,94 @@ namespace Minesweeper.Services.AuthenticationService
         private readonly IConfiguration configuration;
         private readonly ApplicationDbContext context;
         private readonly IEmailService emailService;
+        private readonly ILogger<AuthenticationService> logger;
 
         public AuthenticationService(
             UserManager<Player> playerManager,
             IMapper mapper,
             IConfiguration configuration,
             ApplicationDbContext context,
-            IEmailService emailService
-        )
+            IEmailService emailService,
+            ILogger<AuthenticationService> logger)
         {
             this.playerManager = playerManager;
             this.mapper = mapper;
             this.configuration = configuration;
             this.context = context;
             this.emailService = emailService;
+            this.logger = logger;
         }
 
-        private ServiceResponse<LoginPlayerResponseDTO> CreateGuest()
+        private async Task<ServiceResponse<LoginPlayerResponseDTO>> CreateGuest()
         {
             var serviceResponse = new ServiceResponse<LoginPlayerResponseDTO>();
 
-            Random random = new Random();
-            int number = random.Next(10000, 99999); 
-            string guestName = "Guest_" + number;
-
-            var player = new Player { IsGuest = true, UserName = guestName };
-
-            var claims = new List<Claim>
+            try
             {
-                new Claim(ClaimTypes.NameIdentifier, player.Id),
-                new Claim(ClaimTypes.Name, player.UserName!)
-            };
+                Random random = new Random();
+                int number = random.Next(10000, 99999);
+                string guestName = "Guest_" + number;
 
-            var accessToken = GenerateAccessToken(claims);
-            var refreshToken = GenerateRefreshToken(claims);
+                var player = new Player
+                {
+                    IsGuest = true,
+                    UserName = guestName,
+                    Email = $"guest_{number}@guest.minesweeper.com"
+                };
 
-            serviceResponse.Success = true;
-            serviceResponse.Data = new LoginPlayerResponseDTO
+                var result = await playerManager.CreateAsync(player);
+
+                if (!result.Succeeded)
+                {
+                    var errorDescriptions = string.Join("; ", result.Errors.Select(e => e.Description));
+                    logger.LogError("Failed to create guest player: {Errors}", errorDescriptions);
+
+                    serviceResponse.Success = false;
+                    serviceResponse.Message = "Failed to create guest player";
+                    return serviceResponse;
+                }
+
+                var claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.NameIdentifier, player.Id),
+                    new Claim(ClaimTypes.Name, player.UserName!)
+                };
+
+                var accessToken = GenerateAccessToken(claims);
+                var refreshToken = GenerateRefreshToken(claims);
+
+                context.RefreshTokens.Add(new RefreshToken
+                {
+                    Token = refreshToken,
+                    UserId = player.Id,
+                    Expiration = DateTime.UtcNow.AddDays(Convert.ToDouble(configuration["Jwt:RefreshTokenExpirationDays"]))
+                });
+
+                await context.SaveChangesAsync();
+
+                serviceResponse.Success = true;
+                serviceResponse.Data = new LoginPlayerResponseDTO
+                {
+                    AccessToken = accessToken,
+                    RefreshToken = refreshToken
+                };
+            }
+            catch (Exception ex)
             {
-                AccessToken = accessToken,
-                RefreshToken = refreshToken
-            };
-
-            var result = playerManager.CreateAsync(player);
+                logger.LogError(ex, "Unexpected error during guest creation.");
+                serviceResponse.Success = false;
+                serviceResponse.Message = "An error occurred while creating a guest.";
+            }
 
             return serviceResponse;
-
         }
+
 
         public async Task<ServiceResponse<LoginPlayerResponseDTO>> Login(LoginPlayerDTO player)
         {
             if (player.IsGuest)
             {
-                return CreateGuest();
+                return await CreateGuest();
             }
             var serviceResponse = new ServiceResponse<LoginPlayerResponseDTO>();
             var loggedPlayer = await playerManager.FindByEmailAsync(player.Email!);
@@ -150,7 +185,6 @@ namespace Minesweeper.Services.AuthenticationService
                 if (string.IsNullOrEmpty(player.Email))
                     throw new Exception("player.Email is null or empty");
 
-
                 await emailService.SendEmailAsync(player.Email, "Confirm Your Email",
                     $"Please confirm your email by clicking <a href='{confirmationLink}'>here</a>.");
 
@@ -163,7 +197,7 @@ namespace Minesweeper.Services.AuthenticationService
                 serviceResponse.Message = errors;
                 serviceResponse.Success = false;
             }
-
+             
             return serviceResponse;
         }
 

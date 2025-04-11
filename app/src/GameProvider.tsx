@@ -47,6 +47,9 @@ interface GameContextType {
   isEnemyExploaded: boolean;
   enemyProgress: number;
   enemyName: string;
+
+  currentElo: number;
+  eloChange: number;
   
   playerExploaded:() => void;
 
@@ -78,6 +81,9 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [startCoordinates, setStartCoordinates] = useState<StartCoordinates>({ colIndex: 0, rowIndex: 0 });
   const [startTime, setStartTime] = useState<number>(0);
   const [isWon, setIsWon] = useState<boolean>(false);
+  const [currentElo, setCurrentElo] = useState<number>(500);
+  const [eloChange, setEloChange] = useState<number>(0);
+
   const connectionRef = useRef<signalR.HubConnection | null>(null);
 
   const playerExploaded = () =>
@@ -143,16 +149,19 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
           
       
-          connection.on("GameWon", () => {
-            setIsGameEnded(true);
-            setIsWon(true);
-            currentGameData!.isGameOver = true;
-          });
-          
-          connection.on("GameLost", () => {
-            setIsGameEnded(true);
-            setIsWon(false);
-            currentGameData!.isGameOver = true;
+          connection.on("GameEnd", (response: GameEndResponse) => {
+            if(response.isWon){
+              setIsGameEnded(true);
+              setIsWon(true);
+              currentGameData!.isGameOver = true;
+            }
+            else{
+              setIsGameEnded(true);
+              setIsWon(false);
+              currentGameData!.isGameOver = true;
+            }
+            setCurrentElo(response.newElo);
+            setEloChange(response.eloChange);
           });
     }
   }, [connectionRef,currentGameData, toast]); 
@@ -161,22 +170,22 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const connection = connectionRef.current;
 
     const sendProgress = () =>{
-      if(connection && connection.state === "Connected")
-
-            if(currentGameData?.maxNumberOfRevealedTiles){
-              const progress = currentGameData?.countRevealedTiles() / currentGameData?.maxNumberOfRevealedTiles * 100;
-              if(currentGameData.isExploaded !== undefined){
-                const progressData: SendProgressResponse = {
-                  progress: progress,
-                  isExploaded: isExploaded,
-                };
-              
-                console.warn(currentGameData.isExploaded);
-                
-                      connection.invoke("SendProgress", progressData)
-                    } 
-            }
-          }
+      if(connection && connection.state === "Connected"){
+        if(currentGameData?.maxNumberOfRevealedTiles){
+          const progress = currentGameData?.countRevealedTiles() / currentGameData?.maxNumberOfRevealedTiles * 100;
+          if(currentGameData.isExploaded !== undefined){
+            const progressData: SendProgressResponse = {
+              progress: progress,
+              isExploaded: isExploaded,
+            };
+          
+            console.warn(currentGameData.isExploaded);
+            
+                  connection.invoke("SendProgress", progressData)
+          } 
+        }
+      }
+    }
     sendProgress();
   }, [currentGameData, isExploaded]);
 
@@ -185,24 +194,28 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     <GameContext.Provider value={{ 
       isGameStarted,
       isGameEnded,
-      setGameField,
       isExploaded,
       isEnemyExploaded,
-      setIsExploaded,
-      playerExploaded,
-      setStartTime,
+      isWon,
+
       enemyProgress,
-      setEnemyProgress,
       gameField,
       startCoordinates,
       startTime,
+      currentGameData, 
+      enemyName,
+      eloChange,
+      currentElo,
+
+      setGameField,
+      setIsExploaded,
+      playerExploaded,
+      setStartTime,
+      setEnemyProgress,
       setCurrentGameData,
       setStartCoordinates, 
       setIsGameStarted, 
-      currentGameData, 
-      enemyName, 
       setEnemyName,
-      isWon 
       }}>
       {children}
     </GameContext.Provider>

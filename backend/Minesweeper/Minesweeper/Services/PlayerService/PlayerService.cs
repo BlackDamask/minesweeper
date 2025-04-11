@@ -62,6 +62,10 @@ namespace Minesweeper.Services.PlayerService
 
                 if (existingGameParticipant != null)
                 {
+                    Console.ForegroundColor = ConsoleColor.Magenta;
+                    Console.WriteLine("existingGameParticipant != null");
+                    Console.ResetColor();
+
                     var game = context.Games.FirstOrDefault(g => g.Id == existingGameParticipant.GameId);
                     var enemy = context.GameParticipants
                         .Where(g => g.GameId == game.Id)
@@ -93,7 +97,10 @@ namespace Minesweeper.Services.PlayerService
 
                 if (existingQueueEntry != null)
                 {
-                    
+                    Console.ForegroundColor = ConsoleColor.Magenta;
+                    Console.WriteLine("existingQueueEntry != null");
+                    Console.ResetColor();
+
                     context.MatchmakingQueue.Remove(existingQueueEntry);
                     await context.SaveChangesAsync();
                 }
@@ -112,7 +119,6 @@ namespace Minesweeper.Services.PlayerService
 
                 await context.SaveChangesAsync();
 
-                
                 serviceResponse.Data = null;
             }
             catch (Exception ex)

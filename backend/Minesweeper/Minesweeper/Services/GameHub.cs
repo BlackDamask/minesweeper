@@ -69,11 +69,11 @@ namespace Minesweeper.Services
                     player.Elo += 8;
                     enemy.Elo -= 8;
 
-                    var gameEndResponse = new GameEndDTO { EloChange = 8, NewElo = player.Elo + 8, isWon = true };
+                    var gameEndResponse = new GameEndDTO { EloChange = 8, NewElo = player.Elo + 8, IsWon = true };
 
                     await Clients.User(Context.UserIdentifier!).SendAsync("GamEnd", gameEndResponse);
 
-                    gameEndResponse = new GameEndDTO { EloChange = 8, NewElo = player.Elo - 8, isWon = false };
+                    gameEndResponse = new GameEndDTO { EloChange = 8, NewElo = player.Elo - 8, IsWon = false };
 
                     await Clients.User(enemyGp.PlayerId).SendAsync("GameEnd", gameEndResponse);
 

@@ -34,7 +34,7 @@ export default function MultiplayerGameEnd({isOpen, onClose} : {isOpen: boolean,
                             <section className="font-ubuntuFont w-full ">
                                 <div className="flex flex-col my-4 justify-center w-full items-center">
                                     <h2 className="text-xl">Your Rating:</h2>
-                                    <h1 className="text-2xl">100</h1>
+                                    <h1 className="text-2xl">{game?.currentElo}</h1>
                                 </div>
                             </section>
                             <section>
@@ -74,7 +74,7 @@ export default function MultiplayerGameEnd({isOpen, onClose} : {isOpen: boolean,
                             <section className="font-ubuntuFont w-full ">
                                 <div className="flex flex-col my-4 justify-center w-full items-center">
                                     <h2 className="text-xl">Your Rating:</h2>
-                                    <h1 className="text-2xl">100</h1>
+                                    <h1 className="text-2xl">{game?.currentElo}</h1>
                                 </div>
                             </section>
                             <section>

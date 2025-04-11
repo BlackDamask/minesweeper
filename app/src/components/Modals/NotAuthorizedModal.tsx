@@ -20,6 +20,37 @@ export default function NotAuthorizedModal({isOpen, onClose} : {isOpen: boolean,
     const handleRegister = () => {
         navigate('/register');
     }
+    const  handleGuestLogin = async () =>{
+        const result = await auth!.login('', '', true);
+        try{
+            if (!result.success) {
+                toast({
+                    title: "Login failed",
+                    description: `${result.message}`,
+                    status: 'error',
+                    isClosable: true,
+                });
+            }
+            else{
+                toast({
+                    title: "Login successed",
+                    status: 'success',
+                    isClosable: true,
+                });
+                navigate("/multiplayer");
+            }
+        }
+        catch(error){
+            toast({
+                title: "Login failed",
+                description: `${result.message}`,
+                status: 'error',
+                isClosable: true,
+            });
+        }
+        
+    }
+
     return(
         <Modal isOpen={isOpen} onClose={onClose} isCentered size="lg">
             <ModalOverlay
@@ -47,7 +78,7 @@ export default function NotAuthorizedModal({isOpen, onClose} : {isOpen: boolean,
                     
                 </ModalBody>
                 <ModalFooter >
-                    <p className='text-xl text-zinc-300 self-center m-auto' >Play as Guest</p>
+                    <p className='text-xl text-zinc-300 self-center m-auto' onClick = {handleGuestLogin} >Play as Guest</p>
                 </ModalFooter>
             </ModalContent>
         </Modal>

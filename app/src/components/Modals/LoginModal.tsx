@@ -17,7 +17,7 @@ export default function LoginModal({isOpen, onClose} : {isOpen: boolean, onClose
       };
       const handleSubmit = async () => {
         setLoading(true);
-        const result = await auth!.login(formData.email, formData.password);
+        const result = await auth!.login(formData.email, formData.password, false);
         try{
             if (!result.success) {
                 toast({

@@ -8,11 +8,12 @@ interface ApiResponse<T> {
 interface User {
   playerName: string;
   points: number;
+  isGuest:boolean;
 }
 
 interface AuthContextType {
   user: User | null;
-  login: (username: string, password: string) => Promise<{ success: boolean; message?: string }>;
+  login: (username: string | null, password: string | null, isGuest: boolean) => Promise<{ success: boolean; message?: string }>;
   register: (username: string, email: string, password: string) => Promise<{ success: boolean; message?: string }>;
   logout: () => void;
   changeUsername: (username: string) => Promise<{ success: boolean; message?: string }>
@@ -34,9 +35,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
 
   // Login function
-  const login = async (email: string, password: string): Promise<{ success: boolean; message?: string }> => {
+  const login = async (email: string | null, password: string | null, isGuest: boolean): Promise<{ success: boolean; message?: string }> => {
     try {
-      const response = await axios.post("/player/login", { email: email, password });
+      const response = await axios.post("/player/login", { email: email, password, isGuest });
       if(!response.data.success){
         return { success: false, message:response.data.message };
       }
