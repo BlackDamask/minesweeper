@@ -12,6 +12,13 @@ interface GameStartResponse {
   enemyProgress: number;
   startTime: number;
 }
+
+interface GameEndResponse {
+  isWon: boolean;
+  newElo: number;
+  eloChange: number;
+}
+
 interface ReceiveProgressResponse {
   progress: number; 
   isExploaded:boolean;

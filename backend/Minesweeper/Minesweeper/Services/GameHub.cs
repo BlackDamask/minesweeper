@@ -39,13 +39,13 @@ namespace Minesweeper.Services
                     .Select(gp => gp.GameId)
                     .FirstOrDefault() ?? throw new Exception("Game not found");
 
-                var enemy = dbContext.GameParticipants
+                var enemyGp = dbContext.GameParticipants
                     .Where(gp => gp.GameId == gameId && gp.PlayerId != Context.UserIdentifier)
                     .FirstOrDefault() ?? throw new Exception("Enemy not found");
 
                 var sendResponse = new SendProgressDTO { IsExploaded = response.IsExploaded, Progress = response.Progress };
 
-                await Clients.User(enemy.PlayerId).SendAsync("ReceiveProgress", sendResponse);
+                await Clients.User(enemyGp.PlayerId).SendAsync("ReceiveProgress", sendResponse);
 
                 var playerGp = dbContext.GameParticipants
                         .Where(p => p.PlayerId == Context.UserIdentifier)
@@ -64,10 +64,20 @@ namespace Minesweeper.Services
 
                     game.IsActive = false;
 
-                    await Clients.User(Context.UserIdentifier).SendAsync("GameWon");
-                    await Clients.User(enemy.PlayerId).SendAsync("GameLost");
+                    var enemy = dbContext.Users.FirstOrDefault(u => u.Id == enemyGp.PlayerId) ?? throw new Exception("Enemy not found");
 
-                    dbContext.GameParticipants.Remove(enemy);
+                    player.Elo += 8;
+                    enemy.Elo -= 8;
+
+                    var gameEndResponse = new GameEndDTO { EloChange = 8, NewElo = player.Elo + 8, isWon = true };
+
+                    await Clients.User(Context.UserIdentifier!).SendAsync("GamEnd", gameEndResponse);
+
+                    gameEndResponse = new GameEndDTO { EloChange = 8, NewElo = player.Elo - 8, isWon = false };
+
+                    await Clients.User(enemyGp.PlayerId).SendAsync("GameEnd", gameEndResponse);
+
+                    dbContext.GameParticipants.Remove(enemyGp);
                     dbContext.GameParticipants.Remove(playerGp);
                     dbContext.SaveChanges();
 
