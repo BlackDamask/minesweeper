@@ -21,7 +21,9 @@ export default function NotAuthorizedModal({isOpen, onClose} : {isOpen: boolean,
         navigate('/register');
     }
     const  handleGuestLogin = async () =>{
+        setLoading(true);
         const result = await auth!.login('', '', true);
+        
         try{
             if (!result.success) {
                 toast({
@@ -47,6 +49,9 @@ export default function NotAuthorizedModal({isOpen, onClose} : {isOpen: boolean,
                 status: 'error',
                 isClosable: true,
             });
+        }
+        finally{
+            setLoading(false);
         }
         
     }
@@ -78,7 +83,7 @@ export default function NotAuthorizedModal({isOpen, onClose} : {isOpen: boolean,
                     
                 </ModalBody>
                 <ModalFooter >
-                    <p className='text-xl text-zinc-300 self-center m-auto' onClick = {handleGuestLogin} >Play as Guest</p>
+                    <p className='text-xl text-zinc-300 self-center m-auto cursor-pointer' onClick = {handleGuestLogin} >{isLoading ? "Loading..." : "Play As Guest"}</p>
                 </ModalFooter>
             </ModalContent>
         </Modal>

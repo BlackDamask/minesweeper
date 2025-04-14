@@ -7,6 +7,7 @@ using Minesweeper.models;
 using Minesweeper.models.MinesweeperGame;
 using System;
 using System.Data.Common;
+using System.Runtime.CompilerServices;
 using System.Security.Claims;
 using System.Text.Json;
 
@@ -22,10 +23,8 @@ namespace Minesweeper.Services
             this.dbContext = context;
         }
 
-
         public async Task SendProgress(ReceiveProgressDTO response)
         {
-
             try
             {
                 var player = dbContext.Users
@@ -94,8 +93,6 @@ namespace Minesweeper.Services
 
         public override async Task OnConnectedAsync()
         {
-
-
             await Clients.All.SendAsync("ReceiveSystemMessage",
                 $"{Context.UserIdentifier} joined.");
             Console.WriteLine(Clients.ToString());

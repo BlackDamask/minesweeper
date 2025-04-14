@@ -56,6 +56,7 @@ namespace Minesweeper.Services.AuthenticationService
                 {
                     IsGuest = true,
                     UserName = guestName,
+                    PlayerName = guestName,
                     Email = $"guest_{number}@guest.minesweeper.com"
                 };
 

@@ -193,6 +193,12 @@ export default function Nav() {
                                     <PopoverContent width="56" borderWidth={3}>
                                         <PopoverBody padding={0}>
                                             <Box
+                                                className="h-[2.5em] text-xl flex text-white items-center pl-3 filter brightness-100 hover:brightness-75 bg-slate-800"
+                                                onClick={onChangeUsernameOpen}
+                                            >
+                                                {auth.user?.playerName}
+                                            </Box>
+                                            <Box
                                                 className="h-[2.5em] text-xl flex text-gray-100 items-center pl-3 filter brightness-100 hover:brightness-75 bg-slate-900"
                                                 onClick={onChangeUsernameOpen}
                                             >

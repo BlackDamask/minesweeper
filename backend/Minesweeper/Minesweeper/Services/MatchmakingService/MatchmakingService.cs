@@ -100,6 +100,18 @@ namespace Minesweeper.Services.MatchmakingService
                     .Select(u => u.PlayerName) 
                     .FirstOrDefault() ?? throw new Exception("Player not found");
 
+                string userName = context.Users
+                    .Where(u => u.Id == matchedPlayers[0].PlayerId)
+                    .Select(u => u.PlayerName)
+                    .FirstOrDefault() ?? throw new Exception("Player not found");
+
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("Added user to game: "+ userName);
+                Console.ResetColor();
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("Added user to game: " + enemyName);
+                Console.ResetColor();
+
                 GameBeginDTO response = new GameBeginDTO
                 {
                     GameField = minesweeperGame.gameField,
@@ -112,6 +124,8 @@ namespace Minesweeper.Services.MatchmakingService
 
                 await hubContext.Clients.User(matchedPlayers[0].PlayerId).SendAsync("GameStarted", response);
 
+
+
                 enemyName = context.Users
                     .Where(u => u.Id == matchedPlayers[0].PlayerId)
                     .Select(u => u.PlayerName)
@@ -122,7 +136,10 @@ namespace Minesweeper.Services.MatchmakingService
             }
             catch(Exception ex)
             {
+                Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine(ex.ToString());
+                Console.ResetColor();
+                
             }
             
         }

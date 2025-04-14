@@ -79,7 +79,7 @@ namespace Minesweeper.Services.PlayerService
 
                     var response = new GameBeginDTO
                     {
-                        ColBeginIndex = game.ColBeginIndex,
+                        ColBeginIndex = game!.ColBeginIndex,
                         RowBeginIndex = game.RowBeginIndex,
                         GameField = game.GameField,
                         EnemyName = enemyName,

@@ -116,6 +116,12 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if(connection.state !== "Connected")
         connection.start().catch((e) => "Failed to connect to websocket: " + e);
           connection.on("GameStarted", (response: GameStartResponse) => {
+            toast({
+              title: "GameDataReceived",
+              description: response.enemyName,
+              status: "info",
+              isClosable: true
+            })
             setEnemyName(response.enemyName);
             setGameField(response.gameField);
             setStartCoordinates({ colIndex: response.colBeginIndex, rowIndex: response.rowBeginIndex });
@@ -150,6 +156,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
           
       
           connection.on("GameEnd", (response: GameEndResponse) => {
+            console.warn(response);
             if(response.isWon){
               setIsGameEnded(true);
               setIsWon(true);
