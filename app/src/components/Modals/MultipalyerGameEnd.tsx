@@ -9,6 +9,22 @@ export default function MultiplayerGameEnd({isOpen, onClose} : {isOpen: boolean,
     const game = useGameContext();
     const auth = useContext(AuthContext)
     
+    const showEloChange = (): ReactElement => {
+        const eloChange = game?.eloChange;
+    
+        if (eloChange === undefined || eloChange === null) return <h1> </h1>;
+    
+        const isPositive = eloChange > 0;
+        const color = isPositive ? 'green' : 'red';
+        const sign = isPositive ? '+' : '';
+    
+        return (
+            <h1 className="text-2xl" style={{ color: color }}>
+                ({sign}{eloChange})
+            </h1>
+        );
+    };
+
     const showModalContent = (isWon: boolean | undefined): ReactElement => {
         if (isWon) {
             return (
@@ -34,7 +50,7 @@ export default function MultiplayerGameEnd({isOpen, onClose} : {isOpen: boolean,
                             <section className="font-ubuntuFont w-full ">
                                 <div className="flex flex-col my-4 justify-center w-full items-center">
                                     <h2 className="text-xl">Your Rating:</h2>
-                                    <h1 className="text-2xl">{game?.currentElo}</h1>
+                                    <span className="flex"><h1 className="text-2xl">{game?.currentElo}</h1>{showEloChange()}</span>
                                 </div>
                             </section>
                             <section>
@@ -74,7 +90,7 @@ export default function MultiplayerGameEnd({isOpen, onClose} : {isOpen: boolean,
                             <section className="font-ubuntuFont w-full ">
                                 <div className="flex flex-col my-4 justify-center w-full items-center">
                                     <h2 className="text-xl">Your Rating:</h2>
-                                    <h1 className="text-2xl">{game?.currentElo}</h1>
+                                    <span className="flex"><h1 className="text-2xl">{game?.currentElo}</h1>{showEloChange()}</span>
                                 </div>
                             </section>
                             <section>

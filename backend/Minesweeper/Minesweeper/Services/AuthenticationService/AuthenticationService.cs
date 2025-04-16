@@ -57,7 +57,8 @@ namespace Minesweeper.Services.AuthenticationService
                     IsGuest = true,
                     UserName = guestName,
                     PlayerName = guestName,
-                    Email = $"guest_{number}@guest.minesweeper.com"
+                    Email = $"guest_{number}@guest.minesweeper.com",
+                    EmailConfirmed = true,
                 };
 
                 var result = await playerManager.CreateAsync(player);

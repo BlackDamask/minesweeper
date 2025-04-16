@@ -65,16 +65,17 @@ namespace Minesweeper.Services
 
                     var enemy = dbContext.Users.FirstOrDefault(u => u.Id == enemyGp.PlayerId) ?? throw new Exception("Enemy not found");
 
+                    
+
+                    var playerGameEndResponse = new GameEndDTO { EloChange = 8, NewElo = player.Elo + 8, IsWon = true };
+                    var enemyGameEndResponse = new GameEndDTO { EloChange = -8, NewElo = enemy.Elo - 8, IsWon = false };
+
                     player.Elo += 8;
                     enemy.Elo -= 8;
 
-                    var gameEndResponse = new GameEndDTO { EloChange = 8, NewElo = player.Elo + 8, IsWon = true };
+                    await Clients.User(player.Id).SendAsync("GameEnd", playerGameEndResponse);
 
-                    await Clients.User(Context.UserIdentifier!).SendAsync("GamEnd", gameEndResponse);
-
-                    gameEndResponse = new GameEndDTO { EloChange = 8, NewElo = player.Elo - 8, IsWon = false };
-
-                    await Clients.User(enemyGp.PlayerId).SendAsync("GameEnd", gameEndResponse);
+                    await Clients.User(enemyGp.PlayerId).SendAsync("GameEnd", enemyGameEndResponse);
 
                     dbContext.GameParticipants.Remove(enemyGp);
                     dbContext.GameParticipants.Remove(playerGp);
