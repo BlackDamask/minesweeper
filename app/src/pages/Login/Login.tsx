@@ -1,8 +1,8 @@
-import { Input, Button, Checkbox, IconButton, Image, useToast } from "@chakra-ui/react";
+import { Input, Button,  Image, useToast } from "@chakra-ui/react";
 import { useContext, useEffect, useState } from "react";
-import { FaApple, FaGoogle, FaFacebook } from "react-icons/fa";
+import {  FaGoogle, FaFacebook } from "react-icons/fa";
 import { AuthContext } from "../../AuthProvider";
-import { Navigate, useNavigate,Link } from "react-router-dom";
+import {  useNavigate,Link } from "react-router-dom";
 
 export default function Login(){
     const auth = useContext(AuthContext);

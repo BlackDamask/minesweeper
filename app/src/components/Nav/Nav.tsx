@@ -88,7 +88,7 @@ export default function Nav() {
         return () => {
             document.removeEventListener("click", handleClickOutside);
         };
-    }, []);
+    }, [isSmallScreen]);
 
     const buttons = [
         {
