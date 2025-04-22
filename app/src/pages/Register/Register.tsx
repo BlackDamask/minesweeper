@@ -1,8 +1,8 @@
 import { Input, Button,  Image, useToast } from "@chakra-ui/react";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import {  FaGoogle, FaFacebook } from "react-icons/fa";
 import { AuthContext } from "../../AuthProvider";
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import { Link,  useNavigate } from "react-router-dom";
 
 
 export default function Register(){
@@ -17,6 +17,11 @@ export default function Register(){
         const { name, value } = e.target;
         setFormData((prev) => ({ ...prev, [name]: value }));
     };
+
+    useEffect(() => {
+            if(auth?.isLoggedIn)
+              navigate(-1);
+          }, [auth, navigate]);
 
     const handleSubmit = async () => {
         setLoading(true);

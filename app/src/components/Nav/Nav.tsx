@@ -196,7 +196,7 @@ export default function Nav() {
                                                 className="h-[2.5em] text-xl flex text-white items-center pl-3 filter brightness-100 hover:brightness-75 bg-slate-800"
                                                 onClick={onChangeUsernameOpen}
                                             >
-                                                {auth.user?.playerName}
+                                                {auth.user?.playerName} 
                                             </Box>
                                             <Box
                                                 className="h-[2.5em] text-xl flex text-gray-100 items-center pl-3 filter brightness-100 hover:brightness-75 bg-slate-900"

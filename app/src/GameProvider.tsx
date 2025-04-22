@@ -84,6 +84,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [currentElo, setCurrentElo] = useState<number>(500);
   const [eloChange, setEloChange] = useState<number>(0);
 
+
   const connectionRef = useRef<signalR.HubConnection | null>(null);
 
   const playerExploaded = () =>
@@ -108,7 +109,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     
 
-  }, [accessToken,connectionRef]);
+  }, [accessToken, connectionRef]);
 
   useEffect(() => {
     const connection = connectionRef.current;
@@ -116,12 +117,6 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if(connection.state !== "Connected")
         connection.start().catch((e) => "Failed to connect to websocket: " + e);
           connection.on("GameStarted", (response: GameStartResponse) => {
-            toast({
-              title: "GameDataReceived",
-              description: response.enemyName,
-              status: "info",
-              isClosable: true
-            })
             setEnemyName(response.enemyName);
             setGameField(response.gameField);
             setStartCoordinates({ colIndex: response.colBeginIndex, rowIndex: response.rowBeginIndex });

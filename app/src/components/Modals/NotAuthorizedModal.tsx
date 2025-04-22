@@ -1,6 +1,4 @@
-import { Modal, ModalOverlay, ModalHeader, ModalBody, Stack, InputGroup, InputLeftElement, Input,  ModalFooter, Box, ModalContent, useToast } from '@chakra-ui/react';
-import { ReactComponent as UserIcon } from "./user-icon.svg";
-import { ReactComponent as LockIcon } from "./lock-icon.svg";
+import { Modal, ModalOverlay, ModalHeader, ModalBody,  ModalFooter, Box, ModalContent, useToast } from '@chakra-ui/react';
 import { useContext, useState } from 'react';
 import { AuthContext } from '../../AuthProvider';
 import { useNavigate } from 'react-router-dom';
@@ -8,7 +6,6 @@ import { useNavigate } from 'react-router-dom';
 export default function NotAuthorizedModal({isOpen, onClose} : {isOpen: boolean, onClose: () => void}){
     const auth = useContext(AuthContext);
 
-    const [formData, setFormData] = useState({ email: '', password: '' });
     const [isLoading, setLoading] = useState(false);
     const toast = useToast();
     const navigate = useNavigate(); 
@@ -39,8 +36,8 @@ export default function NotAuthorizedModal({isOpen, onClose} : {isOpen: boolean,
                     status: 'success',
                     isClosable: true,
                 });
-                navigate("/multiplayer");
             }
+            window.location.reload();
         }
         catch(error){
             toast({
