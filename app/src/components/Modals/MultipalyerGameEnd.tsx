@@ -3,7 +3,6 @@ import { ReactComponent as Trophy } from "./trophy.svg";
 import { ReactElement, useContext } from "react";
 import { useGameContext } from "../../GameProvider";
 import { AuthContext } from "../../AuthProvider";
-import { getMaxListeners } from "process";
 
 export default function MultiplayerGameEnd({isOpen, onClose} : {isOpen: boolean, onClose: () => void}) {
     const game = useGameContext();

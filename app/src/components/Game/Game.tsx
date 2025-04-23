@@ -1,4 +1,4 @@
-import {  ReactElement, useEffect, useState } from "react";
+import {  ReactElement, useEffect} from "react";
 import { GameData } from './data';
 import { ReactComponent as FlagIcon } from './flag.svg';
 import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, ModalOverlay,  useDisclosure, useToast } from "@chakra-ui/react";

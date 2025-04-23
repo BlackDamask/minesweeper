@@ -1,4 +1,4 @@
-import { useState, ReactElement } from 'react';
+import { useState} from 'react';
 import { ReactComponent as WierdFace} from './mean.svg';
 import { ReactComponent as SmileFace} from './smile.svg';
 import { GameData } from '../data';

@@ -4,7 +4,6 @@ import Nav from '../../components/Nav/Nav';
 import { AuthContext } from '../../AuthProvider';
 import { useContext } from 'react';
 import { useDisclosure } from '@chakra-ui/react';
-import LoginModal from '../../components/Modals/LoginModal';
 import NotAuthorizedModal from '../../components/Modals/NotAuthorizedModal';
 
 export default function Layout() {

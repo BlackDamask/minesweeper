@@ -13,7 +13,7 @@ import {
     useToast,
   } from '@chakra-ui/react';
   import { ReactComponent as UserIcon } from "./user-icon.svg";
-  import { ReactComponent as LockIcon } from "./lock-icon.svg";
+
   import { useContext, useState } from 'react';
   import { AuthContext } from '../../AuthProvider';
   
