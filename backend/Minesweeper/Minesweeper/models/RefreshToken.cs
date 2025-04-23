@@ -7,5 +7,6 @@ namespace Minesweeper.models
         public required string Token { get; set; }
         public required string UserId { get; set; }
         public DateTime Expiration { get; set; }
+        public Player? User { get; set; }
     }
 }

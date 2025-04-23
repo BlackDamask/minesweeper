@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.IdentityModel.Tokens;
 using Minesweeper.data;
 using Minesweeper.DTOs.PlayerDTO;
-using Minesweeper.Migrations;
+
 using Minesweeper.models;
 using Minesweeper.Services.EmailService;
 using System.IdentityModel.Tokens.Jwt;

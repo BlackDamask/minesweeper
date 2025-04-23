@@ -23,13 +23,13 @@ namespace Minesweeper.data
             builder.HasDefaultSchema("identity");
 
             builder.Entity<RefreshToken>()
-                .HasKey(r => r.Token);  
+                .HasKey(r => r.Token);
 
             builder.Entity<RefreshToken>()
-                .HasOne<Player>()  
-                .WithMany()  
-                .HasForeignKey(r => r.UserId)  
-                .OnDelete(DeleteBehavior.Cascade);  
+                .HasOne(r => r.User)
+                .WithMany()
+                .HasForeignKey(r => r.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }
