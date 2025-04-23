@@ -1,8 +1,8 @@
-import { Input, Button, Checkbox, IconButton, Image, useToast } from "@chakra-ui/react";
-import { useContext, useState } from "react";
-import { FaApple, FaGoogle, FaFacebook } from "react-icons/fa";
+import { Input, Button,  Image, useToast } from "@chakra-ui/react";
+import { useContext, useEffect, useState } from "react";
+import {  FaGoogle, FaFacebook } from "react-icons/fa";
 import { AuthContext } from "../../AuthProvider";
-import { Navigate, useNavigate,Link } from "react-router-dom";
+import {  useNavigate,Link } from "react-router-dom";
 
 export default function Login(){
     const auth = useContext(AuthContext);
@@ -11,6 +11,12 @@ export default function Login(){
     const [formData, setFormData] = useState({ email: '', password: '' });
     const [isLoading, setLoading] = useState(false);
     const toast = useToast();
+
+    useEffect(() => {
+        if(auth?.isLoggedIn)
+          navigate(-1);
+      }, [auth, navigate]);
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       const { name, value } = e.target;
       setFormData((prev) => ({ ...prev, [name]: value }));
