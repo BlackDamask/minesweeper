@@ -79,8 +79,11 @@ export default function NotAuthorizedModal({isOpen, onClose} : {isOpen: boolean,
                 </Box>
                     
                 </ModalBody>
-                <ModalFooter >
-                    <p className='text-xl text-zinc-300 self-center m-auto cursor-pointer' onClick = {handleGuestLogin} >{isLoading ? "Loading..." : "Play As Guest"}</p>
+                <ModalFooter display={'flex'} justifyContent={'center'}>
+                <p className="text-gray-200 mt-3 underline text-lg cursor-pointer hover:text-white"
+                    onClick={handleGuestLogin}>
+                        {isLoading ? 'Loading...' : 'Or Play As Guest'}
+                </p>
                 </ModalFooter>
             </ModalContent>
         </Modal>

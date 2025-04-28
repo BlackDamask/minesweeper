@@ -22,6 +22,43 @@ import {
     const [formData, setFormData] = useState({ username: '', email: '', password: '' });
     const [loading, setLoading] = useState(false);
     const toast = useToast();
+    const [isLoadingGuest, setLoadingGuest] = useState(false);
+
+    const  handleGuestLogin = async () =>{
+      setLoadingGuest(true);
+      const result = await auth!.login('', '', true);
+      
+      try{
+          if (!result.success) {
+              toast({
+                  title: "Login failed",
+                  description: `${result.message}`,
+                  status: 'error',
+                  isClosable: true,
+              });
+          }
+          else{
+              toast({
+                  title: "Login successed",
+                  status: 'success',
+                  isClosable: true,
+              });
+          }
+          window.location.reload();
+      }
+      catch(error){
+          toast({
+              title: "Login failed",
+              description: `${result.message}`,
+              status: 'error',
+              isClosable: true,
+          });
+      }
+      finally{
+          setLoadingGuest(false);
+      }
+      
+  }
     
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -105,7 +142,7 @@ import {
               </InputGroup>
             </Stack>
           </ModalBody>
-          <ModalFooter>
+          <ModalFooter className="flex flex-col">
             <Box
               className="flex items-center justify-center w-2/6 m-auto text-white text-xl font-bold h-14 bg-green-700 hover:bg-green-800 rounded-lg border-b-[3px] border-green-900"
               onClick={handleSubmit}
@@ -113,6 +150,10 @@ import {
             >
               {loading ? 'Loading...' : 'Sign Up'}
             </Box>
+            <p className="text-gray-200 mt-3 underline text-lg cursor-pointer hover:text-white"
+                onClick={handleGuestLogin}>
+                    {isLoadingGuest ? 'Loading...' : 'Or Play As Guest'}
+            </p>
           </ModalFooter>
         </ModalContent>
       </Modal>

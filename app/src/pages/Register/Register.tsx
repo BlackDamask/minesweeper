@@ -1,6 +1,6 @@
 import { Input, Button,  Image, useToast } from "@chakra-ui/react";
 import { useContext, useEffect, useState } from "react";
-import {  FaGoogle, FaFacebook } from "react-icons/fa";
+import {  FaGoogle, FaFacebook, FaUser } from "react-icons/fa";
 import { AuthContext } from "../../AuthProvider";
 import { Link,  useNavigate } from "react-router-dom";
 
@@ -17,6 +17,43 @@ export default function Register(){
         const { name, value } = e.target;
         setFormData((prev) => ({ ...prev, [name]: value }));
     };
+    const [isLoadingGuest, setLoadingGuest] = useState(false);
+
+    const  handleGuestLogin = async () =>{
+      setLoadingGuest(true);
+      const result = await auth!.login('', '', true);
+      
+      try{
+          if (!result.success) {
+              toast({
+                  title: "Login failed",
+                  description: `${result.message}`,
+                  status: 'error',
+                  isClosable: true,
+              });
+          }
+          else{
+              toast({
+                  title: "Login successed",
+                  status: 'success',
+                  isClosable: true,
+              });
+          }
+          window.location.reload();
+      }
+      catch(error){
+          toast({
+              title: "Login failed",
+              description: `${result.message}`,
+              status: 'error',
+              isClosable: true,
+          });
+      }
+      finally{
+          setLoadingGuest(false);
+      }
+      
+  }
 
     useEffect(() => {
             if(auth?.isLoggedIn)
@@ -115,6 +152,9 @@ export default function Register(){
                       </Button>
                       <Button leftIcon={<FaFacebook />} colorScheme="blue" variant="solid" width="full">
                       Sing up with Facebook
+                      </Button>
+                      <Button leftIcon={<FaUser />} colorScheme="gray" variant="solid" width="full" onClick={handleGuestLogin}>
+                        {isLoadingGuest ? 'Loading...' : "Play as Guest"}
                       </Button>
                     </div>
             
