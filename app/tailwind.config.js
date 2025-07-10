@@ -13,7 +13,9 @@ module.exports = {
       fontFamily: {
         customFont: ['"Pixelify"', "sans-serif"],
         pixelFont: ['"Timer"', "sans-serif"],
-        ubuntuFont: ['"Ubuntu"', "sans-serif"]
+        ubuntuFont: ['"Ubuntu"', "sans-serif"],
+        orbitronFont: ['"Orbitron"', "sans-serif"],
+        audiowideFont: ['"Audiowide"', "sans-serif"],
         // Add more custom font families as needed
       },
     },
@@ -22,6 +24,9 @@ module.exports = {
         margin: ["responsive"], // Ensure margin supports responsiveness
       },
     },
+     boxShadow: {
+        innerTile: 'inset 5px 5px 3px #101418, inset -5px -5px 3px #2c3a4b',
+      },
   },
   plugins: [],
 }

@@ -71,19 +71,31 @@ builder.Services.AddIdentityCore<Player>(options =>
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+string[] allowedOrigins = new[]
+{
+    "http://localhost:3000",
+    "https://127.0.0.1:3000",
+    "http://213.176.114.172:5000",
+    "https://213.176.114.172:5000",
+    "http://213.176.114.172",
+    "https://213.176.114.172",
+    "http://localhost",
+    "https://localhost",
+    "http://127.0.0.1",
+    "https://127.0.0.1"
+};
+
+// Add the CORS policy.
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend",
-        policy => policy.WithOrigins("http://localhost:3000") 
-                        .AllowAnyHeader()
-                        .AllowAnyMethod()
-                        .AllowCredentials());
+        policy => policy.WithOrigins(allowedOrigins) 
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials()); 
 });
 
 builder.Services.AddSingleton<EmailService>();
-
-
-
 
 var app = builder.Build();
 
@@ -92,21 +104,17 @@ builder.Services.AddLogging(logging =>
     logging.AddConsole();
 });
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
+
     app.UseSwagger();
     app.UseSwaggerUI();
-}
 
-app.UseCors("AllowFrontend");
 
-app.UseHttpsRedirection();
+    app.UseRouting();
 
-app.UseRouting();
+    app.UseCors("AllowFrontend");
 
-app.UseAuthorization();
-
+    app.UseAuthentication(); // <<< Add this!
+    app.UseAuthorization();
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapControllers(); // Maps controllers.

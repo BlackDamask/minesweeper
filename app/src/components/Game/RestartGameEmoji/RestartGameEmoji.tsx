@@ -6,12 +6,14 @@ import { Button, Popover, PopoverArrow, PopoverBody, PopoverCloseButton, Popover
 import React from 'react';
 
 export default function RestartGameEmoji({
+    selectedStyle,
     setCurrentGameData,
     currentGameData,
     selectedOption,
     zoom,
     setStartTime
 }: {
+    selectedStyle: string,
     setCurrentGameData: React.Dispatch<React.SetStateAction<GameData>>,
     currentGameData: GameData,
     selectedOption: number,
@@ -40,6 +42,7 @@ export default function RestartGameEmoji({
             setStartTime(null);
         }
     };
+
     return (
         <>
             <Popover
@@ -53,14 +56,29 @@ export default function RestartGameEmoji({
                     <div
                         onMouseEnter={handleMouseEnter}
                         onMouseLeave={handleMouseLeave}
-                        className='aspect-square'
+                        className='text-center flex items-center justify-center cursor-pointer'
+
                         onClick={handleButtonClick}
                     >
-                        {isHovered ? (
-                            <SmileFace style={{width: `${zoom*2}px`}}  />
-                        ) : (
-                            <WierdFace style={{width: `${zoom*2}px`}} />
-                        )}
+
+                        {
+                            selectedStyle === 'modern' ?
+                            <div className=' h-full text-blue-300 font-bold font-audiowideFont '
+                                style={{
+                                    height: `${zoom * 2}px`,
+                                    fontSize: `${zoom * 0.7}px`,
+                                }}
+                            >
+                                <p className='text-center h-full flex  items-center'>RESTART</p>
+                            </div>
+                                
+                            :
+                            isHovered ? (
+                                <SmileFace style={{width: `${zoom*2}px`}}  />
+                            ) : (
+                                <WierdFace style={{width: `${zoom*2}px`}} />
+                            )
+                        }
                     </div>
                 </PopoverTrigger>
                 <PopoverContent bg='gray.800' borderColor='gray.900' color='#ceffff'>

@@ -1,0 +1,51 @@
+/* From Uiverse.io by 4uglos */
+.content {
+  position: relative;
+  text-decoration: none;
+  color: #fff;
+  background: linear-gradient(45deg, #7cf1b3, #50b4a0);
+  padding: 14px 25px;
+  border-radius: 16px;
+  font-size: 1.25em;
+  cursor: pointer;
+  border: none;
+  transition: box-shadow 0.3s ease;
+}
+
+.content span {
+  position: relative;
+  z-index: 1;
+}
+
+.content::before {
+  content: "";
+  position: absolute;
+  inset: 2px;
+  background: #030711;
+  border-radius: 14px;
+  transition: 0.5s;
+}
+
+.content:hover::before {
+  opacity: 1;
+}
+
+.content::after {
+  content: "";
+  position: absolute;
+  inset: 0px;
+  border-radius: 9px;
+  transition: 0.5s;
+  opacity: 0;
+  filter: blur(20px);
+}
+
+.content:hover::after {
+  opacity: 1;
+}
+
+/* 🔥 Add shadow on hover */
+.content:hover {
+  box-shadow: 0 0 25px rgba(124, 241, 179, 0.6), 0 0 10px rgba(80, 180, 160, 0.4);
+}
+

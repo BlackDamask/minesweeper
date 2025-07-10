@@ -34,9 +34,24 @@ body {
     font-display: swap;
     src: url(/public/fonts/Ubuntu-Regular.ttf) format('truetype');
   }
+  @font-face {
+    font-family: 'Orbitron';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url(/public/fonts/Orbitron-Regular.ttf) format('truetype');
+  }
+  @font-face {
+    font-family: 'Audiowide';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url(/public/fonts/Audiowide-Regular.ttf) format('truetype');
+  }
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+

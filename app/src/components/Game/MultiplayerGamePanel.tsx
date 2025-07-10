@@ -146,6 +146,7 @@ export default function MultiplayerGamePanel({gameField, colIndex, rowIndex, sel
                         startTime = {null}
                         isExploaded = {game?.isExploaded}
                         playerExploaded = {game?.playerExploaded}
+                        selectedStyle='modern'
                     />
                 </div>
             </div>

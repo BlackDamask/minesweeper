@@ -58,6 +58,12 @@ namespace Minesweeper.Controllers
             return Ok("Email confirmed successfully!");
         }
 
+        [HttpGet("app-version")]
+        public IActionResult AppVersion()
+        {
+            return Ok("1.0.1");
+        }
+
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginPlayerDTO player)
         {
