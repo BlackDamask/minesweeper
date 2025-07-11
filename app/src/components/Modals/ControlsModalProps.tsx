@@ -1,5 +1,5 @@
 import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalCloseButton, Button, useDisclosure, Image } from '@chakra-ui/react';
-import Controls from '../Game/Controls';
+import Controls from '../Game/GameControls/Controls';
 
 interface ControlsModalProps {
   selectedZoom: number;

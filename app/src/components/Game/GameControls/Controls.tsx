@@ -1,4 +1,5 @@
-import { Select } from '@chakra-ui/react';
+import { Select } from '@chakra-ui/react';  
+import './GameControls.css';
 
 interface ControlsProps {
   selectedZoom: number;
@@ -41,11 +42,13 @@ export default function Controls({
     <div className='controls'>
       <div className='flex gap-4'>
         <Select
+          className='content'
           width={'11rem'}
           marginBottom={4}
           color={'white'}
-          borderColor={'#4a619b'}
-          bg='#4A619B' size='md' _hover={{ backgroundColor: '#314167' }}
+          borderColor={'#93c5fd'}
+          borderWidth={'4px'}
+          bg='transparent' size='md'
           onChange={handleStyleChange}
           value={selectedStyle}
         >
@@ -54,10 +57,13 @@ export default function Controls({
         </Select>
       </div>
       <Select
+        className='content'
+        borderColor={'#93c5fd'}
+        borderWidth={'4px'}
         width={'7rem'}
         marginBottom={4}
         color={'white'}
-        bg='#4A619B' size='md' _hover={{ backgroundColor: '#314167' }}
+        bg='transparent' size='md' 
         variant='filled'
         onChange={handleSelectMode}
         value={selectedMode}

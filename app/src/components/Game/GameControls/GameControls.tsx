@@ -1,5 +1,5 @@
 import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalCloseButton, Button, useDisclosure, Image, Select } from '@chakra-ui/react';
-import Controls from '../Controls';
+import Controls from './Controls';
 import './GameControls.css';
 
 export default function GameControls(props: {
@@ -58,14 +58,16 @@ export default function GameControls(props: {
             defaultValue={26}
           >
             {props.resizeValues.map((value) => (
-              <option  key={value} value={value}>🔍 {value}</option>
+              <option  key={value}  value={value}>🔍 {value}</option>
             ))}
           </Select>
           <Select
+            className='content'
             width={'10rem'}
             color={'white'}
-            bg='#4A619B' size='md' _hover={{ backgroundColor: '#314167' }}
-            variant='filled'
+            borderColor={'#93c5fd'}
+            borderWidth={'4px'}
+            rounded={'md'}
             onChange={handleSelectChange}
             value={props.selectedOption}>
             <option className='text-black' value={1}>Beginner</option>
@@ -77,8 +79,10 @@ export default function GameControls(props: {
     
       <Modal isOpen={isOpen} onClose={onClose} isCentered size="md">
         <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Game Controls</ModalHeader>
+        <ModalContent
+          backgroundColor={'#18181b'}>
+          <ModalHeader 
+          className='text-blue-300'> Game Controls</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <Controls {...props} />

@@ -1,7 +1,7 @@
 import Game from '../../components/Game/Game';
 import { GameData } from '../../components/Game/data';
 import { useEffect, useState } from 'react';
-import Controls from './Controls';
+import Controls from './GameControls/Controls';
 import GameNav from './GameNav';
 import { useDisclosure } from '@chakra-ui/react';
 import ControlsModal from '../Modals/ControlsModalProps';
@@ -72,8 +72,8 @@ export default function GamePanel() {
                 selectedStyle={selectedStyle}
                 setSelectedStyle={setSelectedStyle}
             />
-            <div className='h-fit w-fit'>
-                <div className={` h-full w-full pt-3 rounded-xl`}
+            <div className='h-fit w-[calc(100%-84px)] flex justify-center items-center'>
+                <div className={` h-full w-fit pt-3 rounded-xl`}
                     style={{
                         backgroundColor: fullBgColor,
                     }}>
