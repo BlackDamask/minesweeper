@@ -1,4 +1,4 @@
-import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalCloseButton, Button, useDisclosure } from '@chakra-ui/react';
+import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalCloseButton, Button, useDisclosure, Image } from '@chakra-ui/react';
 import Controls from '../Game/Controls';
 
 interface ControlsModalProps {
@@ -13,16 +13,23 @@ interface ControlsModalProps {
   setStartTime: (time: number | null) => void;
   selectedStyle: string;
   setSelectedStyle: (style: string) => void;
+  
 }
 
-export default function ControlsModal(props: ControlsModalProps) {
+export default function GameControls(props: ControlsModalProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
     <>
-      <Button onClick={onOpen} colorScheme="blue" mb={4}>
-        Open Controls
-      </Button>
+    <Image
+      className="self-left w-[3.3em]"
+      src="./settings-icon.svg"
+      alt="Return"
+      borderRadius="lg"
+      onClick= {onOpen}
+      cursor='pointer'
+
+  />
       <Modal isOpen={isOpen} onClose={onClose} isCentered size="md">
         <ModalOverlay />
         <ModalContent>

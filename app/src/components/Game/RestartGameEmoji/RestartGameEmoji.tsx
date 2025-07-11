@@ -63,7 +63,7 @@ export default function RestartGameEmoji({
 
                         {
                             selectedStyle === 'modern' ?
-                            <div className=' h-full text-blue-300 font-bold font-audiowideFont '
+                            <div className=' h-full text-blue-300  font-bold font-audiowideFont '
                                 style={{
                                     height: `${zoom * 2}px`,
                                     fontSize: `${zoom * 0.7}px`,

@@ -3,6 +3,9 @@ import { GameData } from '../../components/Game/data';
 import { useEffect, useState } from 'react';
 import Controls from './Controls';
 import GameNav from './GameNav';
+import { useDisclosure } from '@chakra-ui/react';
+import ControlsModal from '../Modals/ControlsModalProps';
+import GameControls from './GameControls/GameControls';
 
 const generateResizeValues = () => {
     let resizeValues = [];
@@ -22,6 +25,8 @@ export default function GamePanel() {
 
     const resizeValues: number[] = generateResizeValues();
     const [timer, setTimer] = useState("00:00");
+    const { isOpen, onOpen, onClose } = useDisclosure();
+    
 
     useEffect(() => {
         const getTime = () => {
@@ -52,7 +57,9 @@ export default function GamePanel() {
 
     return (
         <main className='flex flex-col ml-14'>
-            <Controls
+
+
+        <GameControls
                 selectedZoom={selectedZoom}
                 setSelectedZoom={setSelectedZoom}
                 resizeValues={resizeValues}
