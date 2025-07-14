@@ -1,14 +1,18 @@
 import '../../index.css';
+import './Layout.css';
 import { Link, useNavigate } from 'react-router-dom';
 import Nav from '../../components/Nav/Nav';
 import { AuthContext } from '../../AuthProvider';
 import { useContext } from 'react';
-import { useDisclosure } from '@chakra-ui/react';
+import { useDisclosure, Image } from '@chakra-ui/react';
 import NotAuthorizedModal from '../../components/Modals/NotAuthorizedModal';
+import { motion } from 'framer-motion';
+
 
 export default function Layout() {
   const auth = useContext(AuthContext);
   const navigate = useNavigate(); 
+  const selectedZoom  = 46;
 
   const {isOpen ,onOpen, onClose} = useDisclosure();
 
@@ -22,9 +26,81 @@ export default function Layout() {
   }
 
   return (
-    <main className='w-screen h-screen flex flex-row bg-slate-900'>
-      
+    <main className='w-screen h-screen items-center flex flex-col bg-gray-950 text-center'>
       <Nav/>
+      
+      <div className="w-[calc(100%-84px)] ml-[84px] my-8">
+         <header>
+          <motion.h1
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, ease: 'easeOut' }}
+            className="text-6xl font-bold uppercase text-transparent bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 bg-clip-text drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)] tracking-widest font-orbitronFont"
+          >
+          Minesweeper
+          </motion.h1>
+
+          <motion.h2
+            initial={{ opacity: 0, scale: 0.95 }}
+
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.5, duration: 1, ease: 'easeOut' }}
+            className="text-3xl mt-4 uppercase text-[#85ECFA] tracking-widest font-audiowideFont"
+          >
+            Battle
+          </motion.h2>
+        </header> 
+        
+        <div className='grid grid-cols-2 w-full'>
+          <div className='h-80 p-12'>
+            <Link to="/single">
+            <Image
+              className="self-left w-3/4"
+              onContextMenuCapture={(e) => e.preventDefault()}
+              src="./game-preview.png"
+              alt="Return"
+              borderRadius="lg"
+              cursor='pointer'
+            />
+            </Link>
+          </div>
+          <div className='h-80 p-5'>
+            <div className='flex items-center justify-center w-[80%] h-fit text-[#85ECFA] text-4xl font-bold'>
+              <p>Play <span className='text-purple-500'>Minesweeper</span> online with other players!</p>
+              
+            </div>
+            <div className='pvp flex mt-5  h-24 w-[calc(100%-40px)] lg:w-[80%] rounded-lg text-white  hover:bg-purple-800 border-b-[3px] border-[#0d5bab] cursor-pointer text-start'
+            onClick={handlePvpButtonClick}>
+              <span className='flex w-full gap-3 h-full'>
+                <div className='w-1/3 sm:w-1/5 h-full  '>
+                  <img alt='' src="./shovel-pvp.svg" className='h-full aspect-square' />
+                </div>
+                <div className='w-4/5 flex flex-col   '>
+                  <h1 className='text-lg sm:text-2xl'>PvP</h1>
+                  <span className='flex cursor-pointer text-sm sm:text-base'><p><u>Beginner 9x9</u> <u>Indermediate 16x16</u> <u>Expert 30x16</u></p> </span>
+                </div>
+              </span>
+            </div>
+            <Link to="/single">
+            <div className='single flex mt-3 h-24 w-[calc(100%-40px)] lg:w-[80%] bg-sky-500  rounded-lg border-b-[3px] border-green-900  cursor-pointer'>
+              <span className='flex w-full  h-full'>
+                <div className='w-fit h-full  aspect-square p-2 '>
+                <img alt='' src="./bomb-shape.png" className=' h-full aspect-square' />
+              </div>
+              <div className='w-2/3 sm:w-3/5 flex flex-col  text-start justify-center ml-[10px] '>
+                <h1 className='text-xl sm:text-2xl text-white'>Single Player</h1>
+                <span className='flex text-white cursor-pointer text-sm sm:text-base'><p><u>Beginner 9x9</u> <u>Indermediate 16x16</u> <u>Expert 30x16</u></p> </span>
+              </div>
+              </span>
+              
+            </div>
+          </Link>
+          </div>
+        </div>
+      </div>
+      
+      
+      {/* <Nav/>
       <div className="w-[100%]">
         
         <h1 className='ml-16 sm:ml-24 my-6 text-3xl text-gray-300'>
@@ -67,7 +143,7 @@ export default function Layout() {
       </div>
       <div className='w-[calc(30%-5rem)]'>
 
-      </div>
+      </div> */}
        <NotAuthorizedModal isOpen={isOpen} onClose={onClose} />
     </main>
   );

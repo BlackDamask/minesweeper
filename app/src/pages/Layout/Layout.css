@@ -1,0 +1,100 @@
+/* From Uiverse.io by 4uglos */
+
+
+.pvp {
+  position: relative;
+  text-decoration: none;
+  color: #fff;
+  background:  #9333ea ;
+  padding: 8px 16px;
+  border-radius: 16px;
+  font-size: 1.25em;
+  cursor: pointer;
+  border: none;
+  transition: box-shadow 0.3s ease;
+}
+
+.pvp span {
+  position: relative;
+  z-index: 1;
+}
+
+.pvp::before {
+  content: "";
+  position: absolute;
+  inset: 2px;
+  background: #9333ea;
+  border-radius: 14px;
+  transition: 0.5s;
+}
+
+.pvp:hover::before {
+  opacity: 1;
+}
+
+.pvp::after {
+  content: "";
+  position: absolute;
+  inset: 0px;
+  border-radius: 9px;
+  transition: 0.5s;
+  opacity: 0;
+  filter: blur(20px);
+}
+
+.pvp:hover::after {
+  opacity: 1;
+}
+
+/* 🔥 Add shadow on hover */
+.pvp:hover {
+  box-shadow: 0 0 25px #9333ea, 0 0 10px purple;
+}
+
+.single {
+  position: relative;
+  text-decoration: none;
+  color: #fff;
+  padding: 4px 0px;
+  border-radius: 16px;
+  font-size: 1.25em;
+  cursor: pointer;
+  border: none;
+  transition: box-shadow 0.3s ease;
+}
+
+.single span {
+  position: relative;
+  z-index: 1;
+}
+
+.single::before {
+  content: "";
+  position: absolute;
+  inset: 2px;
+  border-radius: 14px;
+  transition: 0.5s;
+}
+
+.single:hover::before {
+  opacity: 1;
+}
+
+.single::after {
+  content: "";
+  position: absolute;
+  inset: 0px;
+  border-radius: 9px;
+  transition: 0.5s;
+  opacity: 0;
+  filter: blur(20px);
+}
+
+.single:hover::after {
+  opacity: 1;
+}
+
+/* 🔥 Add shadow on hover */
+.single:hover {
+  box-shadow: 0 0 25px #0284c7, 0 0 10px #0284c7;
+}

@@ -1,0 +1,48 @@
+.content {
+  position: relative;
+  text-decoration: none;
+  color: #fff;
+  background: linear-gradient(45deg, #7cf1b3, #50b4a0);
+  border-radius: 16px;
+  font-size: 1.25em;
+  cursor: pointer;
+  border: none;
+  padding: 0;
+  transition: box-shadow 0.3s ease;
+}
+
+.content span {
+  position: relative;
+  z-index: 1;
+}
+
+.content::before {
+  content: "";
+  position: absolute;
+  inset: 2px;
+  background: #030711;
+  border-radius: 14px;
+  transition: 0.5s;
+}
+
+.content:hover::before {
+  opacity: 1;
+}
+
+.content::after {
+  content: "";
+  position: absolute;
+  inset: 0px;
+  border-radius: 9px;
+  transition: 0.5s;
+  opacity: 0;
+  filter: blur(20px);
+}
+
+.content:hover::after {
+  opacity: 1;
+}
+
+.content:hover {
+  box-shadow: 0 0 25px rgba(0, 0, 255, 0.6), 0 0 10px rgba(0, 0, 255, 0.6);
+}

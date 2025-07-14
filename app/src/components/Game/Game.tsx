@@ -1,56 +1,24 @@
 import {  ReactElement, useEffect} from "react";
 import { GameData } from './data';
-import { ReactComponent as FlagIcon } from './flag.svg';
 import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, ModalOverlay,  useDisclosure, useToast } from "@chakra-ui/react";
 import { useGameContext } from "../../GameProvider";
+import ModernTile from "./Tiles/ModernTile";
+import DefaultTile from "./Tiles/DefaultTile";
 
-const textColorMap: { [key: number]: string } = {
-    1: 'text-blue-700',
-    2: 'text-fuchsia-700',
-    3: 'text-red-700',
-    4: 'text-purple-700',
-    5: 'text-orange-600',
-    6: 'text-teal-500',
-    7: 'text-rose-600',
-    8: 'text-zinc-600',
-};
-
-type TileColor = 'light-tile' | 'dark-tile';
-
-const tileColorMap: { [key in TileColor]: { default: string; clicked: string; withBomb: string } } = {
-    'light-tile': {
-        default: '#A8B7CB',
-        clicked: '#ffe7ba',
-        withBomb: '#bb8c44',
-    },
-    'dark-tile': {
-        default: '#8C9FcA',
-        clicked: '#E8B768',
-        withBomb: '#bb8c44',
-    },
-};
-
-const showBombCount = (bombCount: number | null): ReactElement => {
-    if (bombCount === null || bombCount === 0) {
-        return <p></p>;
-    }
-
-    const colorClass = textColorMap[bombCount] || '';
-    return <p className={colorClass}>{bombCount}</p>;
-};
 
 export default function Game(
-        { currentGameData, setCurrentGameData, selectedOption, selectedMode,selectedZoom, setStartTime, startTime, isExploaded, playerExploaded}: 
+        { currentGameData,selectedStyle, setCurrentGameData, selectedOption, selectedMode,selectedZoom, setStartTime, startTime, isExploaded, playerExploaded}: 
         { 
             currentGameData: GameData,
             setCurrentGameData:  React.Dispatch<React.SetStateAction<GameData>>, 
-            setStartTime: React.Dispatch<React.SetStateAction<number | null>> | null, 
-            startTime: number | null, 
             selectedOption: number, 
             selectedMode: number, 
             selectedZoom: number, 
+            setStartTime: React.Dispatch<React.SetStateAction<number | null>> | null, 
+            startTime: number | null, 
             isExploaded: boolean | undefined,
-            playerExploaded: (() => void) | undefined
+            playerExploaded: (() => void) | undefined,
+            selectedStyle: string
         }
     ) 
 {
@@ -223,62 +191,33 @@ export default function Game(
 
 
     return (
-        <div style={{ filter: game?.isExploaded ? 'invert(1)' : 'none' }}>
+        <div style={{ filter: game?.isExploaded ? 'blur(3px)' : 'none' }}>
             
             {currentGameData.gameField.map((row, rowIndex) => (
                 <div className={`flex w-fit h-fit text-xl`} key={rowIndex} >
-                   {row.map((tile, colIndex) => {
-                    const tileColor = tile.color as TileColor;
-
-                    let backgroundColor = tile.isRevealed
-                        ? tile.hasBomb
-                            ? tileColorMap[tileColor].withBomb
-                            : tileColorMap[tileColor].clicked
-                        : tileColorMap[tileColor].default;
-
-                    const hoverStyle = tile.isRevealed
-                        ? { filter: 'brightness(100%)' } 
-                        : {};
-                        
-
-                    return (
-                        <div
-                            key={colIndex}
-                            className={`flex items-center justify-center font-customFont cursor-pointer`}
-                            style={{
-                                width: `${selectedZoom}px`,
-                                height: `${selectedZoom}px`,
-                                fontSize: `${selectedZoom}px`,
-                                backgroundColor,
-                                ...hoverStyle, 
-                            }}
-                            onClick={() => handleClick(rowIndex, colIndex)}
-                            onContextMenu={(e) => handleRightClick(e, rowIndex, colIndex)} 
-                            onMouseOver={(e) => {
-                                if (tile.isRevealed) e.currentTarget.style.filter = 'brightness(90%)';
-                            }} 
-                            onMouseOut={(e) => {
-                                if (tile.isRevealed) e.currentTarget.style.filter = 'none';
-                            }} 
-
-                        >
-                            {tile.isRevealed && !tile.isFlagged
-                                ? showBombCount(tile.nearbyBombs)
-                                : null}
-
-                            {tile.isFlagged && !tile.isRevealed && (
-                                <FlagIcon width="0.90em" height="0.90em" />
-                            )}
-                            {tile.hasBomb && tile.isRevealed && (
-                                <img
-                                    className="h-3/4 m-2"
-                                    alt=""
-                                    src="./logo192.png"
-                                />
-                            )}
-                        </div>
-                    );
-                })}
+                   {row.map((tile, colIndex) => (
+                        selectedStyle === "modern" ? (
+                            <ModernTile
+                                key={colIndex}
+                                tile={tile}
+                                rowIndex={rowIndex}
+                                colIndex={colIndex}
+                                selectedZoom={selectedZoom}
+                                handleClick={handleClick}
+                                handleRightClick={handleRightClick}
+                            />
+                        ) : (
+                            <DefaultTile
+                                key={colIndex}
+                                tile={tile}
+                                rowIndex={rowIndex}
+                                colIndex={colIndex}
+                                selectedZoom={selectedZoom}
+                                handleClick={handleClick}
+                                handleRightClick={handleRightClick}
+                            />
+                        )
+                    ))}
                 </div>
             ))}
             
@@ -295,6 +234,5 @@ export default function Game(
         
     );
 }
-
 
 
