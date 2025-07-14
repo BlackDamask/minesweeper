@@ -8,22 +8,14 @@ import Login from './pages/Login/Login';
 import ProtectedRoute from './ProtectedRoute';
 import Register from './pages/Register/Register';
 
-const theme = extendTheme({
-  styles: {
-    global: () => ({
-      body: {
-        bg: "#1a1a1a",
-      },
-    }),
-  },
-});
+
 
 document.title = "Minesweeper Battle";
 
 
 function App() {
   return (
-    <ChakraProvider theme={theme} cssVarsRoot="body">
+    <ChakraProvider cssVarsRoot="body">
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Layout />}>
