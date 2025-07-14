@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import Controls from './GameControls/Controls';
 import GameNav from './GameNav';
 import { useDisclosure } from '@chakra-ui/react';
-import ControlsModal from '../Modals/ControlsModalProps';
+
 import GameControls from './GameControls/GameControls';
 
 const generateResizeValues = () => {

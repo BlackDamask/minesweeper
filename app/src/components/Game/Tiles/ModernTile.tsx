@@ -1,6 +1,6 @@
 import { ReactElement } from 'react';
 import {Tile} from '../data';
-import { ReactComponent as FlagIcon } from './flag.svg';
+import { Image } from '@chakra-ui/react';
 
 
 const textColorMap: { [key: number]: string } = {
@@ -19,12 +19,12 @@ type TileColor = 'light-tile' | 'dark-tile';
 const tileColorMap: { [key in TileColor]: { default: string; clicked: string; withBomb: string } } = {
     'light-tile': {
         default: '#25313f',
-        clicked: '#25313fAA',
+        clicked: '#25313f88',
         withBomb: '#bb8c44',
     },
     'dark-tile': {
         default: '#25313f',
-        clicked: '#25313fAA',
+        clicked: '#25313f88',
         withBomb: '#bb8c44',
     },
     };
@@ -100,7 +100,14 @@ export default function ModernTile({ tile,rowIndex, colIndex, selectedZoom, hand
             : null}
 
         {tile.isFlagged && !tile.isRevealed && (
-            <FlagIcon width="0.90em" height="0.90em" />
+            <Image
+                          className="self-center w-3/4"
+                          onContextMenuCapture={(e) => e.preventDefault()}
+                          src="./flag.png"
+                          alt="Return"
+                          borderRadius="lg"
+                          cursor='pointer'
+                        /> 
         )}
         {tile.hasBomb && tile.isRevealed && (
             <img

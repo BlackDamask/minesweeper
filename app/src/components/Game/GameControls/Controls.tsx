@@ -64,7 +64,6 @@ export default function Controls({
         marginBottom={4}
         color={'white'}
         bg='transparent' size='md' 
-        variant='filled'
         onChange={handleSelectMode}
         value={selectedMode}
       >

@@ -57,14 +57,14 @@ export default function NotAuthorizedModal({isOpen, onClose} : {isOpen: boolean,
         <Modal isOpen={isOpen} onClose={onClose} isCentered size="lg">
             <ModalOverlay
             />
-            <ModalContent bg={'#212226'} >
-                <ModalHeader className="text-gray-200 text-center" fontSize={'2xl'}>
-                    Play Minesweeper Online
+            <ModalContent bg={'#0A0A0A'} borderWidth={'4px'} borderColor={'#85ECFA'} borderRadius={'2xl'}>
+                <ModalHeader className="text-[#85ECFA] text-center" fontSize={'2xl'}>
+                    <p>Play <span className='text-purple-500'>Minesweeper</span> online</p>
                 </ModalHeader>
                 <ModalBody>
                     
                 <Box 
-                    className="flex items-center justify-center w-4/6 m-auto mt-6 text-white text-xl font-bold h-14 bg-green-700 hover:bg-green-800 rounded-lg border-b-[3px] border-green-900" 
+                    className="flex items-center justify-center w-4/6 m-auto mt-6 text-gray-50 text-xl font-bold h-14 bg-green-500 hover:bg-green-600 rounded-lg border-b-[3px] border-green-700" 
                     onClick={handleLogin}
                     style={{ cursor: 'pointer' }}
                 >
@@ -80,7 +80,7 @@ export default function NotAuthorizedModal({isOpen, onClose} : {isOpen: boolean,
                     
                 </ModalBody>
                 <ModalFooter display={'flex'} justifyContent={'center'}>
-                <p className="text-gray-200 mt-3 underline text-lg cursor-pointer hover:text-white"
+                <p className="text-white mt-3 underline text-lg cursor-pointer hover:text-white"
                     onClick={handleGuestLogin}>
                         {isLoading ? 'Loading...' : 'Or Play As Guest'}
                 </p>

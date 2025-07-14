@@ -1,9 +1,10 @@
-import { useGameContext } from '../../GameProvider';
-import Game from '../../components/Game/Game';
-import { GameData, Tile } from '../../components/Game/data';
+import { useGameContext } from '../../../GameProvider';
+import Game from '../Game';
+import { GameData, Tile } from '../data';
 import { Select, useDisclosure} from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
-import MultiplayerGameEnd from '../Modals/MultipalyerGameEnd';
+import MultiplayerGameEnd from '../../Modals/MultipalyerGameEnd';
+import './MultiplayerGamePanel.css';
 
 
 const generateResizeValues = () =>{
@@ -87,30 +88,34 @@ export default function MultiplayerGamePanel({gameField, colIndex, rowIndex, sel
     
     return(
         <main className='flex flex-col ml-14'>
-            <div className=''>
-                    <Select 
-                        width={'7rem'} 
-                        marginBottom={4} 
-                        color={'white'} 
-                        borderColor={"#4a619b"} 
-                        bg='#4A619B' size='md' _hover={{backgroundColor: '#314167'}} 
+            <div className='flex gap-5'>
+                    <Select
+                        className='content'
+                        width={'7rem'}
+                        textAlign={'center'}
+                        color={'white'}
+                        size='md' 
+                        padding={'0 0 0 0'}
+                        borderColor={'#93c5fd'}
+                        borderWidth={'4px'}
                         onChange={handleSelectZoom}
                         value={selectedZoom}
                         defaultValue={26}
-                    >
+                        >
                         {resizeValues.map((value) => (
                             <option key={value} value={value} >🔍 {value}</option>
                         ))}
                     </Select>
                     <Select
-                         width={'7rem'}
-                         marginBottom={4}
-                         color={'white'} 
-                        borderColor={"#4a619b"} 
-                        bg='#4A619B' size='md' _hover={{backgroundColor: '#314167'}} 
-                         variant='filled'
-                         onChange={handleSelectMode}
-                         value = {selectedMode}
+                        className='content'
+                        borderColor={'#93c5fd'}
+                        borderWidth={'4px'}
+                        width={'7rem'}
+                        marginBottom={4}
+                        color={'white'}
+                        bg='transparent' size='md' 
+                        onChange={handleSelectMode}
+                        value={selectedMode}
                     >
                         <option value={1}>👆 💣</option>
                         <option value={2}>👆 🚩</option>
@@ -122,7 +127,7 @@ export default function MultiplayerGamePanel({gameField, colIndex, rowIndex, sel
                 <p>You Exploaded</p>
             </div>
                 
-                <div className="bg-[#4A619B] h-full w-full pt-3 border-t rounded-xl ">
+                <div className="h-full w-full pt-3 rounded-xl ">
                 <nav className='flex justify-between items-center text-white'>
                 <div style={{width: `${selectedZoom*3}px`, height: `${selectedZoom*2}px`,fontSize: `${selectedZoom*1.2}px`, color:"white" }} className='flex justify-center items-center font-pixelFont'>
                             {timer}
@@ -135,7 +140,7 @@ export default function MultiplayerGamePanel({gameField, colIndex, rowIndex, sel
                         </div>
 
                     </nav>
-                    <div className='h-3 w-full bg-[#4A619B]'></div>
+                    <div className='h-3 w-full'></div>
                     <Game 
                         currentGameData = {currentGameData} 
                         setCurrentGameData = {setCurrentGameData} 

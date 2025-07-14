@@ -1,7 +1,7 @@
 import { Progress } from "@chakra-ui/react";
 import Nav from "../../components/Nav/Nav";
 import SearchingForGame from "../../components/SearchingForGame/SearchingForGame";
-import MultiplayerGamePanel from "../../components/Game/MultiplayerGamePanel";
+import MultiplayerGamePanel from "../../components/Game/MultiplayerGamePanel/MultiplayerGamePanel";
 import { useGameContext } from "../../GameProvider";
 import { useContext } from "react";
 import { AuthContext } from "../../AuthProvider";
@@ -23,7 +23,7 @@ export default function Multiplayer() {
   }
 
   return (
-    <main className="w-screen h-screen flex flex-row bg-slate-900">
+    <main className="w-screen h-screen flex flex-row bg-black">
       <Nav></Nav>
       <div className="ml-[2rem] sm:ml-[5rem] w-[calc(100%-2rem)] sm:w-[calc(100%-5rem)] ">
         

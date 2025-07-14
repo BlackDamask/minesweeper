@@ -87,7 +87,7 @@ export default function SearchingForGame() {
 
     if (isSmallScreen) {
         return (
-            <div className="h-full w-full flex flex-col justify-center bg-slate-950">
+            <div className="h-full w-full flex flex-col justify-center bg-gray-900">
                 <main className=" h-2/3 flex flex-col items-center justify-evenly">
                     <h1 className="text-2xl text-white text-center">
                     Searching for game
@@ -102,12 +102,12 @@ export default function SearchingForGame() {
     }
 
     return (
-        <main className="w-full max-w-sm md:max-w-lg lg:max-w-xl aspect-square xl:max-w-2xl mx-auto p-6 bg-slate-950 rounded-2xl flex flex-col items-center justify-evenly shadow-lg">
-            <h1 className="text-lg sm:text-2xl md:text-3xl lg:text-4xl text-gray-300 text-center">
+        <main className="w-full max-w-sm md:max-w-lg lg:max-w-xl aspect-square xl:max-w-2xl mx-auto p-6 bg-gray-950 rounded-2xl border-slate-900 border-4 flex flex-col items-center justify-evenly shadow-lg">
+            <h1 className="text-lg sm:text-2xl md:text-3xl lg:text-4xl text-white text-center">
                 Searching for game
             </h1>
             <Spinner color="#d1d5db" size="xl" thickness="4px" />
-            <h2 className="text-lg sm:text-2xl md:text-3xl text-gray-300">
+            <h2 className="text-lg sm:text-2xl md:text-3xl text-white">
                 {formatTime(timeElapsed)}
             </h2>
         </main>
