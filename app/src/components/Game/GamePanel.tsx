@@ -25,7 +25,6 @@ export default function GamePanel() {
 
     const resizeValues: number[] = generateResizeValues();
     const [timer, setTimer] = useState("00:00");
-    const { isOpen, onOpen, onClose } = useDisclosure();
     
 
     useEffect(() => {

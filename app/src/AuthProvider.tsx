@@ -67,7 +67,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const changeUsername = async (userName: string): Promise<{ success: boolean; message?: string }> => {
     try {
       await axios.put(
-        `https://213.176.114.172:5000/api/player/change-username`,
+        `https://localhost:5150/api/player/change-username`,
         null, // No body needed, as userName is sent as a query parameter
         {
           params: { userName: userName }, // Add userName as a query parameter
@@ -75,8 +75,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         }
       );
       
-      const userProfile = await axios.get<ApiResponse<User>>("/player/profile", {
-        headers: { Authorization: `Bearer ${accessToken}` },
+        const userProfile = await axios.get<ApiResponse<User>>("/player/profile", {
+          headers: { Authorization: `Bearer ${accessToken}` },
       });
       
       setUser(userProfile.data.data);

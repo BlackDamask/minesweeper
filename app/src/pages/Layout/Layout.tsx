@@ -12,7 +12,6 @@ import { motion } from 'framer-motion';
 export default function Layout() {
   const auth = useContext(AuthContext);
   const navigate = useNavigate(); 
-  const selectedZoom  = 46;
 
   const {isOpen ,onOpen, onClose} = useDisclosure();
 

@@ -92,7 +92,7 @@ export default function Login(){
       }
     };
     return (
-        <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900">
+        <div className="flex flex-col items-center justify-center min-h-screen bg-black">
             <Image
                 className="w-[6rem] mb-5"
                 src="./logo-shape.png"

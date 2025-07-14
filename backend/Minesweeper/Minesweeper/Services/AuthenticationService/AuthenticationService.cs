@@ -14,6 +14,7 @@ using System.Runtime.InteropServices;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Encodings.Web;
+using Microsoft.EntityFrameworkCore;
 
 namespace Minesweeper.Services.AuthenticationService
 {
@@ -170,6 +171,15 @@ namespace Minesweeper.Services.AuthenticationService
                 return serviceResponse;
             }
 
+            var existingName = await context.Users
+                .FirstOrDefaultAsync(p => p.PlayerName == newPlayer.PlayerName);
+            if (existingName != null)
+            {
+                serviceResponse.Message = "This player name is already taken. Please choose another name.";
+                serviceResponse.Success = false;
+                return serviceResponse;
+            }
+
             var player = mapper.Map<Player>(newPlayer);
 
             var result = await playerManager.CreateAsync(player, newPlayer.Password);
@@ -178,7 +188,7 @@ namespace Minesweeper.Services.AuthenticationService
             {
                 var token = await playerManager.GenerateEmailConfirmationTokenAsync(player);
                 var encodedToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
-                var confirmationLink = $"https://localhost:7036/api/player/confirm-email?userId={player.Id}&token={encodedToken}";
+                var confirmationLink = $"https://localhost:5150/api/player/confirm-email?userId={player.Id}&token={encodedToken}";
 
                 if (emailService == null)
                     throw new Exception("emailService is null");

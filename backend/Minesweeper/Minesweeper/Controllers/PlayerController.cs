@@ -124,6 +124,21 @@ namespace Minesweeper.Controllers
             return Ok(await playerService.RemovePlayerFromQueue(playerId));
         }
 
+        [Authorize]
+        [HttpGet("all")]
+        public async Task<IActionResult> GetAllPlayers()
+        {
+            return Ok(await playerService.GetAllPlayers());
+        }
+
+        [Authorize]
+        [HttpGet("search")]
+        public async Task<IActionResult> SearchPlayers([FromQuery] string name)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+                return BadRequest("Search term is required.");
+            return Ok(await playerService.SearchPlayersByName(name));
+        }
 
     }
 }

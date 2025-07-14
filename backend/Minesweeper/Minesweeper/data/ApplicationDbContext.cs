@@ -15,6 +15,7 @@ namespace Minesweeper.data
         public DbSet<GameParticipant> GameParticipants => Set<GameParticipant>();
         public DbSet<Game> Games => Set<Game>();
         public DbSet<MatchmakingQueue> MatchmakingQueue => Set<MatchmakingQueue>();
+        public DbSet<Request> Requests => Set<Request>();
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

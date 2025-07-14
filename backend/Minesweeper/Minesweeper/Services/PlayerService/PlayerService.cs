@@ -167,6 +167,44 @@ namespace Minesweeper.Services.PlayerService
             }
             return serviceResponse;
         }   
+
+        public async Task<ServiceResponse<List<GetPlayerDTO>>> GetAllPlayers()
+        {
+            var serviceResponse = new ServiceResponse<List<GetPlayerDTO>>();
+            try
+            {
+                var players = await context.Users.ToListAsync();
+                serviceResponse.Data = players.Select(p => mapper.Map<GetPlayerDTO>(p)).ToList();
+                serviceResponse.Success = true;
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = ex.Message;
+            }
+            return serviceResponse;
+        }
+
+        public async Task<ServiceResponse<List<GetPlayerDTO>>> SearchPlayersByName(string namePart)
+        {
+            var serviceResponse = new ServiceResponse<List<GetPlayerDTO>>();
+            try
+            {
+                var players = await context.Users
+                    .Where(p => p.PlayerName != null && p.PlayerName.ToLower().Contains(namePart.ToLower()))
+                    .OrderBy(p => p.PlayerName)
+                    .ToListAsync();
+
+                serviceResponse.Data = players.Select(p => mapper.Map<GetPlayerDTO>(p)).ToList();
+                serviceResponse.Success = true;
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = ex.Message;
+            }
+            return serviceResponse;
+        }
     }
 
 }

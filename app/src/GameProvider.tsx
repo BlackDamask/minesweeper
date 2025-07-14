@@ -99,7 +99,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   useEffect(() => {
     const connection = new signalR.HubConnectionBuilder()
-      .withUrl("http://213.176.114.172:5000/game", {
+      .withUrl("http://localhost:5150/game", {
         accessTokenFactory: () => accessToken ?? "",
       })
       .withAutomaticReconnect()

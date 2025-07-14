@@ -23,7 +23,7 @@ import { ReactComponent as LoginButton } from "./login-button.svg";
 import LoginModal from '../Modals/LoginModal';
 import RegisterModal from "../Modals/RegisterModal";
 import { AuthContext } from "../../AuthProvider";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import ChangeUsernameModal from "../Modals/ChangeUsernameModal";
 
 export default function Nav() {
@@ -35,6 +35,7 @@ export default function Nav() {
     const [isClicked, setIsClicked] = useState(false);
     
     const optionsBoxRef = useRef<HTMLDivElement | null>(null);
+    const navigate = useNavigate(); 
 
     const {
         isOpen: isLoginOpen,
@@ -102,16 +103,21 @@ export default function Nav() {
             alt: "Play",
         },
         {
-            routePath: "/single",
+            routePath: "/",
             options: null,
             imagePath: "./achievements.png",
             alt: "Play",
         },
         {
-            routePath: "/single",
+            routePath: "/",
             options: null,
             imagePath: "./spectaculate2.png",
             alt: "Play",
+        },
+        {
+         routePath: "/friends",
+            options: null,
+            imagePath: "./friends-icon.png",   
         }
     ];
 
@@ -131,6 +137,7 @@ export default function Nav() {
     };
     
     const handleClickButton = (index: number) => {
+        navigate(buttons[index].routePath);
         setIsClicked(!isClicked);
         setHoveredIndex(index);
     };
@@ -175,6 +182,7 @@ export default function Nav() {
                                     onMouseLeave={handleMouseLeaveButton}
                                     onClick={() => handleClickButton(index)}
                                 >
+                                    
                                     <Image
                                         className="self-left w-[3.3em] m-2"
                                         src={button.imagePath}
