@@ -193,6 +193,7 @@ namespace Minesweeper.Services.PlayerService
                 var players = await context.Users
                     .Where(p => p.PlayerName != null && p.PlayerName.ToLower().Contains(namePart.ToLower()))
                     .OrderBy(p => p.PlayerName)
+                    .Take(5)
                     .ToListAsync();
 
                 serviceResponse.Data = players.Select(p => mapper.Map<GetPlayerDTO>(p)).ToList();

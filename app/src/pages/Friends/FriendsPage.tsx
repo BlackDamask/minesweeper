@@ -13,6 +13,10 @@ export default function FriendsPage(){
     const handleInputChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
         setQuery(value);
+        if (value.length < 2) {
+            setSuggestions([]);
+            return;
+        }
         try {
             const response = await axios.get(`/player/search?name=${value}`, {
                 headers: { Authorization: `Bearer ${auth?.accessToken}` },
