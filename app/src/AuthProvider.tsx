@@ -6,6 +6,7 @@ interface ApiResponse<T> {
 }
 
 interface User {
+  id: string;
   playerName: string;
   points: number;
   isGuest:boolean;

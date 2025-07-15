@@ -137,7 +137,36 @@ namespace Minesweeper.Controllers
         {
             if (string.IsNullOrWhiteSpace(name))
                 return BadRequest("Search term is required.");
-            return Ok(await playerService.SearchPlayersByName(name));
+
+            var playerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (playerId is null)
+                return BadRequest();
+
+            return Ok(await playerService.SearchPlayersByName(name, playerId));
+        }
+        
+        [Authorize]
+        [HttpGet("friends")]
+        public async Task<IActionResult> GetFriends()
+        {
+            var playerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (playerId is null)
+                return BadRequest();
+            return Ok(await playerService.GetFriends(playerId));
+        }
+
+        [Authorize]
+        [HttpDelete("remove-friend")]
+        public async Task<IActionResult> RemoveFriend([FromQuery] string friendId)
+        {
+            var playerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (playerId is null)
+                return BadRequest();
+
+            var result = await playerService.RemoveFriend(playerId, friendId);
+            if (result.Success)
+                return Ok(result);
+            return BadRequest(result);
         }
 
     }

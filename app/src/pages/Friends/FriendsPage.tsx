@@ -1,14 +1,51 @@
-import { Avatar } from "@chakra-ui/react";
+import { Avatar, useToast, Image, Button, Popover, PopoverTrigger, PopoverContent, PopoverArrow, PopoverCloseButton, PopoverHeader, PopoverBody, PopoverFooter } from "@chakra-ui/react";
 import Nav from "../../components/Nav/Nav";
 import './FriendsPage.css';
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import axios from "../../api/axios";
 import { AuthContext } from "../../AuthProvider";
+import React from "react";
 
 export default function FriendsPage(){
     const [query, setQuery] = useState("");
     const [suggestions, setSuggestions] = useState([]);
+    const [friendRequests, setFriendRequests] = useState([]);
+    const [friends, setFriends] = useState([]);
+    const [refreshKey, setRefreshKey] = useState(0);
+    const [openPopoverFriendId, setOpenPopoverFriendId] = useState<string | null>(null);
+    
+    const initialFocusRef = React.useRef<HTMLDivElement>(null);
+    
     const auth = useContext(AuthContext);
+    const toast = useToast();
+
+    useEffect(() => {
+        if (!auth?.accessToken) return;
+        axios.get("/request/my-friend-requests", {
+            headers: { Authorization: `Bearer ${auth.accessToken}` },
+        })
+        .then(response => {
+            setFriendRequests(response.data || []);
+            console.log("Friend requests:", response.data);
+        })
+        .catch(err => {
+            // handle error as needed
+            console.error("Error fetching friend requests:", err);
+        });
+        axios.get("/player/friends", {
+            headers: { Authorization: `Bearer ${auth.accessToken}` },
+        })
+        .then(response => {
+            // Ensure friends is always an array
+            const data = Array.isArray(response.data) ? response.data : (response.data?.data || []);
+            setFriends(data);
+            console.log("Friends:", data);
+        })
+        .catch(err => {
+            // handle error as needed
+            console.error("Error fetching friends:", err);
+        });
+    }, [auth?.accessToken, refreshKey]);
 
     const handleInputChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
@@ -28,9 +65,147 @@ export default function FriendsPage(){
         }
     };
 
+    const handleAddFriend = async (requestingPlayerId: string) => {
+        if (!auth?.user?.id) return;
+        try {
+            const response = await axios.post(
+                `/request/friend?playerId=${auth.user.id}&requestingPlayerId=${requestingPlayerId}`,
+                {},
+                {
+                    headers: { Authorization: `Bearer ${auth?.accessToken}` },
+                }
+            );
+            if (response.data && response.data.success) {
+                toast({
+                    title: "Friend Request Sent",
+                    status: "success",
+                    isClosable: true,
+                });
+            }
+            // Optionally show a success message or update UI
+        } catch (err: any) {
+            console.error("Error adding friend:", err);
+            toast({
+                title: "Failed to add friend",
+                description: `${err.response?.data?.message || "Please try again."}`,
+                status: "warning",
+                isClosable: true,
+            });
+        }
+    };
+
+    const handleAcceptRequest = async (requestId: string) => {
+        if (!auth?.accessToken) return;
+        try {
+            const response = await axios.post(
+                `/request/accept?requestId=${requestId}`,
+                {},
+                {
+                    headers: { Authorization: `Bearer ${auth.accessToken}` },
+                }
+            );
+            if (response.data && response.data.success) {
+                toast({
+                    title: "Friend request accepted!",
+                    status: "success",
+                    isClosable: true,
+                });
+                setFriendRequests(prev => prev.filter((req: any) => req.requestId !== requestId));
+            }
+        } catch (err: any) {
+            console.error("Error accepting friend request:", err);
+            toast({
+                title: "Failed to accept friend request",
+                description: `${err.response?.data?.message || "Please try again."}`,
+                status: "warning",
+                isClosable: true,
+            });
+        }
+    };
+
+    const handleRejectRequest = async (requestId: string) => {
+        if (!auth?.accessToken) return;
+        try {
+            const response = await axios.post(
+                `/request/reject?requestId=${requestId}`,
+                {},
+                {
+                    headers: { Authorization: `Bearer ${auth.accessToken}` },
+                }
+            );
+            if (response.data && response.data.success) {
+                toast({
+                    title: "Friend request rejected!",
+                    status: "success",
+                    isClosable: true,
+                });
+                setFriendRequests(prev => prev.filter((req: any) => req.requestId !== requestId));
+            }
+        } catch (err: any) {
+            console.error("Error accepting friend request:", err);
+            toast({
+                title: "Failed to reject friend request",
+                description: `${err.response?.data?.message || "Please try again."}`,
+                status: "warning",
+                isClosable: true,
+            });
+        }
+    };
+
+    const handleRemoveFriend = async (friendId: string) => {
+        if (!auth?.accessToken){
+            toast({
+                title: "Login failed",
+                
+                status: "error",
+                isClosable: true,
+            });
+
+            return;
+        }
+        try {
+            const response = await axios.delete(
+                `/player/remove-friend?friendId=${friendId}`,
+                {
+                    headers: { Authorization: `Bearer ${auth.accessToken}` },
+                }
+            );
+            if (response.data && response.data.success) {
+                toast({
+                    title: "Friend removed!",
+                    status: "success",
+                    isClosable: true,
+                });
+                setFriends(prev => prev.filter((friend: any) => friend.id !== friendId));
+                // onClose(); // onClose is not defined in this scope
+            }
+        } catch (err: any) {
+            console.error("Error removing friend:", err);
+            toast({
+                title: "Failed to remove friend",
+                description: `${err.response?.data?.message || "Please try again."}`,
+                status: "warning",
+                isClosable: true,
+            });
+        }
+    };
+
     return (
         <main className='w-screen h-screen items-center flex flex-col bg-black text-center'>
             <Nav/>
+
+            <button
+                className="fixed bottom-6 right-6 bg-blue-800 text-white rounded-full shadow-lg p-4 hover:bg-blue-700 z-50 w-16"
+                aria-label="Refresh"
+                onClick={() => setRefreshKey(prev => prev + 1)}
+            >
+                <Image
+                    src="./restart-modern.png"
+                    alt="Refresh"
+                    borderRadius="lg"
+                    cursor='pointer'
+                />
+            </button>
             <div className="w-[calc(100%-84px)] ml-[84px] my-8 flex flex-col items-center" >
                 <div className="group w-2/3">
                 <svg viewBox="0 0 24 24" aria-hidden="true" className="search-icon w-4 h-4">
@@ -52,18 +227,79 @@ export default function FriendsPage(){
                 />
                 </div>
                 <div className="w-2/3 mt-8 text-gray-300 text-xl font-bold text-left">
-                    <h2 >Your friends (0):</h2>
-                    <h2 className="mt-8">Suggestions:</h2>
+                    {friendRequests.length > 0 && (
+                        <>
+                            <h2 >Friendship requests:</h2>
+                            <div className="flex flex-col gap-4 mt-4">
+                                {friendRequests.map((req: any) => (
+                                    <div key={req.id} className="flex justify-between items-center border-purple-900 border-4 h-18 p-2 rounded-xl w-full">
+                                        <Avatar name={req.requestingPlayerName || req.requestingPlayerId} />
+                                        <p>{req.requestingPlayerName || req.requestingPlayerId}</p>
+                                        <span className="flex gap-4">
+                                            <Button colorScheme='green' onClick={() => handleAcceptRequest(req.requestId)}>Accept</Button>
+                                            <Button colorScheme='red' onClick ={() => handleRejectRequest(req.requestId)}>Reject</Button>
+                                        </span>
+                                    </div>
+                                ))}
+                            </div>
+                        </>
+                    )}
+                    <h2 >Your friends ({friends.length}):</h2>
                     <div className="flex flex-col gap-4 mt-4">
-                        {suggestions.map((user: any) => (
-                            <div key={user.id} className="flex justify-between items-center border-gray-900 border-4 h-18 p-2 rounded-xl w-full">
-                                <Avatar name={user.playerName} />
-                                <p>{user.playerName}</p>
-                                <button className="bg-sky-500 hover:bg-sky-700 text-white px-4 py-2 rounded-lg">Add</button>
+                        {friends.map((friend: any) => (
+                            <div key={friend.id} className="flex justify-between items-center border-green-900 border-4 h-18 p-2 rounded-xl w-full">
+                                <Avatar name={friend.playerName || friend.id} />
+                                <p>{friend.playerName || friend.id}</p>
+                                <span className="flex gap-4">
+                                    <Button colorScheme='green' >Play</Button>
+                                    <Popover
+                                        initialFocusRef={initialFocusRef}
+                                        placement='right'
+                                        closeOnBlur={false}
+                                        isOpen={openPopoverFriendId === friend.id}
+                                        onClose={() => setOpenPopoverFriendId(null)}
+                                    >
+                                        <PopoverTrigger>
+                                            <Button colorScheme="red" onClick={() => setOpenPopoverFriendId(friend.id)}>Remove</Button>
+                                        </PopoverTrigger>
+                                        <PopoverContent bg='gray.800' borderColor='gray.900' color='#ceffff'>
+                                            <PopoverArrow bg='gray.900' />
+                                            <PopoverCloseButton />
+                                            <PopoverHeader borderColor='gray.900'>Warning</PopoverHeader>
+                                            <PopoverBody>Are you sure you remove this player from your friends?</PopoverBody>
+                                            <PopoverFooter borderColor='gray.900'>
+                                                <Button bg='red.400' color='gray.800' mr='1em' onClick={() => handleRemoveFriend(friend.id)}>
+                                                    Yes
+                                                </Button>
+                                                <Button bg='green.400' color='gray.800' onClick={() => setOpenPopoverFriendId(null)}>
+                                                    No
+                                                </Button>
+                                            </PopoverFooter>
+                                        </PopoverContent>
+                                    </Popover>
+                                </span>
                             </div>
                         ))}
                     </div>
-                    
+                    {query.length > 1 && (
+                        <>
+                            <h2 className="mt-8">Suggestions:</h2>
+                            <div className="flex flex-col gap-4 mt-4">
+                                {suggestions.map((user: any) => (
+                                    <div key={user.id} className="flex justify-between items-center border-gray-900 border-4 h-18 p-2 rounded-xl w-full">
+                                        <Avatar name={user.playerName} />
+                                        <p>{user.playerName}</p>
+                                        <button
+                                            className="bg-sky-500 hover:bg-sky-700 text-white px-4 py-2 rounded-lg"
+                                            onClick={() => handleAddFriend(user.id)}
+                                        >
+                                            Add
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
+                        </>
+                    )}
                 </div>
                 
             </div>

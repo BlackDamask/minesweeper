@@ -14,6 +14,8 @@ namespace Minesweeper.Services.PlayerService
         Task<ServiceResponse<string>> RemovePlayerFromQueue(string playerId);
         Task<ServiceResponse<string>> ChangeUserName(string playerId, string userName);
         Task<ServiceResponse<List<GetPlayerDTO>>> GetAllPlayers();
-        Task<ServiceResponse<List<GetPlayerDTO>>> SearchPlayersByName(string namePart);
+        Task<ServiceResponse<List<GetPlayerDTO>>> SearchPlayersByName(string namePart, string currentPlayerId);
+        Task<ServiceResponse<List<GetPlayerDTO>>> GetFriends(string playerId);
+        Task<ServiceResponse<bool>> RemoveFriend(string playerId, string friendId);
     }
 }
