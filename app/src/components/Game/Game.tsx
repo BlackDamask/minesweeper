@@ -191,7 +191,7 @@ export default function Game(
 
 
     return (
-        <div style={{ filter: game?.isExploaded ? 'blur(3px)' : 'none' }}>
+        <div  style={{ filter: game?.isExploaded ? 'blur(3px)' : 'none' }}>
             
             {currentGameData.gameField.map((row, rowIndex) => (
                 <div className={`flex w-fit h-fit text-xl`} key={rowIndex} >

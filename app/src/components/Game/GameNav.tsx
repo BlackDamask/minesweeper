@@ -24,7 +24,7 @@ export default function GameNav({
 }: GameNavProps) {
   return (
     selectedStyle === 'modern' ? (
-      <nav className="flex items-center justify-between w-full " style={{ height: `${selectedZoom * 2}px` }}>
+      <nav className="flex items-center justify-between w-full  " style={{ height: `${selectedZoom * 2}px` }}>
         {/* Timer */}
         <div
           style={{

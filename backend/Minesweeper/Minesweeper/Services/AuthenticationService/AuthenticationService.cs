@@ -188,7 +188,7 @@ namespace Minesweeper.Services.AuthenticationService
             {
                 var token = await playerManager.GenerateEmailConfirmationTokenAsync(player);
                 var encodedToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
-                var confirmationLink = $"https://localhost:5150/api/player/confirm-email?userId={player.Id}&token={encodedToken}";
+                var confirmationLink = $"http://localhost:5150/api/player/confirm-email?userId={player.Id}&token={encodedToken}";
 
                 if (emailService == null)
                     throw new Exception("emailService is null");
@@ -198,7 +198,26 @@ namespace Minesweeper.Services.AuthenticationService
                     throw new Exception("player.Email is null or empty");
 
                 await emailService.SendEmailAsync(player.Email, "Confirm Your Email",
-                    $"Please confirm your email by clicking <a href='{confirmationLink}'>here</a>.");
+                $@"
+                <div style='font-family: Arial, sans-serif; background: #f9f9f9; padding: 30px;'>
+                    <div style='max-width: 500px; margin: auto; background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); padding: 32px;'>
+                        <h2 style='color: #2d7ff9; text-align: center;'>Welcome to Minesweeper Battle!</h2>
+                        <p style='font-size: 16px; color: #333; text-align: center;'>
+                            Thank you for registering.<br>
+                            Please confirm your email address to activate your account.
+                        </p>
+                        <div style='text-align: center; margin: 32px 0;'>
+                            <a href='{confirmationLink}' 
+                            style='background: #2d7ff9; color: #fff; text-decoration: none; padding: 14px 28px; border-radius: 5px; font-size: 16px; display: inline-block;'>
+                                Confirm Email
+                            </a>
+                        </div>
+                        <p style='font-size: 13px; color: #888; text-align: center;'>
+                            If you did not create an account, you can safely ignore this email.
+                        </p>
+                    </div>
+                </div>
+                ");
 
                 serviceResponse.Message = "Registration succeeded! Please check your email for confirmation.";
                 serviceResponse.Success = true;

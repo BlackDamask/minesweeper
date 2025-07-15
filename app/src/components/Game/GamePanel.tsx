@@ -15,8 +15,17 @@ const generateResizeValues = () => {
     return (resizeValues);
 }
 
+const getDefaultZoom = () => {
+    if (typeof window !== 'undefined') {
+        if (window.innerWidth < 640) return 26; // mobile
+        if (window.innerWidth < 1024) return 36; // tablet
+        return 46; // desktop
+    }
+    return 26;
+};
+
 export default function GamePanel() {
-    const [selectedZoom, setSelectedZoom] = useState(26);
+    const [selectedZoom, setSelectedZoom] = useState(() => getDefaultZoom());
     const [selectedOption, setSelectedOption] = useState<number>(1);
     const [currentGameData, setCurrentGameData] = useState<GameData>(new GameData({ difficulty: selectedOption }));
     const [selectedMode, setSelectedMode] = useState<number>(1);
@@ -55,7 +64,7 @@ export default function GamePanel() {
     let marginBgColor = selectedStyle === "modern" ? "transparent" : "#5D789C";
 
     return (
-        <main className='flex flex-col ml-14'>
+        <main className='flex flex-col'>
 
 
         <GameControls
@@ -72,7 +81,7 @@ export default function GamePanel() {
                 setSelectedStyle={setSelectedStyle}
             />
             <div className='h-fit w-[calc(100%-84px)] flex justify-center items-center'>
-                <div className={` h-full w-fit pt-3 rounded-xl`}
+                <div className={`ml-14 h-full w-fit pt-3 rounded-xl`}
                     style={{
                         backgroundColor: fullBgColor,
                     }}>

@@ -28,33 +28,33 @@ export default function Layout() {
     <main className='w-screen h-screen items-center flex flex-col bg-gray-950 text-center'>
       <Nav/>
       
-      <div className="w-[calc(100%-84px)] ml-[84px] my-8">
+      <div className="w-[calc(100%-56px)] sm:w-[calc(100%-80px)]  ml-14 sm:ml-20 px-4 sm:px-6 lg:px-8 my-8">
          <header>
           <motion.h1
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, ease: 'easeOut' }}
-            className="text-6xl font-bold uppercase text-transparent bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 bg-clip-text drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)] tracking-widest font-orbitronFont"
+            className="text-3xl sm:text-4xl md:text-5xl font-bold uppercase text-transparent bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 bg-clip-text drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)] tracking-widest font-orbitronFont"
           >
           Minesweeper
           </motion.h1>
 
           <motion.h2
             initial={{ opacity: 0, scale: 0.95 }}
-
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.5, duration: 1, ease: 'easeOut' }}
-            className="text-3xl mt-4 uppercase text-[#85ECFA] tracking-widest font-audiowideFont"
+            className="text-xl sm:text-2xl md:text-3xl mt-4 uppercase text-[#85ECFA] tracking-widest font-audiowideFont"
           >
             Battle
           </motion.h2>
         </header> 
         
-        <div className='grid grid-cols-2 w-full'>
-          <div className='h-80 p-12'>
+        <div className='grid grid-cols-1 md:grid-cols-2 w-full mt-10'>
+          {/* Hide preview image on small screens */}
+          <div className='hidden md:flex h-60 sm:h-80 p-4 sm:p-12 justify-center items-center'>
             <Link to="/single">
             <Image
-              className="self-left w-3/4"
+              className="self-left w-full lg:w-5/6 xl:w-4/5 max-w-md"
               onContextMenuCapture={(e) => e.preventDefault()}
               src="./game-preview.png"
               alt="Return"
@@ -63,32 +63,32 @@ export default function Layout() {
             />
             </Link>
           </div>
-          <div className='h-80 p-5'>
-            <div className='flex items-center justify-center w-[80%] h-fit text-[#85ECFA] text-4xl font-bold'>
+          <div className='h-fit sm:h-80 p-2 sm:p-5 flex flex-col justify-center'>
+            <div className='flex items-center justify-center w-full sm:w-[80%] h-fit text-[#85ECFA] text-2xl sm:text-4xl font-bold'>
               <p>Play <span className='text-purple-500'>Minesweeper</span> online with other players!</p>
               
             </div>
-            <div className='pvp flex mt-5  h-24 w-[calc(100%-40px)] lg:w-[80%] rounded-lg text-white  hover:bg-purple-800 border-b-[3px] border-[#0d5bab] cursor-pointer text-start'
+            <div className='pvp flex mt-5 h-20 sm:h-24 w-full sm:w-[calc(100%-40px)] lg:w-[80%] rounded-lg text-white hover:bg-purple-800 border-b-[3px] border-[#0d5bab] cursor-pointer text-start'
             onClick={handlePvpButtonClick}>
               <span className='flex w-full gap-3 h-full'>
-                <div className='w-1/3 sm:w-1/5 h-full  '>
+                <div className='w-fit h-full'>
                   <img alt='' src="./shovel-pvp.svg" className='h-full aspect-square' />
                 </div>
-                <div className='w-4/5 flex flex-col   '>
-                  <h1 className='text-lg sm:text-2xl'>PvP</h1>
-                  <span className='flex cursor-pointer text-sm sm:text-base'><p><u>Beginner 9x9</u> <u>Indermediate 16x16</u> <u>Expert 30x16</u></p> </span>
+                <div className='w-3/4 sm:w-4/5 flex flex-col'>
+                  <h1 className='text-base sm:text-lg '>PvP</h1>
+                  <span className='flex cursor-pointer text-xs sm:text-sm '><p><u>Beginner 9x9</u> <u>Indermediate 16x16</u> <u>Expert 30x16</u></p> </span>
                 </div>
               </span>
             </div>
             <Link to="/single">
-            <div className='single flex mt-3 h-24 w-[calc(100%-40px)] lg:w-[80%] bg-sky-500  rounded-lg border-b-[3px] border-green-900  cursor-pointer'>
-              <span className='flex w-full  h-full'>
-                <div className='w-fit h-full  aspect-square p-2 '>
-                <img alt='' src="./bomb-shape.png" className=' h-full aspect-square' />
+            <div className='single flex mt-3 h-20 sm:h-24 w-full sm:w-[calc(100%-40px)] lg:w-[80%] bg-sky-500 rounded-lg border-b-[3px] border-green-900 cursor-pointer'>
+              <span className='flex w-full h-full'>
+                <div className='w-fit h-full aspect-square p-2'>
+                <img alt='' src="./bomb-shape.png" className='h-full aspect-square' />
               </div>
-              <div className='w-2/3 sm:w-3/5 flex flex-col  text-start justify-center ml-[10px] '>
-                <h1 className='text-xl sm:text-2xl text-white'>Single Player</h1>
-                <span className='flex text-white cursor-pointer text-sm sm:text-base'><p><u>Beginner 9x9</u> <u>Indermediate 16x16</u> <u>Expert 30x16</u></p> </span>
+              <div className='w-2/3 sm:w-3/5 flex flex-col text-start justify-center ml-[10px]'>
+                <h1 className='text-base sm:text-xl  text-white'>Single Player</h1>
+                <span className='flex text-white cursor-pointer text-xs sm:text-sm'><p><u>Beginner 9x9</u> <u>Indermediate 16x16</u> <u>Expert 30x16</u></p> </span>
               </div>
               </span>
               
@@ -147,4 +147,3 @@ export default function Layout() {
     </main>
   );
 }
- 

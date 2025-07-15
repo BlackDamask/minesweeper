@@ -114,11 +114,11 @@ export default function Nav() {
             imagePath: "./spectaculate2.png",
             alt: "Play",
         },
-        {
-         routePath: "/friends",
+        ...(auth?.isLoggedIn ? [{
+            routePath: "/friends",
             options: null,
-            imagePath: "./friends-icon.png",   
-        }
+            imagePath: "./friends-icon.png",
+        }] : [])
     ];
 
     const handleMouseEnterButton = (index: number) => {

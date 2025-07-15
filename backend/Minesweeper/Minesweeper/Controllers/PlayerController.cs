@@ -55,7 +55,28 @@ namespace Minesweeper.Controllers
             var result = await playerManager.ConfirmEmailAsync(user, decodedToken);
             if (!result.Succeeded) return BadRequest("Email confirmation failed");
 
-            return Ok("Email confirmed successfully!");
+            var html = @"
+                <html>
+                <head>
+                    <title>Email Confirmed</title>
+                </head>
+                <body style='font-family: Arial, sans-serif; background: #f9f9f9; padding: 30px;'>
+                    <div style='max-width: 500px; margin: auto; background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); padding: 32px; text-align: center;'>
+                        <h2 style='color: #2d7ff9;'>Email Confirmed!</h2>
+                        <p style='font-size: 16px; color: #333;'>
+                            Your email has been successfully confirmed.<br>
+                            You can now log in to your account.
+                        </p>
+                        <a href='http://localhost:3000' 
+                           style='background: #2d7ff9; color: #fff; text-decoration: none; padding: 14px 28px; border-radius: 5px; font-size: 16px; display: inline-block; margin-top: 24px;'>
+                            Go to Minesweeper Battle Website
+                        </a>
+                    </div>
+                </body>
+                </html>
+            ";
+
+            return Content(html, "text/html");
         }
 
         [HttpGet("app-version")]

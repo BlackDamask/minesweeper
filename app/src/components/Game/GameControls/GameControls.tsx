@@ -33,7 +33,7 @@ export default function GameControls(props: {
 
   return (
     <>
-      <div className='flex items-center mb-4 w-10'>
+      <div className='flex items-center mb-4 w-10 ml-0 sm:ml-5 md:ml-7 lg:ml-10 xl:ml-12'>
         <Image
           className="self-left"
           
@@ -47,6 +47,7 @@ export default function GameControls(props: {
           <Select
             className='content'
             width={'7rem'}
+            fontSize={['0.7rem','1rem']}
             textAlign={'center'}
             color={'white'}
             size='md' 
@@ -63,7 +64,8 @@ export default function GameControls(props: {
           </Select>
           <Select
             className='content'
-            width={'10rem'}
+            width={['8rem', '10rem', '11rem']}
+            fontSize={['0.7rem','1rem']}
             color={'white'}
             borderColor={'#93c5fd'}
             borderWidth={'4px'}
