@@ -1,15 +1,12 @@
 ﻿using AutoMapper;
-
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using Minesweeper.DTOs.PlayerDTO;
 using Minesweeper.models;
 using Minesweeper.Services.AuthenticationService;
 using Minesweeper.Services.PlayerService;
-using System.Reflection.Metadata.Ecma335;
 using System.Security.Claims;
 using System.Text;
 
@@ -38,10 +35,50 @@ namespace Minesweeper.Controllers
             this.mapper = mapper;
             this.authenticationService = authenticationService;
         }
+
+        // --- POST methods (alphabetically) ---
+        [Authorize]
+        [HttpPost("add-to-queue")]
+        public async Task<IActionResult> AddToQueue()
+        {
+            var playerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (playerId is null)
+            {
+                return BadRequest();
+            }
+            return Ok(await playerService.AddPlayerToQueue(playerId));
+        }
+
+        [HttpPost("login")]
+        public async Task<IActionResult> Login(LoginPlayerDTO player)
+        {
+            return Ok(await authenticationService.Login(player));
+        }
+
+        [HttpPost("refresh-token")]
+        public async Task<IActionResult> RefreshToken(string refreshToken)
+        {
+            return Ok(await authenticationService.RefreshToken(refreshToken));
+        }
+
         [HttpPost("register-user")]
         public async Task<IActionResult> Register(RegisterPlayerDTO newPlayer)
         {
             return Ok(await authenticationService.Register(newPlayer));
+        }
+
+        // --- GET methods (alphabetically) ---
+        [HttpGet("app-version")]
+        public IActionResult AppVersion()
+        {
+            return Ok("1.0.1");
+        }
+
+        [Authorize]
+        [HttpGet("all")]
+        public async Task<IActionResult> GetAllPlayers()
+        {
+            return Ok(await playerService.GetAllPlayers());
         }
 
         [HttpGet("confirm-email")]
@@ -79,22 +116,14 @@ namespace Minesweeper.Controllers
             return Content(html, "text/html");
         }
 
-        [HttpGet("app-version")]
-        public IActionResult AppVersion()
+        [Authorize]
+        [HttpGet("friends")]
+        public async Task<IActionResult> GetFriends()
         {
-            return Ok("1.0.1");
-        }
-
-        [HttpPost("login")]
-        public async Task<IActionResult> Login(LoginPlayerDTO player)
-        {
-            return Ok(await authenticationService.Login(player));
-        }
-
-        [HttpPost("refresh-token")]
-        public async Task<IActionResult> RefreshToken(string refreshToken)
-        {
-            return Ok(await authenticationService.RefreshToken(refreshToken));
+            var playerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (playerId is null)
+                return BadRequest();
+            return Ok(await playerService.GetFriends(playerId));
         }
 
         [Authorize]
@@ -107,49 +136,6 @@ namespace Minesweeper.Controllers
                 return BadRequest();
             }
             return Ok(await playerService.GetProfile(playerId));
-        }
-    
-        [Authorize]
-        [HttpPut("change-username")]
-        public async Task<IActionResult> ChangeUsername(string userName)
-        {
-            var playerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (playerId is null)
-            {
-                return BadRequest();
-            }
-            return Ok(await playerService.ChangeUserName(playerId, userName));
-        }
-
-        [Authorize]
-        [HttpPost("add-to-queue")]
-        public async Task<IActionResult> AddToQueue()
-        {
-            var playerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (playerId is null)
-            {
-                return BadRequest();
-            }
-            return Ok(await playerService.AddPlayerToQueue(playerId));
-        }
-
-        [Authorize]
-        [HttpDelete("remove-from-queue")]
-        public async Task<IActionResult> RemoveFromQueue()
-        {
-            var playerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (playerId is null)
-            {
-                return BadRequest();
-            }
-            return Ok(await playerService.RemovePlayerFromQueue(playerId));
-        }
-
-        [Authorize]
-        [HttpGet("all")]
-        public async Task<IActionResult> GetAllPlayers()
-        {
-            return Ok(await playerService.GetAllPlayers());
         }
 
         [Authorize]
@@ -165,17 +151,21 @@ namespace Minesweeper.Controllers
 
             return Ok(await playerService.SearchPlayersByName(name, playerId));
         }
-        
+
+        // --- PUT methods ---
         [Authorize]
-        [HttpGet("friends")]
-        public async Task<IActionResult> GetFriends()
+        [HttpPut("change-username")]
+        public async Task<IActionResult> ChangeUsername(string userName)
         {
             var playerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (playerId is null)
+            {
                 return BadRequest();
-            return Ok(await playerService.GetFriends(playerId));
+            }
+            return Ok(await playerService.ChangeUserName(playerId, userName));
         }
 
+        // --- DELETE methods (alphabetically) ---
         [Authorize]
         [HttpDelete("remove-friend")]
         public async Task<IActionResult> RemoveFriend([FromQuery] string friendId)
@@ -190,5 +180,16 @@ namespace Minesweeper.Controllers
             return BadRequest(result);
         }
 
+        [Authorize]
+        [HttpDelete("remove-from-queue")]
+        public async Task<IActionResult> RemoveFromQueue()
+        {
+            var playerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (playerId is null)
+            {
+                return BadRequest();
+            }
+            return Ok(await playerService.RemovePlayerFromQueue(playerId));
+        }
     }
 }
