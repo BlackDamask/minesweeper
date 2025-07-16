@@ -62,21 +62,21 @@ export default function NotAuthorizedModal({isOpen, onClose} : {isOpen: boolean,
                     <p>Play <span className='text-purple-500'>Minesweeper</span> online</p>
                 </ModalHeader>
                 <ModalBody>
-                    
                 <Box 
-                    className="flex items-center justify-center w-4/6 m-auto mt-6 text-gray-50 text-xl font-bold h-14 bg-green-500 hover:bg-green-600 rounded-lg border-b-[3px] border-green-700" 
-                    onClick={handleLogin}
-                    style={{ cursor: 'pointer' }}
-                >
-                    Log In
-                </Box>
-                <Box 
-                    className="flex items-center justify-center w-4/6 m-auto mt-6 text-white text-xl font-bold h-14 bg-zinc-700 hover:bg-zinc-800 rounded-lg border-b-[3px] border-zinc-800" 
+                    className="flex items-center justify-center w-4/6 m-auto mt-6 text-white text-xl font-bold h-14 bg-green-500 hover:bg-green-700 rounded-lg border-b-[3px] border-green-800" 
                     onClick={handleRegister}
                     style={{ cursor: 'pointer' }}
                 >
                     Register
                 </Box>
+                <Box 
+                    className="flex items-center justify-center w-4/6 m-auto mt-6 text-gray-50 text-xl font-bold h-14 bg-zinc-500 hover:bg-zinc-600 rounded-lg border-b-[3px] border-zinc-700" 
+                    onClick={handleLogin}
+                    style={{ cursor: 'pointer' }}
+                >
+                    Log In
+                </Box>
+                
                     
                 </ModalBody>
                 <ModalFooter display={'flex'} justifyContent={'center'}>

@@ -99,7 +99,7 @@ export default function Login(){
                 alt="Return"
                 borderRadius="lg"
             />
-          <div className="bg-gray-800 p-8 rounded-xl shadow-lg w-96">
+          <div className="bg-zinc-950 border-violet-600 border-4 p-8 rounded-xl shadow-lg w-96">
             <h1 className="text-center text-4xl font-bold text-gray-200 mb-6 font-customFont">
               Minesweeper Battle
             </h1>
@@ -110,9 +110,17 @@ export default function Login(){
                 placeholder="Email"
                 size="lg"
                 variant="filled"
-                onChange={handleChange} 
+                onChange={handleChange}
                 value={formData.email}
-                className="bg-gray-700 text-black"
+                bg="black"
+                color="white"
+                boxShadow={"0 0 0 1px #06b6d4"}
+                _hover={{
+                  boxShadow: "0 0 0 3px #06b6d4",
+                }}
+                _focus={{
+                  boxShadow: "0 0 0 3px #06b6d4",
+                }}
               />
               <Input
                 name="password"
@@ -122,11 +130,20 @@ export default function Login(){
                 variant="filled"
                 onChange={handleChange} 
                 value={formData.password}
+                bg="black"
+                color="white"
+                boxShadow={"0 0 0 1px #06b6d4"}
                 className="bg-gray-700 text-black"
+                _hover={{
+                  boxShadow: "0 0 0 3px #06b6d4",
+                }}
+                _focus={{
+                  boxShadow: "0 0 0 3px #06b6d4",
+                }}
               />
               
     
-              <Button colorScheme="green" size="lg" width="full" onClick={handleSubmit}>
+              <Button colorScheme="green" bg={"#22c55e"} size="lg" width="full" onClick={handleSubmit}>
                 {isLoading ? 'Loading...' : 'Log In'}
               </Button>
             </div>
@@ -151,7 +168,7 @@ export default function Login(){
             </div>
     
             <p className="text-center text-gray-400 mt-6 text-sm">
-              New? <Link to='/register'  className="text-green-400 hover:underline">Sign up - and start playing minesweeper!</Link>
+              New? <Link to='/register'  className="text-cyan-400 hover:underline">Sign up - and start playing minesweeper!</Link>
             </p>
           </div>
         </div>

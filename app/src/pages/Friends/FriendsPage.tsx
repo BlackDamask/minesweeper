@@ -26,6 +26,7 @@ export default function FriendsPage(){
 
     useEffect(() => {
         if (!auth?.accessToken) return;
+        setQuery("");
         axios.get("/request/my-friend-requests", {
             headers: { Authorization: `Bearer ${auth.accessToken}` },
         })
@@ -70,6 +71,7 @@ export default function FriendsPage(){
             );
             if (response.data && response.data.success) {
                 setFriendRequests(prev => prev.filter((req: any) => req.requestId !== requestId));
+                setRefreshKey(prev => prev + 1); // Refresh component after accepting
             }
         } catch (err: any) {
             toast({
