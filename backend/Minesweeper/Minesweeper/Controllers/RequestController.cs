@@ -1,12 +1,14 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Minesweeper.Services.RequestService;
+using Minesweeper.DTOs.RequestDTO;
 using System.Security.Claims;
 
 namespace Minesweeper.Controllers;
 
 [ApiController]
 [Route("api/request")]
+[Authorize] // Require authorization for all endpoints
 public class RequestController : ControllerBase
 {
     private readonly IRequestService requestService;
@@ -17,33 +19,41 @@ public class RequestController : ControllerBase
     }
 
     [HttpPost("friend")]
-    public async Task<IActionResult> CreateFriendRequest([FromQuery] string playerId, [FromQuery] string requestingPlayerId)
+    public async Task<IActionResult> CreateFriendRequest([FromBody] FriendRequestDto dto)
     {
-        var result = await requestService.CreateFriendRequest(requestingPlayerId, playerId);
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (userId == null)
+            return Unauthorized();
+        var result = await requestService.CreateFriendRequest(userId, dto.RequestingPlayerId);
         if (result.Success)
             return Ok(result);
         return BadRequest(result);
     }
 
     [HttpPost("accept")]
-    public async Task<IActionResult> AcceptFriendRequest([FromQuery] string requestId)
+    public async Task<IActionResult> AcceptFriendRequest([FromBody] FriendRequestActionDto dto)
     {
-        var result = await requestService.AcceptFriendRequest(requestId);
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (userId == null)
+            return Unauthorized();
+        var result = await requestService.AcceptFriendRequest(dto.RequestId);
         if (result.Success)
             return Ok(result);
         return BadRequest(result);
     }
 
     [HttpPost("reject")]
-    public async Task<IActionResult> RejectFriendRequest([FromQuery] string requestId)
+    public async Task<IActionResult> RejectFriendRequest([FromBody] FriendRequestActionDto dto)
     {
-        var result = await requestService.RejectFriendRequest(requestId);
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (userId == null)
+            return Unauthorized();
+        var result = await requestService.RejectFriendRequest(dto.RequestId);
         if (result.Success)
             return Ok(result);
         return BadRequest(result);
     }
 
-    [Authorize]
     [HttpGet("my-friend-requests")]
     public async Task<IActionResult> GetMyFriendRequests()
     {

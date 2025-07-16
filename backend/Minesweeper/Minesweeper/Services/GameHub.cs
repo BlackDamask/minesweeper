@@ -185,8 +185,6 @@ namespace Minesweeper.Services
 
         public override async Task OnConnectedAsync()
         {
-            await Clients.All.SendAsync("ReceiveSystemMessage",
-                $"{Context.UserIdentifier} joined.");
             Console.WriteLine(Clients.ToString());
 
         }

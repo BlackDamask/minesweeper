@@ -5,6 +5,8 @@ import { useContext, useState, useEffect } from "react";
 import axios from "../../api/axios";
 import { AuthContext } from "../../AuthProvider";
 import React from "react";
+import { useGameContext } from "../../GameProvider";
+import { useNavigate } from "react-router-dom";
 
 export default function FriendsPage(){
     const [query, setQuery] = useState("");
@@ -13,10 +15,13 @@ export default function FriendsPage(){
     const [friends, setFriends] = useState([]);
     const [refreshKey, setRefreshKey] = useState(0);
     const [openPopoverFriendId, setOpenPopoverFriendId] = useState<string | null>(null);
-    
+    const [sentRequests, setSentRequests] = useState<string[]>([]);
+
     const initialFocusRef = React.useRef<HTMLDivElement>(null);
     
     const auth = useContext(AuthContext);
+    const navigate = useNavigate();
+    const gameContext = useGameContext();
     const toast = useToast();
 
     useEffect(() => {
@@ -47,6 +52,58 @@ export default function FriendsPage(){
         });
     }, [auth?.accessToken, refreshKey]);
 
+    useEffect(() => {
+        if (gameContext?.shallRedirectToMultiplayerPage) {
+            navigate("/multiplayer");
+        }
+    }, [gameContext?.shallRedirectToMultiplayerPage, navigate]);
+
+    const handleAcceptRequest = async (requestId: string) => {
+        if (!gameContext) return;
+        try {
+            const response = await axios.post(
+                "/request/accept",
+                { requestId },
+                {
+                    headers: { Authorization: `Bearer ${auth?.accessToken}` },
+                }
+            );
+            if (response.data && response.data.success) {
+                setFriendRequests(prev => prev.filter((req: any) => req.requestId !== requestId));
+            }
+        } catch (err: any) {
+            toast({
+                title: "Failed to accept friend request",
+                description: `${err.response?.data?.message || "Please try again."}`,
+                status: "warning",
+                isClosable: true,
+            });
+        }
+    };
+
+    const handleRejectRequest = async (requestId: string) => {
+        if (!gameContext) return;
+        try {
+            const response = await axios.post(
+                "/request/reject",
+                { requestId },
+                {
+                    headers: { Authorization: `Bearer ${auth?.accessToken}` },
+                }
+            );
+            if (response.data && response.data.success) {
+                setFriendRequests(prev => prev.filter((req: any) => req.requestId !== requestId));
+            }
+        } catch (err: any) {
+            toast({
+                title: "Failed to reject friend request",
+                description: `${err.response?.data?.message || "Please try again."}`,
+                status: "warning",
+                isClosable: true,
+            });
+        }
+    };
+
     const handleInputChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
         setQuery(value);
@@ -69,8 +126,8 @@ export default function FriendsPage(){
         if (!auth?.user?.id) return;
         try {
             const response = await axios.post(
-                `/request/friend?playerId=${auth.user.id}&requestingPlayerId=${requestingPlayerId}`,
-                {},
+                "/request/friend",
+                { requestingPlayerId },
                 {
                     headers: { Authorization: `Bearer ${auth?.accessToken}` },
                 }
@@ -81,70 +138,12 @@ export default function FriendsPage(){
                     status: "success",
                     isClosable: true,
                 });
+                setSentRequests(prev => [...prev, requestingPlayerId]);
             }
-            // Optionally show a success message or update UI
         } catch (err: any) {
             console.error("Error adding friend:", err);
             toast({
                 title: "Failed to add friend",
-                description: `${err.response?.data?.message || "Please try again."}`,
-                status: "warning",
-                isClosable: true,
-            });
-        }
-    };
-
-    const handleAcceptRequest = async (requestId: string) => {
-        if (!auth?.accessToken) return;
-        try {
-            const response = await axios.post(
-                `/request/accept?requestId=${requestId}`,
-                {},
-                {
-                    headers: { Authorization: `Bearer ${auth.accessToken}` },
-                }
-            );
-            if (response.data && response.data.success) {
-                toast({
-                    title: "Friend request accepted!",
-                    status: "success",
-                    isClosable: true,
-                });
-                setFriendRequests(prev => prev.filter((req: any) => req.requestId !== requestId));
-            }
-        } catch (err: any) {
-            console.error("Error accepting friend request:", err);
-            toast({
-                title: "Failed to accept friend request",
-                description: `${err.response?.data?.message || "Please try again."}`,
-                status: "warning",
-                isClosable: true,
-            });
-        }
-    };
-
-    const handleRejectRequest = async (requestId: string) => {
-        if (!auth?.accessToken) return;
-        try {
-            const response = await axios.post(
-                `/request/reject?requestId=${requestId}`,
-                {},
-                {
-                    headers: { Authorization: `Bearer ${auth.accessToken}` },
-                }
-            );
-            if (response.data && response.data.success) {
-                toast({
-                    title: "Friend request rejected!",
-                    status: "success",
-                    isClosable: true,
-                });
-                setFriendRequests(prev => prev.filter((req: any) => req.requestId !== requestId));
-            }
-        } catch (err: any) {
-            console.error("Error accepting friend request:", err);
-            toast({
-                title: "Failed to reject friend request",
                 description: `${err.response?.data?.message || "Please try again."}`,
                 status: "warning",
                 isClosable: true,
@@ -190,14 +189,40 @@ export default function FriendsPage(){
         }
     };
 
+    // Accept PvP game invitation handler
+    const handleAcceptGameInvitation = async () => {
+        if (!gameContext?.gameInvitation) return;
+        await gameContext.acceptPvpGameInvitation(gameContext.gameInvitation.id);
+        gameContext.setGameInvitation(null);
+        navigate("/multiplayer");
+    };
+    // Discard PvP game invitation handler
+    const handleDiscardGameInvitation = () => {
+        gameContext?.setGameInvitation(null);
+    };
+
     return (
         <main className='w-screen h-screen items-center flex flex-col bg-black text-center'>
             <Nav/>
-
+            {/* Game Invitation Notification Bar */}
+            {gameContext?.gameInvitation && (
+                <div className="fixed top-0 left-0 w-full z-50 flex justify-center">
+                    <div className="bg-blue-900 text-white px-6 py-4 rounded-b-xl shadow-lg flex items-center gap-6">
+                        <span>
+                            <b>{gameContext.gameInvitation.name}</b> invites you to play! Elo: {gameContext.gameInvitation.elo}
+                        </span>
+                        <Button colorScheme="green" size="sm" onClick={handleAcceptGameInvitation}>Accept</Button>
+                        <Button colorScheme="red" size="sm" onClick={handleDiscardGameInvitation}>Discard</Button>
+                    </div>
+                </div>
+            )}
             <button
                 className="fixed bottom-6 right-6 bg-blue-800 text-white rounded-full shadow-lg p-4 hover:bg-blue-700 z-50 w-16"
                 aria-label="Refresh"
-                onClick={() => setRefreshKey(prev => prev + 1)}
+                onClick={() => {
+                    setRefreshKey(prev => prev + 1);
+                    setSentRequests([]);
+                }}
             >
                 <Image
                     src="./restart-modern.png"
@@ -251,7 +276,7 @@ export default function FriendsPage(){
                                 <Avatar name={friend.playerName || friend.id} />
                                 <p>{friend.playerName || friend.id}</p>
                                 <span className="flex gap-4">
-                                    <Button colorScheme='green' >Play</Button>
+                                    <Button colorScheme='green' onClick={() => gameContext?.sendPvpGameInvitation(friend.id)}>Play</Button>
                                     <Popover
                                         initialFocusRef={initialFocusRef}
                                         placement='right'
@@ -285,18 +310,22 @@ export default function FriendsPage(){
                         <>
                             <h2 className="mt-8">Suggestions:</h2>
                             <div className="flex flex-col gap-4 mt-4">
-                                {suggestions.map((user: any) => (
-                                    <div key={user.id} className="flex justify-between items-center border-gray-900 border-4 h-18 p-2 rounded-xl w-full">
-                                        <Avatar name={user.playerName} />
-                                        <p>{user.playerName}</p>
-                                        <button
-                                            className="bg-sky-500 hover:bg-sky-700 text-white px-4 py-2 rounded-lg"
-                                            onClick={() => handleAddFriend(user.id)}
-                                        >
-                                            Add
-                                        </button>
-                                    </div>
-                                ))}
+                                {suggestions.map((user: any) => {
+                                    const alreadySent = sentRequests.includes(user.id);
+                                    return (
+                                        <div key={user.id} className="flex justify-between items-center border-gray-900 border-4 h-18 p-2 rounded-xl w-full">
+                                            <Avatar name={user.playerName} />
+                                            <p>{user.playerName}</p>
+                                            <button
+                                                className={`bg-sky-500 hover:bg-sky-700 text-white px-4 py-2 rounded-lg ${alreadySent ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                                onClick={() => !alreadySent && handleAddFriend(user.id)}
+                                                disabled={alreadySent}
+                                            >
+                                                {alreadySent ? "Sent" : "Add"}
+                                            </button>
+                                        </div>
+                                    );
+                                })}
                             </div>
                         </>
                     )}

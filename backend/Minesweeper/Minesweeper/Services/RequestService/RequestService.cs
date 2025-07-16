@@ -14,7 +14,7 @@ public class RequestService : IRequestService
         this.context = context;
     }
 
-    public async Task<ServiceResponse<bool>> CreateFriendRequest(string playerId, string requestingPlayerId)
+    public async Task<ServiceResponse<bool>> CreateFriendRequest(string requestingPlayerId,string playerId)
     {
         var response = new ServiceResponse<bool>();
 

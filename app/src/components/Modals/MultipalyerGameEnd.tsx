@@ -60,8 +60,8 @@ export default function MultiplayerGameEnd({isOpen, onClose} : {isOpen: boolean,
                             
                     </ModalBody>
                     <ModalFooter>
-                        <Button colorScheme="green"  mr={5} onClick={() => { game?.setIsGameStarted(false); }}>
-                            New Game 
+                        <Button colorScheme="green" mr={5} onClick={() => { game?.resetMultiplayerGame(); }}>
+                            New Game
                         </Button>
                         <Button colorScheme="white" onClick={onClose}>Show field</Button>
                     </ModalFooter>

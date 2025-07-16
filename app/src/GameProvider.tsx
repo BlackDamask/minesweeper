@@ -3,6 +3,7 @@ import * as signalR from "@microsoft/signalr";
 import { useToast } from "@chakra-ui/react";
 import { AuthContext } from "./AuthProvider";
 import { GameData, Tile } from "./components/Game/data";
+import { useNavigate } from "react-router-dom";
  
 interface GameStartResponse {
   gameField: Tile[][],
@@ -33,6 +34,12 @@ interface StartCoordinates {
   rowIndex: number;
 }
 
+interface GameInvitation {
+  id: string;
+  name: string;
+  elo: number;
+}
+
 interface GameContextType {
   isGameStarted: boolean;
   isGameEnded: boolean | undefined;
@@ -50,8 +57,14 @@ interface GameContextType {
 
   currentElo: number;
   eloChange: number;
+
+  gameInvitation: GameInvitation | null;
   
   playerExploaded:() => void;
+  sendPvpGameInvitation: (invitedPlayerId: string) => Promise<void>;
+  acceptPvpGameInvitation: (inviterPlayerId: string) => Promise<void>;
+  acceptFriendRequest: (requestId: string) => Promise<boolean>;
+  rejectFriendRequest: (requestId: string) => Promise<boolean>;
 
   setGameField: React.Dispatch<React.SetStateAction<Tile[][]>>;
   setIsGameStarted: React.Dispatch<React.SetStateAction<boolean>>;
@@ -61,6 +74,10 @@ interface GameContextType {
   setStartTime: React.Dispatch<React.SetStateAction<number>>;
   setEnemyProgress: React.Dispatch<React.SetStateAction<number>>;
   setEnemyName: React.Dispatch<React.SetStateAction<string>>;
+  setGameInvitation: React.Dispatch<React.SetStateAction<GameInvitation | null>>;
+  resetMultiplayerGame: () => void;
+  shallRedirectToMultiplayerPage: boolean;
+  setShallRedirectToMultiplayerPage: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const GameContext = createContext<GameContextType | undefined>(undefined);
@@ -83,6 +100,8 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isWon, setIsWon] = useState<boolean>(false);
   const [currentElo, setCurrentElo] = useState<number>(500);
   const [eloChange, setEloChange] = useState<number>(0);
+  const [gameInvitation, setGameInvitation] = useState<GameInvitation | null>(null);
+  const [shallRedirectToMultiplayerPage, setShallRedirectToMultiplayerPage] = useState(false);
 
 
   const connectionRef = useRef<signalR.HubConnection | null>(null);
@@ -117,6 +136,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if(connection.state !== "Connected")
         connection.start().catch((e) => "Failed to connect to websocket: " + e);
           connection.on("GameStarted", (response: GameStartResponse) => {
+            setShallRedirectToMultiplayerPage(true);
             setEnemyName(response.enemyName);
             setGameField(response.gameField);
             setStartCoordinates({ colIndex: response.colBeginIndex, rowIndex: response.rowBeginIndex });
@@ -148,22 +168,36 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
             });
           });
       
+          connection.on("ReceivePvpGameInvitation", (invitation: GameInvitation) => {
+            console.log("Received PvP Game Invitation in GameProvider", invitation);
+            setGameInvitation(invitation);
+            toast({
+              title: `Game Invitation from ${invitation.name}`,
+              description: `Elo: ${invitation.elo}`,
+              status: "info",
+              isClosable: true,
+            });
+          });
+      
           
       
           connection.on("GameEnd", (response: GameEndResponse) => {
             console.warn(response);
             if(response.isWon){
+              setShallRedirectToMultiplayerPage(false);
               setIsGameEnded(true);
               setIsWon(true);
-              currentGameData!.isGameOver = true;
+              if (currentGameData) currentGameData.isGameOver = true;
             }
             else{
+              setShallRedirectToMultiplayerPage(false);
               setIsGameEnded(true);
               setIsWon(false);
-              currentGameData!.isGameOver = true;
+              if (currentGameData) currentGameData.isGameOver = true;
             }
             setCurrentElo(response.newElo);
             setEloChange(response.eloChange);
+            // Do NOT resetMultiplayerGame here, only on button click
           });
     }
   }, [connectionRef,currentGameData, toast]); 
@@ -192,6 +226,134 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [currentGameData, isExploaded]);
 
 
+  const sendPvpGameInvitation = async (invitedPlayerId: string) => {
+    const connection = connectionRef.current;
+    if (connection && connection.state === "Connected") {
+      try {
+        await connection.invoke("SendPvpGameInvitation", invitedPlayerId);
+        toast({
+          title: "Invitation sent!",
+          status: "success",
+          isClosable: true,
+        });
+      } catch (err: any) {
+        console.error("Error sending PvP game invitation:", err);
+        toast({
+          title: "Failed to send invitation",
+          description: err.message || "Please try again.",
+          status: "warning",
+          isClosable: true,
+        });
+      }
+    } else {
+      toast({
+        title: "Not connected to game server",
+        status: "error",
+        isClosable: true,
+      });
+    }
+  };
+
+  const acceptPvpGameInvitation = async (inviterPlayerId: string) => {
+    const connection = connectionRef.current;
+    if (connection && connection.state === "Connected") {
+      try {
+        await connection.invoke("AcceptPvpGameInvitation", inviterPlayerId);
+      } catch (err: any) {
+        toast({
+          title: "Failed to accept invitation",
+          description: err.message || "Please try again.",
+          status: "error",
+          isClosable: true,
+          position: "top",
+        });
+      }
+    } else {
+      try {
+        await connection?.start();
+        await connection?.invoke("AcceptPvpGameInvitation", inviterPlayerId);
+      } catch (err: any) {
+        toast({
+          title: "Not connected to game server",
+          status: "error",
+          isClosable: true,
+          position: "top",
+        });
+      }
+    }
+  };
+
+  const acceptFriendRequest = async (requestId: string) => {
+    if (!auth?.accessToken) return false;
+    try {
+      const response = await fetch(`/request/accept?requestId=${requestId}`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${auth.accessToken}` },
+      });
+      const data = await response.json();
+      if (data && data.success) {
+        toast({
+          title: "Friend request accepted!",
+          status: "success",
+          isClosable: true,
+        });
+        return true;
+      }
+    } catch (err: any) {
+      toast({
+        title: "Failed to accept friend request",
+        description: err.message || "Please try again.",
+        status: "warning",
+        isClosable: true,
+      });
+    }
+    return false;
+  };
+
+  const rejectFriendRequest = async (requestId: string) => {
+    if (!auth?.accessToken) return false;
+    try {
+      const response = await fetch(`/request/reject?requestId=${requestId}`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${auth.accessToken}` },
+      });
+      const data = await response.json();
+      if (data && data.success) {
+        toast({
+          title: "Friend request rejected!",
+          status: "success",
+          isClosable: true,
+        });
+        return true;
+      }
+    } catch (err: any) {
+      toast({
+        title: "Failed to reject friend request",
+        description: err.message || "Please try again.",
+        status: "warning",
+        isClosable: true,
+      });
+    }
+    return false;
+  };
+
+  const resetMultiplayerGame = () => {
+    setIsGameStarted(false);
+    setIsGameEnded(false);
+    setCurrentGameData(null);
+    setGameField([[]]);
+    setStartCoordinates({ colIndex: 0, rowIndex: 0 });
+    setEnemyProgress(0);
+    setEnemyName("Opponent");
+    setIsExploaded(false);
+    setIsEnemyExploaded(false);
+    setGameInvitation(null);
+    setStartTime(0);
+    setIsWon(false);
+    setEloChange(0);
+    // Optionally reset other state as needed
+  };
+
   return (
     <GameContext.Provider value={{ 
       isGameStarted,
@@ -209,6 +371,10 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
       eloChange,
       currentElo,
 
+      gameInvitation,
+      
+      setGameInvitation,
+
       setGameField,
       setIsExploaded,
       playerExploaded,
@@ -218,6 +384,13 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setStartCoordinates, 
       setIsGameStarted, 
       setEnemyName,
+      sendPvpGameInvitation,
+      acceptPvpGameInvitation,
+      acceptFriendRequest,
+      rejectFriendRequest,
+      resetMultiplayerGame,
+      shallRedirectToMultiplayerPage,
+      setShallRedirectToMultiplayerPage,
       }}>
       {children}
     </GameContext.Provider>
