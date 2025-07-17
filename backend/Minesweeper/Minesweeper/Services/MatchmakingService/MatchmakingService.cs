@@ -74,7 +74,6 @@ namespace Minesweeper.Services.MatchmakingService
                     RowBeginIndex = minesweeperGame.rowStartIndex,
                     Difficulty = 1,
                     StartTimeNumeric = (int)DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
-
                 };
 
                 await context.Games.AddAsync(newGame);

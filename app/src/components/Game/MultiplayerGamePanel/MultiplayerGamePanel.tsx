@@ -33,28 +33,36 @@ export default function MultiplayerGamePanel({gameField, colIndex, rowIndex, sel
     
 
     useEffect(() => {
+        let interval: NodeJS.Timeout | null = null;
+
         const getTime = () => {
-            if(game?.startTime){
-                const time = Date.now() - game?.startTime - 52*60000 - 3000;
+            if (game?.startTime) {
+                const time = Date.now() - game?.startTime - 57*60000 - 36000;
                 let minutes = String(Math.floor((time / 1000 / 60) % 60));
                 let seconds = String(Math.floor((time / 1000) % 60));
-                if(minutes.length === 1){
-                    minutes = "0"+minutes
+                if (minutes.length === 1) {
+                    minutes = "0" + minutes;
                 }
-                if(seconds.length === 1){
-                    seconds = "0"+seconds
+                if (seconds.length === 1) {
+                    seconds = "0" + seconds;
                 }
-                setTimer(minutes+":"+ seconds);
-            }
-            else{
+                setTimer(minutes + ":" + seconds);
+            } else {
                 setTimer("00:00");
             }
-            
-          };
-        const interval = setInterval(() => getTime(), 1000);
-        
-        return () => clearInterval(interval);
-      }, [game]);
+        };
+
+        if (!game?.isGameEnded) {
+            interval = setInterval(getTime, 1000);
+        } else {
+            // Optionally set timer to final value here
+            getTime();
+        }
+
+        return () => {
+            if (interval) clearInterval(interval);
+        };
+    }, [game?.startTime, game?.isGameEnded]);
 
     const handleSelectMode = (event: any) => {
         const selectedMode = Number(event.target.value); 

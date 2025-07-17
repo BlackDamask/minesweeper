@@ -18,6 +18,7 @@ interface GameEndResponse {
   isWon: boolean;
   newElo: number;
   eloChange: number;
+  winnersTime: number | null;
 }
 
 interface ReceiveProgressResponse {
@@ -78,6 +79,8 @@ interface GameContextType {
   resetMultiplayerGame: () => void;
   shallRedirectToMultiplayerPage: boolean;
   setShallRedirectToMultiplayerPage: React.Dispatch<React.SetStateAction<boolean>>;
+  winnersTime: string;
+  setWinnersTime: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export const GameContext = createContext<GameContextType | undefined>(undefined);
@@ -102,6 +105,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [eloChange, setEloChange] = useState<number>(0);
   const [gameInvitation, setGameInvitation] = useState<GameInvitation | null>(null);
   const [shallRedirectToMultiplayerPage, setShallRedirectToMultiplayerPage] = useState(false);
+  const [winnersTime, setWinnersTime] = useState<string >("00:00");
 
 
   const connectionRef = useRef<signalR.HubConnection | null>(null);
@@ -190,6 +194,20 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
               setIsGameEnded(true);
               setIsWon(false);
               if (currentGameData) currentGameData.isGameOver = true;
+            }
+            const time = Date.now() - startTime - 57 * 60000 - 36000; // Adjusted time calculation
+            if (typeof time === "number" && !isNaN(time)) {
+              let minutes = String(Math.floor((time / 1000 / 60) % 60));
+              let seconds = String(Math.floor((time / 1000) % 60));
+              if (minutes.length === 1) {
+                minutes = "0" + minutes;
+              }
+              if (seconds.length === 1) {
+                seconds = "0" + seconds;
+              }
+              setWinnersTime(`${minutes}:${seconds}`);
+            } else {
+              setWinnersTime("00:00");
             }
             setCurrentElo(response.newElo);
             setEloChange(response.eloChange);
@@ -350,6 +368,99 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Optionally reset other state as needed
   };
 
+  // Save game state before unload
+  useEffect(() => {
+    window.addEventListener("beforeunload", () => {
+      localStorage.setItem("gameState", JSON.stringify({ 
+        isGameStarted,
+        isGameEnded,
+        isExploaded,
+        isEnemyExploaded,
+        isWon,
+        shallRedirectToMultiplayerPage,
+
+        enemyProgress,
+        gameField,
+        startCoordinates,
+        startTime,
+        currentGameData, 
+        enemyName,
+        eloChange,
+        currentElo,
+
+        gameInvitation,
+        winnersTime,
+      }));
+    });
+    return () => window.removeEventListener("beforeunload", () => {});
+  }, [isGameStarted, isGameEnded, isExploaded, isEnemyExploaded, isWon, shallRedirectToMultiplayerPage, enemyProgress, gameField, startCoordinates, startTime, currentGameData, enemyName, eloChange, currentElo, gameInvitation, winnersTime]);
+
+  // Restore game state on load
+  useEffect(() => {
+    const savedState = localStorage.getItem("gameState");
+    if (savedState) {
+      const {
+        isGameStarted,
+        isGameEnded,
+        isExploaded,
+        isEnemyExploaded,
+        isWon,
+        shallRedirectToMultiplayerPage,
+
+        enemyProgress,
+        gameField,
+        startCoordinates,
+        startTime,
+        currentGameData, 
+        enemyName,
+        eloChange,
+        currentElo,
+
+        gameInvitation,
+        
+        winnersTime,
+      } = JSON.parse(savedState);
+
+      setIsGameStarted(isGameStarted);
+      setIsGameEnded(isGameEnded);
+      setIsExploaded(isExploaded);
+      setIsEnemyExploaded(isEnemyExploaded);
+      setIsWon(isWon);
+      setShallRedirectToMultiplayerPage(shallRedirectToMultiplayerPage);
+
+      setEnemyProgress(enemyProgress);
+      setGameField(gameField);
+      setStartCoordinates(startCoordinates);
+      setStartTime(startTime);
+      setCurrentGameData(currentGameData); 
+      setEnemyName(enemyName);
+      setEloChange(eloChange);
+      setCurrentElo(currentElo);
+
+      setGameInvitation(gameInvitation);
+      
+      // setGameInvitation,
+
+      // setGameField,
+      // setIsExploaded,
+      // playerExploaded,
+      // setStartTime,
+      // setEnemyProgress,
+      // setCurrentGameData,
+      // setStartCoordinates, 
+      // setIsGameStarted, 
+      // setEnemyName,
+      // setShallRedirectToMultiplayerPage,
+      // sendPvpGameInvitation,
+      // acceptPvpGameInvitation,
+      // acceptFriendRequest,
+      // rejectFriendRequest,
+      // resetMultiplayerGame,
+      setWinnersTime(winnersTime);
+    }
+  }, []);
+  
+
   return (
     <GameContext.Provider value={{ 
       isGameStarted,
@@ -387,7 +498,8 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
       acceptFriendRequest,
       rejectFriendRequest,
       resetMultiplayerGame,
-      
+      winnersTime,
+      setWinnersTime,
       }}>
       {children}
     </GameContext.Provider>

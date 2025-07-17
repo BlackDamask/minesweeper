@@ -273,6 +273,57 @@ namespace Minesweeper.Services.PlayerService
             }
             return serviceResponse;
         }
+
+        public async Task<ServiceResponse<int?[]>> GetRecords(string playerId)
+        {
+            var serviceResponse = new ServiceResponse<int?[]>();
+            try
+            {
+                var player = await context.Users.FindAsync(playerId);
+                if (player == null)
+                    throw new Exception("Player not found");
+
+                serviceResponse.Data = player.Records;
+                serviceResponse.Success = true;
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = ex.Message;
+            }
+            return serviceResponse;
+        }
+
+        public async Task<ServiceResponse<int?[]>> SetRecords(string playerId, int?[] newRecords)
+        {
+            var serviceResponse = new ServiceResponse<int?[]>();
+            try
+            {
+                var player = await context.Users.FindAsync(playerId);
+                if (player == null)
+                    throw new Exception("Player not found");
+
+                for (int i = 0; i < player.Records.Length && i < newRecords.Length; i++)
+                {
+                    if (newRecords[i] != null)
+                    {
+                        player.Records[i] = newRecords[i];
+                    }
+                }
+
+                await context.SaveChangesAsync();
+                serviceResponse.Data = player.Records;
+                serviceResponse.Success = true;
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = ex.Message;
+            }
+            return serviceResponse;
+        }
+        
+        
     }
 
 }

@@ -8,5 +8,6 @@ namespace Minesweeper.models
         public int Elo { get; set; } = 500;
         public bool IsGuest { get; set; } = false;
         public List<string>? FriendsId { get; set; }
+        public int?[] Records { get; set; } = [null, null, null];
     }
 }

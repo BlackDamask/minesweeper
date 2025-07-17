@@ -1,20 +1,16 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
-using Microsoft.OpenApi.Validations;
+
 using Minesweeper.data;
 using Minesweeper.DTOs.GameDTO;
 using Minesweeper.models;
 using Minesweeper.models.MinesweeperGame;
-using System;
-using System.Data.Common;
-using System.Runtime.CompilerServices;
-using System.Security.Claims;
-using System.Text.Json;
+
 
 namespace Minesweeper.Services
 {
     [Authorize]
-    public class GameHub : Hub, IDisposable
+    public class GameHub : Hub
     {
         private readonly ApplicationDbContext dbContext;
 
@@ -55,22 +51,45 @@ namespace Minesweeper.Services
                 {
                     var game = dbContext.Games
                         .FirstOrDefault(g => g.Id == gameId) ?? throw new Exception("Game not found");
-                    
 
                     game.IsActive = false;
 
                     var enemy = dbContext.Users.FirstOrDefault(u => u.Id == enemyGp.PlayerId) ?? throw new Exception("Enemy not found");
+                    var winnerTime = DateTime.Now - game.StartTime;
 
-                    
+                    bool isNewRecord = false;
+                    // Check and set new record for winner
+                    if (player.Records != null)
+                    {
+                        if (player.Records[0] == null || player.Records[0] > (int)winnerTime.TotalSeconds)
+                        {
+                            player.Records[0] = (int)winnerTime.TotalSeconds;
+                            isNewRecord = true;
+                        }
+                    }
 
-                    var playerGameEndResponse = new GameEndDTO { EloChange = 8, NewElo = player.Elo + 8, IsWon = true };
-                    var enemyGameEndResponse = new GameEndDTO { EloChange = -8, NewElo = enemy.Elo - 8, IsWon = false };
+                    var playerGameEndResponse = new GameEndDto
+                    {
+                        EloChange = 8,
+                        NewElo = player.Elo + 8,
+                        IsWon = true,
+                        WinnersTime = winnerTime,
+                        IsNewRecord = isNewRecord
+                    };
+
+                    var enemyGameEndResponse = new GameEndDto
+                    {
+                        EloChange = -8,
+                        NewElo = enemy.Elo - 8,
+                        IsWon = false,
+                        WinnersTime = winnerTime,
+                        IsNewRecord = false
+                    };
 
                     player.Elo += 8;
                     enemy.Elo -= 8;
 
                     await Clients.User(player.Id).SendAsync("GameEnd", playerGameEndResponse);
-
                     await Clients.User(enemyGp.PlayerId).SendAsync("GameEnd", enemyGameEndResponse);
 
                     dbContext.GameParticipants.Remove(enemyGp);
@@ -97,9 +116,9 @@ namespace Minesweeper.Services
 
                 var invitation = new
                 {
-                    Id = sender.Id,
+                    sender.Id,
                     Name = sender.UserName,
-                    Elo = sender.Elo
+                    sender.Elo
                 };
 
                 await Clients.User(invitedPlayerId).SendAsync("ReceivePvpGameInvitation", invitation);
@@ -221,8 +240,8 @@ namespace Minesweeper.Services
                         if (player != null) player.Elo -= 8;
                         if (enemy != null) enemy.Elo += 8;
 
-                        var playerGameEndResponse = new GameEndDTO { EloChange = -8, NewElo = player?.Elo ?? 0, IsWon = false };
-                        var enemyGameEndResponse = new GameEndDTO { EloChange = 8, NewElo = enemy?.Elo ?? 0, IsWon = true };
+                        var playerGameEndResponse = new GameEndDto { EloChange = -8, NewElo = player?.Elo ?? 0, IsWon = false };
+                        var enemyGameEndResponse = new GameEndDto { EloChange = 8, NewElo = enemy?.Elo ?? 0, IsWon = true };
 
                         if (player != null)
                             await Clients.User(player.Id).SendAsync("GameEnd", playerGameEndResponse);
