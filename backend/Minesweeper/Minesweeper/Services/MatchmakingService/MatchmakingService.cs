@@ -45,7 +45,9 @@ namespace Minesweeper.Services.MatchmakingService
 
                 if (matchedPlayers.Count < 2)
                 {
+                    Console.ForegroundColor = ConsoleColor.Cyan;
                     Console.WriteLine("Not enough players to start the game.");
+                    Console.ResetColor();
                     return;
                 }
 

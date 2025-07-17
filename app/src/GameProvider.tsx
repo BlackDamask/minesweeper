@@ -88,7 +88,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const accessToken = auth?.accessToken;
   
   const [isGameStarted, setIsGameStarted] = useState(false);
-  const [isGameEnded, setIsGameEnded] = useState(false);
+  const [isGameEnded, setIsGameEnded] = useState(true);
   const [isExploaded, setIsExploaded] = useState(false);
   const [isEnemyExploaded, setIsEnemyExploaded] = useState(false);
   const [enemyName, setEnemyName] = useState("Opponent");
@@ -170,13 +170,9 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
           connection.on("ReceivePvpGameInvitation", (invitation: GameInvitation) => {
             console.log("Received PvP Game Invitation in GameProvider", invitation);
-            setGameInvitation(invitation);
-            toast({
-              title: `Game Invitation from ${invitation.name}`,
-              description: `Elo: ${invitation.elo}`,
-              status: "info",
-              isClosable: true,
-            });
+            if(isGameEnded){
+              setGameInvitation(invitation);
+            }
           });
       
           
@@ -361,6 +357,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
       isExploaded,
       isEnemyExploaded,
       isWon,
+      shallRedirectToMultiplayerPage,
 
       enemyProgress,
       gameField,
@@ -384,13 +381,13 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setStartCoordinates, 
       setIsGameStarted, 
       setEnemyName,
+      setShallRedirectToMultiplayerPage,
       sendPvpGameInvitation,
       acceptPvpGameInvitation,
       acceptFriendRequest,
       rejectFriendRequest,
       resetMultiplayerGame,
-      shallRedirectToMultiplayerPage,
-      setShallRedirectToMultiplayerPage,
+      
       }}>
       {children}
     </GameContext.Provider>

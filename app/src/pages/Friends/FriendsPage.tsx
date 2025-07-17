@@ -1,5 +1,6 @@
 import { Avatar, useToast, Image, Button, Popover, PopoverTrigger, PopoverContent, PopoverArrow, PopoverCloseButton, PopoverHeader, PopoverBody, PopoverFooter } from "@chakra-ui/react";
 import Nav from "../../components/Nav/Nav";
+import GameInvitationBar from "../../components/Game/GameInvitationBar";
 import './FriendsPage.css';
 import { useContext, useState, useEffect } from "react";
 import axios from "../../api/axios";
@@ -192,32 +193,10 @@ export default function FriendsPage(){
     };
 
     // Accept PvP game invitation handler
-    const handleAcceptGameInvitation = async () => {
-        if (!gameContext?.gameInvitation) return;
-        await gameContext.acceptPvpGameInvitation(gameContext.gameInvitation.id);
-        gameContext.setGameInvitation(null);
-        navigate("/multiplayer");
-    };
-    // Discard PvP game invitation handler
-    const handleDiscardGameInvitation = () => {
-        gameContext?.setGameInvitation(null);
-    };
-
     return (
         <main className='w-screen h-screen items-center flex flex-col bg-black text-center'>
+            <GameInvitationBar />
             <Nav/>
-            {/* Game Invitation Notification Bar */}
-            {gameContext?.gameInvitation && (
-                <div className="fixed top-0 left-0 w-full z-50 flex justify-center">
-                    <div className="bg-blue-900 text-white px-6 py-4 rounded-b-xl shadow-lg flex items-center gap-6">
-                        <span>
-                            <b>{gameContext.gameInvitation.name}</b> invites you to play! Elo: {gameContext.gameInvitation.elo}
-                        </span>
-                        <Button colorScheme="green" size="sm" onClick={handleAcceptGameInvitation}>Accept</Button>
-                        <Button colorScheme="red" size="sm" onClick={handleDiscardGameInvitation}>Discard</Button>
-                    </div>
-                </div>
-            )}
             <button
                 className="fixed bottom-6 right-6 bg-blue-800 text-white rounded-full shadow-lg p-4 hover:bg-blue-700 z-50 w-16"
                 aria-label="Refresh"

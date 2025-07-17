@@ -137,6 +137,11 @@ namespace Minesweeper.Services.PlayerService
             {
                 var position = await context.MatchmakingQueue.FirstOrDefaultAsync(p => p.PlayerId == playerId) ?? throw new Exception("Player not found");
                 context.MatchmakingQueue.Remove(position);
+                var player = await context.Users.FirstOrDefaultAsync(p => p.Id == playerId) ?? throw new Exception("Player not found");
+                string playerName = player.UserName;
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine("removed from queue "+ player.UserName);
+                Console.ResetColor();
                 await context.SaveChangesAsync();
             }
             catch (Exception ex)

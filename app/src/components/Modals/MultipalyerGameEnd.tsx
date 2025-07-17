@@ -1,13 +1,19 @@
 import { Avatar, Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, ModalOverlay } from "@chakra-ui/react";
 import { ReactComponent as Trophy } from "./trophy.svg";
 import { ReactComponent as XCircle } from "./x-circle.svg";
-import { ReactElement, useContext } from "react";
+import { ReactElement, useContext, useEffect } from "react";
 import { useGameContext } from "../../GameProvider";
 import { AuthContext } from "../../AuthProvider";
 
 export default function MultiplayerGameEnd({isOpen, onClose} : {isOpen: boolean, onClose: () => void}) {
     const game = useGameContext();
-    const auth = useContext(AuthContext)
+    const auth = useContext(AuthContext);
+
+    useEffect(() => {
+        if (game?.isGameStarted) {
+            onClose();
+        }
+    }, [game?.isGameStarted, onClose]);
     
     const showEloChange = (): ReactElement => {
         const eloChange = game?.eloChange;

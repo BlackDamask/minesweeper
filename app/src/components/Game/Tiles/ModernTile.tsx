@@ -109,6 +109,15 @@ export default function ModernTile({ tile,rowIndex, colIndex, selectedZoom, hand
                           cursor='pointer'
                         /> 
         )}
+        {/* without cheats */ }
+        {/* {tile.hasBomb && tile.isRevealed && (
+            <img
+                className="h-3/4 m-2"
+                alt=""
+                src="./logo192.png"
+            />
+        )} */}
+        {/* cheats */ }
         {tile.hasBomb && tile.isRevealed && (
             <img
                 className="h-3/4 m-2"
