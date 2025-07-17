@@ -98,7 +98,7 @@ namespace Minesweeper.Services.PlayerService
                 if (existingQueueEntry != null)
                 {
                     Console.ForegroundColor = ConsoleColor.Magenta;
-                    Console.WriteLine("existingQueueEntry != null");
+                    Console.WriteLine("player is already in queue");
                     Console.ResetColor();
 
                     context.MatchmakingQueue.Remove(existingQueueEntry);

@@ -9,6 +9,7 @@ import NotAuthorizedModal from '../../components/Modals/NotAuthorizedModal';
 import { motion } from 'framer-motion';
 import GameInvitationBar from "../../components/Game/GameInvitationBar";
 import { useGameContext } from '../../GameProvider';
+import axios from '../../api/axios';
 
 
 export default function Layout() {
@@ -27,6 +28,16 @@ export default function Layout() {
       onOpen();
     }
   }
+  useEffect(() => {
+    axios.delete(
+      "/player/remove-from-queue",
+      {
+          headers: { Authorization: `Bearer ${auth?.accessToken}` },
+      }
+  ).catch(error => {
+      console.error("Error removing from queue:", error);
+  });
+  }, [auth?.accessToken]);
 
   useEffect(() => {
     if (gameContext?.shallRedirectToMultiplayerPage) {

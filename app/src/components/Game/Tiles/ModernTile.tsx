@@ -118,7 +118,7 @@ export default function ModernTile({ tile,rowIndex, colIndex, selectedZoom, hand
             />
         )} */}
         {/* cheats */ }
-        {tile.hasBomb && tile.isRevealed && (
+        {tile.hasBomb && (
             <img
                 className="h-3/4 m-2"
                 alt=""

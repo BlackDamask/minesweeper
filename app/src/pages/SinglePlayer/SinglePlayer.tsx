@@ -2,11 +2,25 @@ import GamePanel from '../../components/Game/GamePanel';
 import Nav from '../../components/Nav/Nav';
 import GameInvitationBar from "../../components/Game/GameInvitationBar";
 import { useGameContext } from '../../GameProvider';
-import { useEffect } from 'react';
+import { useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from '../../api/axios';
+import { AuthContext } from '../../AuthProvider';
 export function SinglePlayer(){
     const gameContext = useGameContext();
     const navigate = useNavigate();
+    const auth = useContext(AuthContext);
+
+    useEffect(() => {
+        axios.delete(
+          "/player/remove-from-queue",
+          {
+              headers: { Authorization: `Bearer ${auth?.accessToken}` },
+          }
+      ).catch(error => {
+          console.error("Error removing from queue:", error);
+      });
+      }, [auth?.accessToken]);
     
     useEffect(() => {
         if (gameContext?.shallRedirectToMultiplayerPage) {

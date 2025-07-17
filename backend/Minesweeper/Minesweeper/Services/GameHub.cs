@@ -183,10 +183,64 @@ namespace Minesweeper.Services
             }
         }
 
-        public override async Task OnConnectedAsync()
+        public override Task OnConnectedAsync()
         {
             Console.WriteLine(Clients.ToString());
-
+            return Task.CompletedTask;
         }
+
+        public override async Task OnDisconnectedAsync(Exception exception)
+        {
+            Console.WriteLine("Client closed");
+
+            var playerId = Context.UserIdentifier;
+            if (!string.IsNullOrEmpty(playerId))
+            {
+                // Remove player from matchmaking queue if present
+                var queueEntry = dbContext.MatchmakingQueue.FirstOrDefault(q => q.PlayerId == playerId);
+                if (queueEntry != null)
+                {
+                    dbContext.MatchmakingQueue.Remove(queueEntry);
+                    await dbContext.SaveChangesAsync();
+                    Console.WriteLine($"Removed player {playerId} from matchmaking queue on disconnect.");
+                }
+
+                // Lose the game if player is in an active game
+                var playerGp = dbContext.GameParticipants.FirstOrDefault(gp => gp.PlayerId == playerId);
+                if (playerGp != null)
+                {
+                    var game = dbContext.Games.FirstOrDefault(g => g.Id == playerGp.GameId && g.IsActive);
+                    if (game != null)
+                    {
+                        var enemyGp = dbContext.GameParticipants.FirstOrDefault(gp => gp.GameId == game.Id && gp.PlayerId != playerId);
+                        var player = dbContext.Users.FirstOrDefault(u => u.Id == playerId);
+                        var enemy = enemyGp != null ? dbContext.Users.FirstOrDefault(u => u.Id == enemyGp.PlayerId) : null;
+
+                        // End game and update Elo
+                        game.IsActive = false;
+                        if (player != null) player.Elo -= 8;
+                        if (enemy != null) enemy.Elo += 8;
+
+                        var playerGameEndResponse = new GameEndDTO { EloChange = -8, NewElo = player?.Elo ?? 0, IsWon = false };
+                        var enemyGameEndResponse = new GameEndDTO { EloChange = 8, NewElo = enemy?.Elo ?? 0, IsWon = true };
+
+                        if (player != null)
+                            await Clients.User(player.Id).SendAsync("GameEnd", playerGameEndResponse);
+                        if (enemyGp != null && enemy != null)
+                            await Clients.User(enemyGp.PlayerId).SendAsync("GameEnd", enemyGameEndResponse);
+
+                        dbContext.GameParticipants.Remove(playerGp);
+                        if (enemyGp != null)
+                            dbContext.GameParticipants.Remove(enemyGp);
+
+                        await dbContext.SaveChangesAsync();
+
+                        Console.WriteLine($"Player {playerId} disconnected and lost the game.");
+                    }
+                }
+            }
+
+            await base.OnDisconnectedAsync(exception);
+        } 
     }
 }

@@ -26,6 +26,17 @@ export default function FriendsPage(){
     const toast = useToast();
 
     useEffect(() => {
+        axios.delete(
+          "/player/remove-from-queue",
+          {
+              headers: { Authorization: `Bearer ${auth?.accessToken}` },
+          }
+      ).catch(error => {
+          console.error("Error removing from queue:", error);
+      });
+      }, [auth?.accessToken]);
+
+    useEffect(() => {
         if (!auth?.accessToken) return;
         setQuery("");
         axios.get("/request/my-friend-requests", {

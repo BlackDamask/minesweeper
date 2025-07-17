@@ -57,6 +57,7 @@ export default function SearchingForGame() {
         }).catch(error => {
             console.error("Error adding to queue:", error);
         }); 
+
     }, [auth, toast, game]);
 
     useEffect(() => {
