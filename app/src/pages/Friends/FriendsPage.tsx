@@ -68,8 +68,13 @@ export default function FriendsPage(){
     useEffect(() => {
         if (gameContext?.shallRedirectToMultiplayerPage) {
             navigate("/multiplayer");
+            toast({ 
+                title: "Redirecting",
+                status: "warning",
+                description: "You are in game, redirecting to multiplayer..." 
+            });
         }
-    }, [gameContext?.shallRedirectToMultiplayerPage, navigate]);
+      }, [gameContext?.shallRedirectToMultiplayerPage, navigate]);
 
     const handleAcceptRequest = async (requestId: string) => {
         if (!gameContext) return;

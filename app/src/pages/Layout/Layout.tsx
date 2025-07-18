@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import Nav from '../../components/Nav/Nav';
 import { AuthContext } from '../../AuthProvider';
 import { useContext, useEffect } from 'react';
-import { useDisclosure, Image } from '@chakra-ui/react';
+import { useDisclosure, Image, useToast } from '@chakra-ui/react';
 import NotAuthorizedModal from '../../components/Modals/NotAuthorizedModal';
 import { motion } from 'framer-motion';
 import GameInvitationBar from "../../components/Game/GameInvitationBar";
@@ -15,7 +15,9 @@ import axios from '../../api/axios';
 export default function Layout() {
   const auth = useContext(AuthContext);
   const gameContext = useGameContext();
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
+  const toast = useToast();
+   
   
 
   const {isOpen ,onOpen, onClose} = useDisclosure();
@@ -40,10 +42,15 @@ export default function Layout() {
   }, [auth?.accessToken]);
 
   useEffect(() => {
-    if (gameContext?.shallRedirectToMultiplayerPage) {
-        navigate("/multiplayer");
-    }
-  }, [gameContext?.shallRedirectToMultiplayerPage, navigate]);
+        if (gameContext?.shallRedirectToMultiplayerPage) {
+            navigate("/multiplayer");
+            toast({ 
+                title: "Redirecting",
+                status: "warning",
+                description: "You are in game, redirecting to multiplayer..." 
+            });
+        }
+      }, [gameContext?.shallRedirectToMultiplayerPage, navigate]);
 
   return (
     <main className='w-screen h-full min-h-screen items-center flex flex-col bg-gray-950 text-center'>

@@ -6,10 +6,12 @@ import { useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from '../../api/axios';
 import { AuthContext } from '../../AuthProvider';
+import { useToast } from '@chakra-ui/react';
 export function SinglePlayer(){
     const gameContext = useGameContext();
     const navigate = useNavigate();
     const auth = useContext(AuthContext);
+    const toast = useToast();
 
     useEffect(() => {
         axios.delete(
@@ -25,9 +27,13 @@ export function SinglePlayer(){
     useEffect(() => {
         if (gameContext?.shallRedirectToMultiplayerPage) {
             navigate("/multiplayer");
+            toast({ 
+                title: "Redirecting",
+                status: "warning",
+                description: "You are in game, redirecting to multiplayer..." 
+            });
         }
-      }, [gameContext?.shallRedirectToMultiplayerPage, navigate]);
-    
+      }, [gameContext?.shallRedirectToMultiplayerPage, navigate,toast]);
     return(
         <main className='w-screen h-screen flex flex-row bg-gray-950 overflow-auto'>
             <GameInvitationBar />

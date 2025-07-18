@@ -4,6 +4,7 @@ import { ReactComponent as XCircle } from "./x-circle.svg";
 import { ReactElement, useContext, useEffect } from "react";
 import { useGameContext } from "../../GameProvider";
 import { AuthContext } from "../../AuthProvider";
+import ModalGameInvitation from "../Game/ModalGameInvitation";
 
 export default function MultiplayerGameEnd({isOpen, onClose} : {isOpen: boolean, onClose: () => void}) {
     const game = useGameContext();
@@ -34,6 +35,7 @@ export default function MultiplayerGameEnd({isOpen, onClose} : {isOpen: boolean,
     
     return(
         <Modal isOpen={isOpen} onClose={onClose} isCentered size="lg">
+        
         <ModalOverlay
             bg="none"
             backdropFilter="auto"
@@ -74,12 +76,23 @@ export default function MultiplayerGameEnd({isOpen, onClose} : {isOpen: boolean,
                         <span className="flex"><h1 className="text-2xl">{game?.currentElo}</h1>{showEloChange()}</span>
                     </div>
                 </section>
+                {game?.isWon && (
                 <section>
-                    <p className="text-white">{`Your time: ${game?.winnersTime}`}</p>
-                    <p className="text-white">Your record:</p>
+                    <p className="text-white">{`Your time: ${game?.currentGameData?.time} seconds`}</p>
+                    <p className="text-white">
+                        Your record: {(() => {
+                            const modeIndex = 0;
+                            if (!auth?.isLoggedIn) return "Authorize to save your best time";
+                            if (!auth?.records || auth.records[modeIndex] == null) return "No record yet";
+                            return `${auth.records[modeIndex]} seconds`;
+                        })()}
+                    </p>
                 </section>
+                )}
+                <ModalGameInvitation />
             </ModalBody>
             <ModalFooter>
+                
                 <Button colorScheme="green" mr={5} onClick={() => { game?.resetMultiplayerGame(); }}>
                     New Game
                 </Button>

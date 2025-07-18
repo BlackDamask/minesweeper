@@ -57,16 +57,7 @@ namespace Minesweeper.Services
                     var enemy = dbContext.Users.FirstOrDefault(u => u.Id == enemyGp.PlayerId) ?? throw new Exception("Enemy not found");
                     var winnerTime = DateTime.Now - game.StartTime;
 
-                    bool isNewRecord = false;
-                    // Check and set new record for winner
-                    if (player.Records != null)
-                    {
-                        if (player.Records[0] == null || player.Records[0] > (int)winnerTime.TotalSeconds)
-                        {
-                            player.Records[0] = (int)winnerTime.TotalSeconds;
-                            isNewRecord = true;
-                        }
-                    }
+                    
 
                     var playerGameEndResponse = new GameEndDto
                     {
@@ -74,7 +65,6 @@ namespace Minesweeper.Services
                         NewElo = player.Elo + 8,
                         IsWon = true,
                         WinnersTime = winnerTime,
-                        IsNewRecord = isNewRecord
                     };
 
                     var enemyGameEndResponse = new GameEndDto
@@ -144,7 +134,6 @@ namespace Minesweeper.Services
                 if (inviter == null || accepter == null)
                     throw new Exception("Player(s) not found.");
 
-                // Create game
                 MinesweeperGame minesweeperGame = new MinesweeperGame(1);
 
                 var newGame = new Game
@@ -170,7 +159,6 @@ namespace Minesweeper.Services
                 await dbContext.GameParticipants.AddRangeAsync(participants);
                 await dbContext.SaveChangesAsync();
 
-                // Prepare response for both players
                 var inviterResponse = new GameBeginDTO
                 {
                     GameField = minesweeperGame.gameField,
@@ -223,40 +211,7 @@ namespace Minesweeper.Services
                     await dbContext.SaveChangesAsync();
                     Console.WriteLine($"Removed player {playerId} from matchmaking queue on disconnect.");
                 }
-
-                // Lose the game if player is in an active game
-                var playerGp = dbContext.GameParticipants.FirstOrDefault(gp => gp.PlayerId == playerId);
-                if (playerGp != null)
-                {
-                    var game = dbContext.Games.FirstOrDefault(g => g.Id == playerGp.GameId && g.IsActive);
-                    if (game != null)
-                    {
-                        var enemyGp = dbContext.GameParticipants.FirstOrDefault(gp => gp.GameId == game.Id && gp.PlayerId != playerId);
-                        var player = dbContext.Users.FirstOrDefault(u => u.Id == playerId);
-                        var enemy = enemyGp != null ? dbContext.Users.FirstOrDefault(u => u.Id == enemyGp.PlayerId) : null;
-
-                        // End game and update Elo
-                        game.IsActive = false;
-                        if (player != null) player.Elo -= 8;
-                        if (enemy != null) enemy.Elo += 8;
-
-                        var playerGameEndResponse = new GameEndDto { EloChange = -8, NewElo = player?.Elo ?? 0, IsWon = false };
-                        var enemyGameEndResponse = new GameEndDto { EloChange = 8, NewElo = enemy?.Elo ?? 0, IsWon = true };
-
-                        if (player != null)
-                            await Clients.User(player.Id).SendAsync("GameEnd", playerGameEndResponse);
-                        if (enemyGp != null && enemy != null)
-                            await Clients.User(enemyGp.PlayerId).SendAsync("GameEnd", enemyGameEndResponse);
-
-                        dbContext.GameParticipants.Remove(playerGp);
-                        if (enemyGp != null)
-                            dbContext.GameParticipants.Remove(enemyGp);
-
-                        await dbContext.SaveChangesAsync();
-
-                        Console.WriteLine($"Player {playerId} disconnected and lost the game.");
-                    }
-                }
+                
             }
 
             await base.OnDisconnectedAsync(exception);

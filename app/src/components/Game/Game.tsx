@@ -1,9 +1,11 @@
-import {  ReactElement, useEffect} from "react";
+import {  ReactElement, useContext, useEffect, useRef, useState } from "react";
 import { GameData } from './data';
 import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, ModalOverlay,  useDisclosure, useToast } from "@chakra-ui/react";
 import { useGameContext } from "../../GameProvider";
 import ModernTile from "./Tiles/ModernTile";
 import DefaultTile from "./Tiles/DefaultTile";
+import { AuthContext } from "../../AuthProvider";
+import axios from '../../api/axios';
 
 
 export default function Game(
@@ -22,26 +24,75 @@ export default function Game(
         }
     ) 
 {
+    const auth = useContext(AuthContext);
     const game = useGameContext();
     const { isOpen, onOpen, onClose } = useDisclosure();
     const toast = useToast();
+    const toastShownRef = useRef(false);
     
 
     useEffect(() => {
+        if (auth?.isLoggedIn && auth?.accessToken) {
+            axios.get("player/records", {
+                headers: {
+                    Authorization: `Bearer ${auth.accessToken}`,
+                    "Content-Type": "application/json"
+                }
+            })
+            .then(res => {
+                if (res.data?.data && Array.isArray(res.data.data)) {
+                    auth?.setRecords(res.data.data);
+                }
+            })
+            .catch(() => auth?.setRecords([null, null, null]));
+        }
+    }, [auth?.isLoggedIn, auth?.accessToken]);
 
-        toast({
-            title: "Game Started",
-            status: "success",
-            isClosable: true,
-        });
-    }, [toast]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    useEffect(() => {
+        if (!toastShownRef.current) {
+            toast({
+                title: "Game Started",
+                status: "success",
+                isClosable: true,
+            });
+            toastShownRef.current = true;
+        }
+    }, []);
+
+
 
     useEffect(() => {
         if (currentGameData.isGameOver && setStartTime) {
             onOpen();
             setStartTime(null);
+            if (
+                currentGameData.isWin &&
+                auth?.isLoggedIn &&
+                auth?.accessToken &&
+                currentGameData.time !== null
+            ) {
+                const modeIndex = selectedOption - 1;
+                const currentRecord = auth?.records[modeIndex];
+                const newTime = currentGameData.time;
+                if (currentRecord === null || newTime < currentRecord) {
+                    const newRecords: (number | null)[] = [null, null, null];
+                    newRecords[modeIndex] = newTime;
+                    axios.put("/player/records", newRecords, {
+                        headers: {
+                            Authorization: `Bearer ${auth.accessToken}`,
+                            "Content-Type": "application/json"
+                        }
+                    })
+                    .then(res => {
+                        if (res.data?.data && Array.isArray(res.data.data)) {
+                            auth?.setRecords(res.data.data);
+                        }
+                    });
+                }
+            }
         }
-    }, [currentGameData.isGameOver, onOpen, setStartTime]);
+    }, [currentGameData.isGameOver, onOpen, setStartTime,currentGameData.isWin, auth?.isLoggedIn, auth?.accessToken, currentGameData.time, auth?.records, selectedOption]);
 
 
     const setFlaggedTile = (colIndex: number, rowIndex: number) => {
@@ -140,16 +191,25 @@ export default function Game(
 
 
     const showModalContent = (isWon: boolean): ReactElement => {
+        const modeIndex = selectedOption - 1;
+        let recordDisplay: string;
+        if (!auth?.isLoggedIn) {
+            recordDisplay = "Authorize to save your best time";
+        } else if (auth?.records[modeIndex] === null) {
+            recordDisplay = "No record yet";
+        } else {
+            recordDisplay = `${auth?.records[modeIndex]} seconds`;
+        }
         if (isWon) {
             return (
-                <ModalContent backgroundColor="#F1A10C">
-                    <ModalHeader textAlign="center" fontSize="3xl" textColor={'#052e16'}  className="font-customFont">You won</ModalHeader>
-                    <ModalBody pb={6} fontSize="2xl" textColor={'#052e16'}  className="font-customFont">
-                        <p>{`Your time: ${currentGameData.time}`}</p>
-                        <p>Your record:</p>
+                <ModalContent bg={'#0A0A0A'} borderWidth={'4px'} borderColor={'#85ECFA'} borderRadius={'2xl'}>
+                    <ModalHeader textAlign="center" fontSize="3xl" textColor={'#85ECFA'}  className="font-audiowideFont">You won</ModalHeader>
+                    <ModalBody pb={6} fontSize="2xl"   className="font-customFont">
+                        <p className="text-violet-400">{`Your time: ${currentGameData.time} seconds`}</p>
+                        <p className="text-violet-400">Your record: {recordDisplay}</p>
                     </ModalBody>
                     <ModalFooter>
-                        <Button colorScheme="green" color="white" borderColor="#000000" backgroundColor="#052e16" mr={5} onClick={
+                        <Button colorScheme="cyan"  mr={5} onClick={
                             () => 
                             { 
                                 setCurrentGameData(new GameData({difficulty:selectedOption}));
@@ -165,15 +225,15 @@ export default function Game(
             );
         } else {
             return (
-                <ModalContent backgroundColor="#08396B">
-                    <ModalHeader textAlign="center" fontSize="3xl" textColor={'#ceffff'}  className="font-customFont">
+                <ModalContent bg={'#0A0A0A'} borderWidth={'4px'} borderColor={'#f87171'} borderRadius={'2xl'}>
+                    <ModalHeader textAlign="center" fontSize="3xl"   className="font-audiowideFont text-red-500">
                         Game Over
                     </ModalHeader>
                     <ModalBody pb={6} fontSize="2xl" textColor={'#ceffff'}  className="font-customFont">
-                        {`Your time: ${currentGameData.time}`}
+                        {`Your time: ${currentGameData.time} seconds`}
                     </ModalBody>
                     <ModalFooter>
-                        <Button colorScheme="gray" borderColor="#000000" textColor={'#000000'} backgroundColor="#ceffff" mr={5} onClick={
+                        <Button colorScheme="cyan" borderColor="#000000" backgroundColor={'#ceffff'} textColor={'#000000'}  mr={5} onClick={
                             () => 
                             { 
                                 setCurrentGameData(new GameData({difficulty:selectedOption})); 
@@ -183,12 +243,14 @@ export default function Game(
                             }}>
                             Retry
                         </Button>
-                        <Button colorScheme="blue" color={'white'} backgroundColor={'#032448'} onClick={onClose}>Show field</Button>
+                        <Button colorScheme="blue" color={'white'} backgroundColor={'#000000'} onClick={onClose}>Show field</Button>
                     </ModalFooter>
                 </ModalContent>
             );
         }
     };
+
+    
 
 
     return (
@@ -226,7 +288,6 @@ export default function Game(
                 <ModalOverlay
                     bg="none"
                     backdropFilter="auto"
-                    backdropInvert="70%"
                     backdropBlur="2px"
                 />
                 {showModalContent(currentGameData.isWin)}
