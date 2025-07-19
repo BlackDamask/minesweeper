@@ -98,7 +98,7 @@ namespace Minesweeper.Services.PlayerService
                 if (existingQueueEntry != null)
                 {
                     Console.ForegroundColor = ConsoleColor.Magenta;
-                    Console.WriteLine("existingQueueEntry != null");
+                    Console.WriteLine("player is already in queue");
                     Console.ResetColor();
 
                     context.MatchmakingQueue.Remove(existingQueueEntry);
@@ -137,6 +137,11 @@ namespace Minesweeper.Services.PlayerService
             {
                 var position = await context.MatchmakingQueue.FirstOrDefaultAsync(p => p.PlayerId == playerId) ?? throw new Exception("Player not found");
                 context.MatchmakingQueue.Remove(position);
+                var player = await context.Users.FirstOrDefaultAsync(p => p.Id == playerId) ?? throw new Exception("Player not found");
+                string playerName = player.UserName;
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine("removed from queue "+ player.UserName);
+                Console.ResetColor();
                 await context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -268,6 +273,57 @@ namespace Minesweeper.Services.PlayerService
             }
             return serviceResponse;
         }
+
+        public async Task<ServiceResponse<int?[]>> GetRecords(string playerId)
+        {
+            var serviceResponse = new ServiceResponse<int?[]>();
+            try
+            {
+                var player = await context.Users.FindAsync(playerId);
+                if (player == null)
+                    throw new Exception("Player not found");
+
+                serviceResponse.Data = player.Records;
+                serviceResponse.Success = true;
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = ex.Message;
+            }
+            return serviceResponse;
+        }
+
+        public async Task<ServiceResponse<int?[]>> SetRecords(string playerId, int?[] newRecords)
+        {
+            var serviceResponse = new ServiceResponse<int?[]>();
+            try
+            {
+                var player = await context.Users.FindAsync(playerId);
+                if (player == null)
+                    throw new Exception("Player not found");
+
+                for (int i = 0; i < player.Records.Length && i < newRecords.Length; i++)
+                {
+                    if (newRecords[i] != null)
+                    {
+                        player.Records[i] = newRecords[i];
+                    }
+                }
+
+                await context.SaveChangesAsync();
+                serviceResponse.Data = player.Records;
+                serviceResponse.Success = true;
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = ex.Message;
+            }
+            return serviceResponse;
+        }
+        
+        
     }
 
 }

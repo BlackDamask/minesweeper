@@ -139,6 +139,16 @@ namespace Minesweeper.Controllers
         }
 
         [Authorize]
+        [HttpGet("records")]
+        public async Task<IActionResult> GetRecords()
+        {
+            var playerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (playerId is null)
+                return BadRequest();
+            return Ok(await playerService.GetRecords(playerId));
+        }
+
+        [Authorize]
         [HttpGet("search")]
         public async Task<IActionResult> SearchPlayers([FromQuery] string name)
         {
@@ -163,6 +173,16 @@ namespace Minesweeper.Controllers
                 return BadRequest();
             }
             return Ok(await playerService.ChangeUserName(playerId, userName));
+        }
+
+        [Authorize]
+        [HttpPut("records")]
+        public async Task<IActionResult> SetRecords([FromBody] int?[] newRecords)
+        {
+            var playerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (playerId is null)
+                return BadRequest();
+            return Ok(await playerService.SetRecords(playerId, newRecords));
         }
 
         // --- DELETE methods (alphabetically) ---

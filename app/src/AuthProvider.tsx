@@ -20,6 +20,8 @@ interface AuthContextType {
   changeUsername: (username: string) => Promise<{ success: boolean; message?: string }>
   accessToken: string | null;
   isLoggedIn: boolean;
+  records: (number|null)[];
+  setRecords: React.Dispatch<React.SetStateAction<(number|null)[]>>;
 }
 
 interface AuthProviderProps {
@@ -34,6 +36,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [accessToken, setAccessToken] = useState<string | null>(localStorage.getItem("accessToken"));
   const [refreshToken, setRefreshToken] = useState<string | null>(localStorage.getItem("refreshToken"));
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const [records, setRecords] = useState<(number|null)[]>([null, null, null]);
 
   // Login function
   const login = async (email: string | null, password: string | null, isGuest: boolean): Promise<{ success: boolean; message?: string }> => {
@@ -159,7 +162,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, [accessToken, refreshToken]);
 
   return (
-    <AuthContext.Provider value={{ user, login, register, logout, changeUsername, accessToken, isLoggedIn }}>
+    <AuthContext.Provider value={{ user, login, register, logout, changeUsername, accessToken, isLoggedIn, records, setRecords }}>
       {children}
     </AuthContext.Provider>
   );

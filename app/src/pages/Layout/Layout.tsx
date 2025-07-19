@@ -3,15 +3,22 @@ import './Layout.css';
 import { Link, useNavigate } from 'react-router-dom';
 import Nav from '../../components/Nav/Nav';
 import { AuthContext } from '../../AuthProvider';
-import { useContext } from 'react';
-import { useDisclosure, Image } from '@chakra-ui/react';
+import { useContext, useEffect } from 'react';
+import { useDisclosure, Image, useToast } from '@chakra-ui/react';
 import NotAuthorizedModal from '../../components/Modals/NotAuthorizedModal';
 import { motion } from 'framer-motion';
+import GameInvitationBar from "../../components/Game/GameInvitationBar";
+import { useGameContext } from '../../GameProvider';
+import axios from '../../api/axios';
 
 
 export default function Layout() {
   const auth = useContext(AuthContext);
-  const navigate = useNavigate(); 
+  const gameContext = useGameContext();
+  const navigate = useNavigate();
+  const toast = useToast();
+   
+  
 
   const {isOpen ,onOpen, onClose} = useDisclosure();
 
@@ -23,9 +30,31 @@ export default function Layout() {
       onOpen();
     }
   }
+  useEffect(() => {
+    axios.delete(
+      "/player/remove-from-queue",
+      {
+          headers: { Authorization: `Bearer ${auth?.accessToken}` },
+      }
+  ).catch(error => {
+      console.error("Error removing from queue:", error);
+  });
+  }, [auth?.accessToken]);
+
+  useEffect(() => {
+        if (gameContext?.shallRedirectToMultiplayerPage) {
+            navigate("/multiplayer");
+            toast({ 
+                title: "Redirecting",
+                status: "warning",
+                description: "You are in game, redirecting to multiplayer..." 
+            });
+        }
+      }, [gameContext?.shallRedirectToMultiplayerPage, navigate]);
 
   return (
     <main className='w-screen h-full min-h-screen items-center flex flex-col bg-gray-950 text-center'>
+      <GameInvitationBar />
       <Nav/>
       
       <div className="w-[calc(100%-56px)] sm:w-[calc(100%-80px)]  ml-14 sm:ml-20 px-4 sm:px-6 lg:px-8 my-8">

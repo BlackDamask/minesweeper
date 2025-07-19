@@ -4,5 +4,6 @@
     {
         public int Progress { get; set; }
         public bool IsExploaded { get; set; }
+        public int TimeInSeconds { get; set; }
     }
 }

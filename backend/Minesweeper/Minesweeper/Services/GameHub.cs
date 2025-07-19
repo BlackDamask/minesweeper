@@ -1,20 +1,16 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
-using Microsoft.OpenApi.Validations;
+
 using Minesweeper.data;
 using Minesweeper.DTOs.GameDTO;
 using Minesweeper.models;
 using Minesweeper.models.MinesweeperGame;
-using System;
-using System.Data.Common;
-using System.Runtime.CompilerServices;
-using System.Security.Claims;
-using System.Text.Json;
+
 
 namespace Minesweeper.Services
 {
     [Authorize]
-    public class GameHub : Hub, IDisposable
+    public class GameHub : Hub
     {
         private readonly ApplicationDbContext dbContext;
 
@@ -55,22 +51,35 @@ namespace Minesweeper.Services
                 {
                     var game = dbContext.Games
                         .FirstOrDefault(g => g.Id == gameId) ?? throw new Exception("Game not found");
-                    
 
                     game.IsActive = false;
 
                     var enemy = dbContext.Users.FirstOrDefault(u => u.Id == enemyGp.PlayerId) ?? throw new Exception("Enemy not found");
+                    var winnerTime = DateTime.Now - game.StartTime;
 
                     
 
-                    var playerGameEndResponse = new GameEndDTO { EloChange = 8, NewElo = player.Elo + 8, IsWon = true };
-                    var enemyGameEndResponse = new GameEndDTO { EloChange = -8, NewElo = enemy.Elo - 8, IsWon = false };
+                    var playerGameEndResponse = new GameEndDto
+                    {
+                        EloChange = 8,
+                        NewElo = player.Elo + 8,
+                        IsWon = true,
+                        WinnersTime = winnerTime,
+                    };
+
+                    var enemyGameEndResponse = new GameEndDto
+                    {
+                        EloChange = -8,
+                        NewElo = enemy.Elo - 8,
+                        IsWon = false,
+                        WinnersTime = winnerTime,
+                        IsNewRecord = false
+                    };
 
                     player.Elo += 8;
                     enemy.Elo -= 8;
 
                     await Clients.User(player.Id).SendAsync("GameEnd", playerGameEndResponse);
-
                     await Clients.User(enemyGp.PlayerId).SendAsync("GameEnd", enemyGameEndResponse);
 
                     dbContext.GameParticipants.Remove(enemyGp);
@@ -97,9 +106,9 @@ namespace Minesweeper.Services
 
                 var invitation = new
                 {
-                    Id = sender.Id,
+                    sender.Id,
                     Name = sender.UserName,
-                    Elo = sender.Elo
+                    sender.Elo
                 };
 
                 await Clients.User(invitedPlayerId).SendAsync("ReceivePvpGameInvitation", invitation);
@@ -125,7 +134,6 @@ namespace Minesweeper.Services
                 if (inviter == null || accepter == null)
                     throw new Exception("Player(s) not found.");
 
-                // Create game
                 MinesweeperGame minesweeperGame = new MinesweeperGame(1);
 
                 var newGame = new Game
@@ -151,7 +159,6 @@ namespace Minesweeper.Services
                 await dbContext.GameParticipants.AddRangeAsync(participants);
                 await dbContext.SaveChangesAsync();
 
-                // Prepare response for both players
                 var inviterResponse = new GameBeginDTO
                 {
                     GameField = minesweeperGame.gameField,
@@ -183,10 +190,31 @@ namespace Minesweeper.Services
             }
         }
 
-        public override async Task OnConnectedAsync()
+        public override Task OnConnectedAsync()
         {
             Console.WriteLine(Clients.ToString());
-
+            return Task.CompletedTask;
         }
+
+        public override async Task OnDisconnectedAsync(Exception exception)
+        {
+            Console.WriteLine("Client closed");
+
+            var playerId = Context.UserIdentifier;
+            if (!string.IsNullOrEmpty(playerId))
+            {
+                // Remove player from matchmaking queue if present
+                var queueEntry = dbContext.MatchmakingQueue.FirstOrDefault(q => q.PlayerId == playerId);
+                if (queueEntry != null)
+                {
+                    dbContext.MatchmakingQueue.Remove(queueEntry);
+                    await dbContext.SaveChangesAsync();
+                    Console.WriteLine($"Removed player {playerId} from matchmaking queue on disconnect.");
+                }
+                
+            }
+
+            await base.OnDisconnectedAsync(exception);
+        } 
     }
 }

@@ -18,6 +18,7 @@ interface GameEndResponse {
   isWon: boolean;
   newElo: number;
   eloChange: number;
+  winnersTime: number | null;
 }
 
 interface ReceiveProgressResponse {
@@ -78,6 +79,8 @@ interface GameContextType {
   resetMultiplayerGame: () => void;
   shallRedirectToMultiplayerPage: boolean;
   setShallRedirectToMultiplayerPage: React.Dispatch<React.SetStateAction<boolean>>;
+  winnersTime: string;
+  setWinnersTime: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export const GameContext = createContext<GameContextType | undefined>(undefined);
@@ -88,7 +91,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const accessToken = auth?.accessToken;
   
   const [isGameStarted, setIsGameStarted] = useState(false);
-  const [isGameEnded, setIsGameEnded] = useState(false);
+  const [isGameEnded, setIsGameEnded] = useState(true);
   const [isExploaded, setIsExploaded] = useState(false);
   const [isEnemyExploaded, setIsEnemyExploaded] = useState(false);
   const [enemyName, setEnemyName] = useState("Opponent");
@@ -102,6 +105,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [eloChange, setEloChange] = useState<number>(0);
   const [gameInvitation, setGameInvitation] = useState<GameInvitation | null>(null);
   const [shallRedirectToMultiplayerPage, setShallRedirectToMultiplayerPage] = useState(false);
+  const [winnersTime, setWinnersTime] = useState<string >("00:00");
 
 
   const connectionRef = useRef<signalR.HubConnection | null>(null);
@@ -116,114 +120,136 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }, 5000); 
     }
 
+  // Create SignalR connection only once on mount
   useEffect(() => {
     const connection = new signalR.HubConnectionBuilder()
       .withUrl("http://localhost:5150/game", {
         accessTokenFactory: () => accessToken ?? "",
       })
       .withAutomaticReconnect()
-      .build(); 
+      .build();
 
     connectionRef.current = connection;
 
-    
+    // Attach event handlers
+    connection.on("GameStarted", (response: GameStartResponse) => {
+      setShallRedirectToMultiplayerPage(true);
+      setEnemyName(response.enemyName);
+      setGameField(response.gameField);
+      setStartCoordinates({ colIndex: response.colBeginIndex, rowIndex: response.rowBeginIndex });
+      setEnemyProgress(response.enemyProgress);
+      setStartTime(response.startTime);
+      setIsGameStarted(true);
+      setIsGameEnded(false);
+      console.log(response);
+    });
 
-  }, [accessToken, connectionRef]);
+    connection.on("SetNotIsExploaded", () => {
+      console.warn("ReceivedSetNotIsExploaded");
+      setIsExploaded(false);
+    });
 
-  useEffect(() => {
-    const connection = connectionRef.current;
-    if(connection){
-      if(connection.state !== "Connected")
-        connection.start().catch((e) => "Failed to connect to websocket: " + e);
-          connection.on("GameStarted", (response: GameStartResponse) => {
-            setShallRedirectToMultiplayerPage(true);
-            setEnemyName(response.enemyName);
-            setGameField(response.gameField);
-            setStartCoordinates({ colIndex: response.colBeginIndex, rowIndex: response.rowBeginIndex });
-            setEnemyProgress(response.enemyProgress);
-            setStartTime(response.startTime);
-            setIsGameStarted(true);
-            setIsGameEnded(false);
-            console.log(response);
-          });
-      
-          connection.on("SetNotIsExploaded", () => {
-            console.warn("ReceivedSetNotIsExploaded");
-            setIsExploaded(false);
-          });
-          
-      
-          connection.on("ReceiveProgress", (response: ReceiveProgressResponse) => {
-            setEnemyProgress(response.progress);
-            setIsEnemyExploaded(response.isExploaded);
-          });
-      
-          connection.on("ReceiveSystemMessage", (message: string) => {
-            console.log("System message received:", message);
-            toast({
-              title: "System Message",
-              description: message,
-              status: "info",
-              isClosable: true,
-            });
-          });
-      
-          connection.on("ReceivePvpGameInvitation", (invitation: GameInvitation) => {
-            console.log("Received PvP Game Invitation in GameProvider", invitation);
-            setGameInvitation(invitation);
-            toast({
-              title: `Game Invitation from ${invitation.name}`,
-              description: `Elo: ${invitation.elo}`,
-              status: "info",
-              isClosable: true,
-            });
-          });
-      
-          
-      
-          connection.on("GameEnd", (response: GameEndResponse) => {
-            console.warn(response);
-            if(response.isWon){
-              setShallRedirectToMultiplayerPage(false);
-              setIsGameEnded(true);
-              setIsWon(true);
-              if (currentGameData) currentGameData.isGameOver = true;
-            }
-            else{
-              setShallRedirectToMultiplayerPage(false);
-              setIsGameEnded(true);
-              setIsWon(false);
-              if (currentGameData) currentGameData.isGameOver = true;
-            }
-            setCurrentElo(response.newElo);
-            setEloChange(response.eloChange);
-            // Do NOT resetMultiplayerGame here, only on button click
-          });
+    connection.on("ReceiveProgress", (response: ReceiveProgressResponse) => {
+      setEnemyProgress(response.progress);
+      setIsEnemyExploaded(response.isExploaded);
+    });
+
+    connection.on("ReceiveSystemMessage", (message: string) => {
+      console.log("System message received:", message);
+      toast({
+        title: "System Message",
+        description: message,
+        status: "info",
+        isClosable: true,
+      });
+    });
+
+    connection.on("ReceivePvpGameInvitation", (invitation: GameInvitation) => {
+      console.log("Received PvP Game Invitation in GameProvider", invitation);
+      if (isGameEnded) {
+        setGameInvitation(invitation);
+      }
+    });
+
+    connection.on("GameEnd", (response: GameEndResponse) => {
+      console.warn(response);
+      if (response.isWon) {
+        setShallRedirectToMultiplayerPage(false);
+        setIsGameEnded(true);
+        setIsWon(true);
+        if (currentGameData) currentGameData.isGameOver = true;
+      } else {
+        setShallRedirectToMultiplayerPage(false);
+        setIsGameEnded(true);
+        setIsWon(false);
+        if (currentGameData) currentGameData.isGameOver = true;
+      }
+      const time = Date.now() - startTime - 57 * 60000 - 36000; // Adjusted time calculation
+      if (typeof time === "number" && !isNaN(time)) {
+        let minutes = String(Math.floor((time / 1000 / 60) % 60));
+        let seconds = String(Math.floor((time / 1000) % 60));
+        if (minutes.length === 1) {
+          minutes = "0" + minutes;
+        }
+        if (seconds.length === 1) {
+          seconds = "0" + seconds;
+        }
+        setWinnersTime(`${minutes}:${seconds}`);
+      } else {
+        setWinnersTime("00:00");
+      }
+      setCurrentElo(response.newElo);
+      setEloChange(response.eloChange);
+      // Do NOT resetMultiplayerGame here, only on button click
+    });
+
+    // Start connection if not started
+    if (connection.state !== "Connected") {
+      connection.start().catch((e) => console.error("Failed to connect to websocket: ", e));
     }
-  }, [connectionRef,currentGameData, toast]); 
+
+    // Optionally handle reconnection
+    connection.onreconnected(() => {
+      console.log("SignalR reconnected");
+      // You can re-fetch state or re-attach handlers if needed
+    });
+    connection.onclose(() => {
+      console.warn("SignalR connection closed");
+    });
+
+    // Clean up on unmount
+    return () => {
+      connection.stop();
+    };
+  }, [accessToken]);
 
   useEffect(() => {
     const connection = connectionRef.current;
 
-    const sendProgress = () =>{
-      if(connection && connection.state === "Connected"){
-        if(currentGameData?.maxNumberOfRevealedTiles){
-          const progress = currentGameData?.countRevealedTiles() / currentGameData?.maxNumberOfRevealedTiles * 100;
-          if(currentGameData.isExploaded !== undefined){
-            const progressData: SendProgressResponse = {
-              progress: progress,
-              isExploaded: isExploaded,
-            };
-          
-            console.warn(currentGameData.isExploaded);
-            
-                  connection.invoke("SendProgress", progressData)
-          } 
+    const sendProgress = () => {
+      if (
+        connection &&
+        connection.state === "Connected" &&
+        isGameStarted &&
+        !isGameEnded &&
+        currentGameData?.maxNumberOfRevealedTiles
+      ) {
+        const progress =
+          (currentGameData.countRevealedTiles() / currentGameData.maxNumberOfRevealedTiles) * 100;
+        if (currentGameData.isExploaded !== undefined) {
+          const progressData: SendProgressResponse = {
+            progress: progress,
+            isExploaded: isExploaded,
+          };
+
+          console.warn(currentGameData.isExploaded);
+
+          connection.invoke("SendProgress", progressData);
         }
       }
-    }
+    };
     sendProgress();
-  }, [currentGameData, isExploaded]);
+  }, [currentGameData, isExploaded, isGameStarted, isGameEnded]);
 
 
   const sendPvpGameInvitation = async (invitedPlayerId: string) => {
@@ -354,6 +380,97 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Optionally reset other state as needed
   };
 
+  // Save game state before unload
+  useEffect(() => {
+    window.addEventListener("beforeunload", () => {
+      localStorage.setItem("gameState", JSON.stringify({ 
+        isGameStarted,
+        isGameEnded,
+        isExploaded,
+        isEnemyExploaded,
+        isWon,
+        shallRedirectToMultiplayerPage,
+
+        enemyProgress,
+        gameField,
+        startCoordinates,
+        startTime,
+        currentGameData, 
+        enemyName,
+        eloChange,
+        currentElo,
+
+        gameInvitation,
+        winnersTime,
+      }));
+    });
+    return () => window.removeEventListener("beforeunload", () => {});
+  }, [isGameStarted, isGameEnded, isExploaded, isEnemyExploaded, isWon, shallRedirectToMultiplayerPage, enemyProgress, gameField, startCoordinates, startTime, currentGameData, enemyName, eloChange, currentElo, gameInvitation, winnersTime]);
+
+  // Restore game state on load
+  useEffect(() => {
+    const savedState = localStorage.getItem("gameState");
+    if (savedState) {
+      const {
+        isGameStarted,
+        isGameEnded,
+        isExploaded,
+        isEnemyExploaded,
+        isWon,
+        shallRedirectToMultiplayerPage,
+
+        enemyProgress,
+        gameField,
+        startCoordinates,
+        startTime,
+        enemyName,
+        eloChange,
+        currentElo,
+
+        gameInvitation,
+        
+        winnersTime,
+      } = JSON.parse(savedState);
+
+      setIsGameStarted(isGameStarted);
+      setIsGameEnded(isGameEnded);
+      setIsExploaded(isExploaded);
+      setIsEnemyExploaded(isEnemyExploaded);
+      setIsWon(isWon);
+      setShallRedirectToMultiplayerPage(shallRedirectToMultiplayerPage);
+
+      setEnemyProgress(enemyProgress);
+      setGameField(gameField);
+      setStartCoordinates(startCoordinates);
+      setStartTime(startTime);
+      setEnemyName(enemyName);
+      setEloChange(eloChange);
+      setCurrentElo(currentElo);
+
+      setGameInvitation(gameInvitation);
+      
+      // setGameInvitation,
+
+      // setGameField,
+      // setIsExploaded,
+      // playerExploaded,
+      // setStartTime,
+      // setEnemyProgress,
+      // setCurrentGameData,
+      // setStartCoordinates, 
+      // setIsGameStarted, 
+      // setEnemyName,
+      // setShallRedirectToMultiplayerPage,
+      // sendPvpGameInvitation,
+      // acceptPvpGameInvitation,
+      // acceptFriendRequest,
+      // rejectFriendRequest,
+      // resetMultiplayerGame,
+      setWinnersTime(winnersTime);
+    }
+  }, []);
+  
+
   return (
     <GameContext.Provider value={{ 
       isGameStarted,
@@ -361,6 +478,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
       isExploaded,
       isEnemyExploaded,
       isWon,
+      shallRedirectToMultiplayerPage,
 
       enemyProgress,
       gameField,
@@ -384,13 +502,14 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setStartCoordinates, 
       setIsGameStarted, 
       setEnemyName,
+      setShallRedirectToMultiplayerPage,
       sendPvpGameInvitation,
       acceptPvpGameInvitation,
       acceptFriendRequest,
       rejectFriendRequest,
       resetMultiplayerGame,
-      shallRedirectToMultiplayerPage,
-      setShallRedirectToMultiplayerPage,
+      winnersTime,
+      setWinnersTime,
       }}>
       {children}
     </GameContext.Provider>
