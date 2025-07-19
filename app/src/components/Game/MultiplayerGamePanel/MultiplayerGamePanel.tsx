@@ -17,6 +17,16 @@ const generateResizeValues = () =>{
     return(resizeValues);
 }
 
+const getDefaultZoom = () => {
+    if (typeof window !== 'undefined') {
+        if (window.innerWidth < 640) return 26; // mobile
+        if (window.innerWidth < 1024) return 36; // tablet
+        return 46; // desktop
+    }
+    return 26;
+};
+
+
 export default function MultiplayerGamePanel({gameField, colIndex, rowIndex, selectedOption} 
     : 
     {gameField : Tile[][], colIndex: number, rowIndex: number, selectedOption: number}) 
@@ -24,7 +34,7 @@ export default function MultiplayerGamePanel({gameField, colIndex, rowIndex, sel
     const game = useGameContext();
     const auth = useContext(AuthContext);
 
-    const [selectedZoom, setSelectedZoom] = useState(26);
+    const [selectedZoom, setSelectedZoom] = useState(() => getDefaultZoom());
     const [currentGameData, setCurrentGameData] = useState<GameData>(
         new GameData({ gameField: gameField, colStartIndex: colIndex, rowStartIndex: rowIndex })
     );
@@ -147,7 +157,7 @@ export default function MultiplayerGamePanel({gameField, colIndex, rowIndex, sel
                         defaultValue={26}
                         >
                         {resizeValues.map((value) => (
-                            <option key={value} value={value} >🔍 {value}</option>
+                            <option className='text-black' key={value} value={value} >🔍 {value}</option>
                         ))}
                     </Select>
                     <Select

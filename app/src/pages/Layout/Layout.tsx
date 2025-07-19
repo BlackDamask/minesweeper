@@ -57,7 +57,7 @@ export default function Layout() {
       <GameInvitationBar />
       <Nav/>
       
-      <div className="w-[calc(100%-56px)] sm:w-[calc(100%-80px)]  ml-14 sm:ml-20 px-4 sm:px-6 lg:px-8 my-8">
+      <div className="w-[calc(100%-40px)] sm:w-[calc(100%-80px)]  ml-14 sm:ml-20 px-4 sm:px-6 lg:px-8 my-8">
          <header>
           <motion.h1
             initial={{ opacity: 0, y: -20 }}

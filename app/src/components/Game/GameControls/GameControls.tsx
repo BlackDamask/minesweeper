@@ -38,7 +38,7 @@ export default function GameControls(props: {
           className="self-left"
           
           src="./settings-icon.svg"
-          alt="Return"
+          alt="Settings"
           borderRadius="lg"
           onClick= {onOpen}
           cursor='pointer'
@@ -46,7 +46,7 @@ export default function GameControls(props: {
         <div className='flex gap-4 ml-4'>
           <Select
             className='content'
-            width={'7rem'}
+            width={['6rem', '7rem', '7rem']}
             fontSize={['0.7rem','1rem']}
             textAlign={'center'}
             color={'white'}
@@ -59,7 +59,7 @@ export default function GameControls(props: {
             defaultValue={26}
           >
             {props.resizeValues.map((value) => (
-              <option  key={value}  value={value}>🔍 {value}</option>
+              <option className='text-black' key={value}  value={value}>🔍 {value}</option>
             ))}
           </Select>
           <Select

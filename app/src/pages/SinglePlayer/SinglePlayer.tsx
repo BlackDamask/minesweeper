@@ -35,10 +35,10 @@ export function SinglePlayer(){
         }
       }, [gameContext?.shallRedirectToMultiplayerPage, navigate,toast]);
     return(
-        <main className='w-screen h-screen flex flex-row bg-gray-950 overflow-auto'>
+        <main className='w-screen h-screen pt-2 pl-2 flex flex-row bg-gray-950 overflow-auto'>
             <GameInvitationBar />
             <Nav/>
-            <div className='w-[calc(100%-56px)] sm:w-[calc(100%-80px)]  ml-14 sm:ml-20 mt-5'>
+            <div className='w-[calc(100%-56px)] sm:w-[calc(100%-80px)] xl:w-[calc(100%-160px)]  ml-14 sm:ml-20 xl:ml-40 mt-5'>
                 <GamePanel></GamePanel>
             </div>
         </main>

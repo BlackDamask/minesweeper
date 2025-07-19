@@ -130,6 +130,7 @@ export default function Nav() {
         ...(auth?.isLoggedIn ? [{
             routePath: "/friends",
             options: null,
+            alt: "Friends",
             imagePath: "./friends-icon.png",
         }] : [])
     ];
@@ -155,7 +156,7 @@ export default function Nav() {
         return(
             <>
             <Image
-                className="self-left w-16 fixed left-2 top-5"
+                className="self-left w-14 fixed left-2 top-5"
                 src="./menu.svg"
                 alt="Menu"
                 borderRadius="lg"
@@ -172,7 +173,7 @@ export default function Nav() {
             >
                 <DrawerOverlay />
                 <DrawerContent className="bg-slate-950" backgroundColor={'#020617'}>
-                <DrawerCloseButton />
+                <DrawerCloseButton fontSize={'2xl'} textColor={"#85ecfa"} />
                 <DrawerHeader>
                     <Link to="/">
                             <Box
@@ -227,9 +228,13 @@ export default function Nav() {
                 <DrawerFooter>
                     <div className="flex flex-col space-y-4  items-center w-full px-5">
                         {auth?.isLoggedIn ? (
-                            <Popover placement="right">
-                                <PopoverTrigger>
-                                    <Avatar name={auth.user?.playerName} />
+                            <Popover placement="top">
+                                <PopoverTrigger >
+                                    <div className="w-full flex items-center">
+                                        <Avatar name={auth.user?.playerName} />
+                                        <p className="ml-3 text-lg text-cyan-300">{auth.user?.playerName}</p>
+                                    </div>
+                                    
                                 </PopoverTrigger>
                                 <PopoverContent width="56" borderWidth={3}>
                                     <PopoverBody padding={0}>
@@ -428,8 +433,12 @@ export default function Nav() {
                     <div className="flex flex-col space-y-4 mb-10 items-center w-[80%]">
                         {auth?.isLoggedIn ? (
                             <Popover placement="right">
-                                <PopoverTrigger>
-                                    <Avatar name={auth.user?.playerName} />
+                                <PopoverTrigger >
+                                    <div className="w-full flex items-center">
+                                        <Avatar name={auth.user?.playerName} />
+                                        <p className="ml-3 text-lg text-cyan-300">{auth.user?.playerName}</p>
+                                    </div>
+                                    
                                 </PopoverTrigger>
                                 <PopoverContent width="56" borderWidth={3}>
                                     <PopoverBody padding={0}>

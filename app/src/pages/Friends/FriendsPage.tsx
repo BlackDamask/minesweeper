@@ -208,7 +208,7 @@ export default function FriendsPage(){
         }
     };
 
-    // Accept PvP game invitation handler
+    
     return (
         <main className='w-screen h-screen items-center flex flex-col bg-black text-center'>
             <GameInvitationBar />
@@ -228,7 +228,7 @@ export default function FriendsPage(){
                     cursor='pointer'
                 />
             </button>
-            <div className="w-[calc(100%-84px)] ml-[84px] my-8 flex flex-col items-center" >
+            <div className="w-full sm:w-[calc(100%-84px)] ml-4 sm:ml-[84px] my-7 flex flex-col items-center" >
                 <div className="group w-2/3">
                 <svg viewBox="0 0 24 24" aria-hidden="true" className="search-icon w-4 h-4">
                     <g>
@@ -248,16 +248,16 @@ export default function FriendsPage(){
                     onChange={handleInputChange}
                 />
                 </div>
-                <div className="w-2/3 mt-8 text-gray-300 text-xl font-bold text-left">
+                <div className="w-full md:w-2/3 pl-5 sm:pl-0 mt-8 text-gray-300 text-xl font-bold text-left">
                     {friendRequests.length > 0 && (
                         <>
                             <h2 >Friendship requests:</h2>
                             <div className="flex flex-col gap-4 mt-4">
                                 {friendRequests.map((req: any) => (
-                                    <div key={req.id} className="flex justify-between items-center border-purple-900 border-4 h-18 p-2 rounded-xl w-full">
+                                    <div key={req.id} className="flex justify-between items-center border-purple-900 border-4 h-18 p-2 rounded-xl w-5/6 sm:w-full">
                                         <Avatar name={req.requestingPlayerName || req.requestingPlayerId} />
                                         <p>{req.requestingPlayerName || req.requestingPlayerId}</p>
-                                        <span className="flex gap-4">
+                                        <span className="flex flex-col sm:flex-row gap-4">
                                             <Button colorScheme='green' onClick={() => handleAcceptRequest(req.requestId)}>Accept</Button>
                                             <Button colorScheme='red' onClick ={() => handleRejectRequest(req.requestId)}>Reject</Button>
                                         </span>
@@ -269,10 +269,10 @@ export default function FriendsPage(){
                     <h2 >Your friends ({friends.length}):</h2>
                     <div className="flex flex-col gap-4 mt-4">
                         {friends.map((friend: any) => (
-                            <div key={friend.id} className="flex justify-between items-center border-green-900 border-4 h-18 p-2 rounded-xl w-full">
+                            <div key={friend.id} className="flex justify-between items-center border-green-900 border-4 h-18 p-2 rounded-xl w-5/6 sm:w-full">
                                 <Avatar name={friend.playerName || friend.id} />
                                 <p>{friend.playerName || friend.id}</p>
-                                <span className="flex gap-4">
+                                <span className="flex flex-col sm:flex-row gap-4 ">
                                     <Button colorScheme='green' onClick={() => gameContext?.sendPvpGameInvitation(friend.id)}>Play</Button>
                                     <Popover
                                         initialFocusRef={initialFocusRef}

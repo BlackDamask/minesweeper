@@ -88,7 +88,7 @@ export default function SearchingForGame() {
 
     if (isSmallScreen) {
         return (
-            <div className="h-full w-full flex flex-col justify-center bg-gray-900">
+            <div className="h-full w-full flex flex-col justify-center bg-black">
                 <main className=" h-2/3 flex flex-col items-center justify-evenly">
                     <h1 className="text-2xl text-white text-center">
                     Searching for game
