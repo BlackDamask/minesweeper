@@ -20,12 +20,12 @@ const tileColorMap: { [key in TileColor]: { default: string; clicked: string; wi
     'light-tile': {
         default: '#A8B7CB',
         clicked: '#ffe7ba',
-        withBomb: '#bb8c44',
+        withBomb: '#ffe7ba',
     },
     'dark-tile': {
         default: '#8C9FcA',
         clicked: '#E8B768',
-        withBomb: '#bb8c44',
+        withBomb: '#E8B768',
     },
 };
 
