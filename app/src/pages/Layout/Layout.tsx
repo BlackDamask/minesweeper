@@ -51,7 +51,7 @@ export default function Layout() {
         
         <div className='grid grid-cols-1 md:grid-cols-2 w-full gap-y-20  mt-20'>
           {/* Hide preview image on small screens */}
-          <div className=' hidden md:flex h-60 sm:h-80 p-4 sm:p-12 justify-center items-center'>
+          <div className=' hidden md:flex h-60 sm:h-80 p-4 sm:p-12 xl:p-24 2xl:p-12 justify-center items-center'>
             <Link to="/single">
             <Image
               className="self-left w-full  max-w-md"
