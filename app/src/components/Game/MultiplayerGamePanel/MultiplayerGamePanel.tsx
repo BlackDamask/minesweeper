@@ -7,6 +7,7 @@ import MultiplayerGameEnd from '../../Modals/MultipalyerGameEnd';
 import './MultiplayerGamePanel.css';
 import { AuthContext } from '../../../AuthProvider';
 import axios from '../../../api/axios';
+import { useTranslation } from 'react-i18next';
 
 
 const generateResizeValues = () =>{
@@ -31,6 +32,7 @@ export default function MultiplayerGamePanel({gameField, colIndex, rowIndex, sel
     : 
     {gameField : Tile[][], colIndex: number, rowIndex: number, selectedOption: number}) 
 {
+    const { t } = useTranslation();
     const game = useGameContext();
     const auth = useContext(AuthContext);
 
@@ -178,7 +180,7 @@ export default function MultiplayerGamePanel({gameField, colIndex, rowIndex, sel
             <div className='h-fit w-fit'>
                 
             <div className={`flex mt-5 ${game?.isExploaded ? 'text-white' : 'text-transparent'} text-xl `}>
-                <p>You Exploaded</p>
+                <p>{t('youExploded')}</p>
             </div>
                 
                 <div className="h-full w-full pt-3 rounded-xl ">

@@ -8,8 +8,10 @@ import { AuthContext } from "../../AuthProvider";
 import React from "react";
 import { useGameContext } from "../../GameProvider";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 export default function FriendsPage(){
+    const { t } = useTranslation();
     const [query, setQuery] = useState("");
     const [suggestions, setSuggestions] = useState([]);
     const [friendRequests, setFriendRequests] = useState([]);
@@ -69,12 +71,12 @@ export default function FriendsPage(){
         if (gameContext?.shallRedirectToMultiplayerPage) {
             navigate("/multiplayer");
             toast({ 
-                title: "Redirecting",
+                title: t('redirecting'),
                 status: "warning",
-                description: "You are in game, redirecting to multiplayer..." 
+                description: t('redirectingDescription')
             });
         }
-      }, [gameContext?.shallRedirectToMultiplayerPage, navigate]);
+      }, [gameContext?.shallRedirectToMultiplayerPage, navigate, t, toast]);
 
     const handleAcceptRequest = async (requestId: string) => {
         if (!gameContext) return;
@@ -92,8 +94,8 @@ export default function FriendsPage(){
             }
         } catch (err: any) {
             toast({
-                title: "Failed to accept friend request",
-                description: `${err.response?.data?.message || "Please try again."}`,
+                title: t('acceptRequestFailed'),
+                description: `${err.response?.data?.message || t('pleaseTryAgain')}`,
                 status: "warning",
                 isClosable: true,
             });
@@ -115,8 +117,8 @@ export default function FriendsPage(){
             }
         } catch (err: any) {
             toast({
-                title: "Failed to reject friend request",
-                description: `${err.response?.data?.message || "Please try again."}`,
+                title: t('rejectRequestFailed'),
+                description: `${err.response?.data?.message || t('pleaseTryAgain')}`,
                 status: "warning",
                 isClosable: true,
             });
@@ -153,7 +155,7 @@ export default function FriendsPage(){
             );
             if (response.data && response.data.success) {
                 toast({
-                    title: "Friend Request Sent",
+                    title: t('friendRequestSent'),
                     status: "success",
                     isClosable: true,
                 });
@@ -162,8 +164,8 @@ export default function FriendsPage(){
         } catch (err: any) {
             console.error("Error adding friend:", err);
             toast({
-                title: "Failed to add friend",
-                description: `${err.response?.data?.message || "Please try again."}`,
+                title: t('addFriendFailed'),
+                description: `${err.response?.data?.message || t('pleaseTryAgain')}`,
                 status: "warning",
                 isClosable: true,
             });
@@ -173,7 +175,7 @@ export default function FriendsPage(){
     const handleRemoveFriend = async (friendId: string) => {
         if (!auth?.accessToken){
             toast({
-                title: "Login failed",
+                title: t('loginFailed'),
                 
                 status: "error",
                 isClosable: true,
@@ -190,7 +192,7 @@ export default function FriendsPage(){
             );
             if (response.data && response.data.success) {
                 toast({
-                    title: "Friend removed!",
+                    title: t('friendRemoved'),
                     status: "success",
                     isClosable: true,
                 });
@@ -200,8 +202,8 @@ export default function FriendsPage(){
         } catch (err: any) {
             console.error("Error removing friend:", err);
             toast({
-                title: "Failed to remove friend",
-                description: `${err.response?.data?.message || "Please try again."}`,
+                title: t('removeFriendFailed'),
+                description: `${err.response?.data?.message || t('pleaseTryAgain')}`,
                 status: "warning",
                 isClosable: true,
             });
@@ -215,7 +217,7 @@ export default function FriendsPage(){
             <Nav/>
             <button
                 className="fixed bottom-6 right-6 bg-blue-800 text-white rounded-full shadow-lg p-4 hover:bg-blue-700 z-50 w-16"
-                aria-label="Refresh"
+                aria-label={t('refresh')}
                 onClick={() => {
                     setRefreshKey(prev => prev + 1);
                     setSentRequests([]);
@@ -223,7 +225,7 @@ export default function FriendsPage(){
             >
                 <Image
                     src="./restart-modern.png"
-                    alt="Refresh"
+                    alt={t('refresh')}
                     borderRadius="lg"
                     cursor='pointer'
                 />
@@ -242,7 +244,7 @@ export default function FriendsPage(){
                     id="query"
                     className="input h-12"
                     type="search"
-                    placeholder="Search friends..."
+                    placeholder={t('searchFriends')}
                     name="searchbar"
                     value={query}
                     onChange={handleInputChange}
@@ -251,29 +253,29 @@ export default function FriendsPage(){
                 <div className="w-full md:w-2/3 pl-5 sm:pl-0 mt-8 text-gray-300 text-xl font-bold text-left">
                     {friendRequests.length > 0 && (
                         <>
-                            <h2 >Friendship requests:</h2>
+                            <h2 >{t('friendshipRequests')}</h2>
                             <div className="flex flex-col gap-4 mt-4">
                                 {friendRequests.map((req: any) => (
                                     <div key={req.id} className="flex justify-between items-center border-purple-900 border-4 h-18 p-2 rounded-xl w-5/6 sm:w-full">
                                         <Avatar name={req.requestingPlayerName || req.requestingPlayerId} />
                                         <p>{req.requestingPlayerName || req.requestingPlayerId}</p>
                                         <span className="flex flex-col sm:flex-row gap-4">
-                                            <Button colorScheme='green' onClick={() => handleAcceptRequest(req.requestId)}>Accept</Button>
-                                            <Button colorScheme='red' onClick ={() => handleRejectRequest(req.requestId)}>Reject</Button>
+                                            <Button colorScheme='green' onClick={() => handleAcceptRequest(req.requestId)}>{t('accept')}</Button>
+                                            <Button colorScheme='red' onClick ={() => handleRejectRequest(req.requestId)}>{t('reject')}</Button>
                                         </span>
                                     </div>
                                 ))}
                             </div>
                         </>
                     )}
-                    <h2 >Your friends ({friends.length}):</h2>
+                    <h2 >{t('yourFriends', { count: friends.length })}</h2>
                     <div className="flex flex-col gap-4 mt-4">
                         {friends.map((friend: any) => (
                             <div key={friend.id} className="flex justify-between items-center border-green-900 border-4 h-18 p-2 rounded-xl w-5/6 sm:w-full">
                                 <Avatar name={friend.playerName || friend.id} />
                                 <p>{friend.playerName || friend.id}</p>
                                 <span className="flex flex-col sm:flex-row gap-4 ">
-                                    <Button colorScheme='green' onClick={() => gameContext?.sendPvpGameInvitation(friend.id)}>Play</Button>
+                                    <Button colorScheme='green' onClick={() => gameContext?.sendPvpGameInvitation(friend.id)}>{t('play')}</Button>
                                     <Popover
                                         initialFocusRef={initialFocusRef}
                                         placement='right'
@@ -282,19 +284,19 @@ export default function FriendsPage(){
                                         onClose={() => setOpenPopoverFriendId(null)}
                                     >
                                         <PopoverTrigger>
-                                            <Button colorScheme="red" onClick={() => setOpenPopoverFriendId(friend.id)}>Remove</Button>
+                                            <Button colorScheme="red" onClick={() => setOpenPopoverFriendId(friend.id)}>{t('remove')}</Button>
                                         </PopoverTrigger>
                                         <PopoverContent bg='gray.800' borderColor='gray.900' color='#ceffff'>
                                             <PopoverArrow bg='gray.900' />
                                             <PopoverCloseButton />
-                                            <PopoverHeader borderColor='gray.900'>Warning</PopoverHeader>
-                                            <PopoverBody>Are you sure you remove this player from your friends?</PopoverBody>
+                                            <PopoverHeader borderColor='gray.900'>{t('warning')}</PopoverHeader>
+                                            <PopoverBody>{t('removeFriendConfirmation')}</PopoverBody>
                                             <PopoverFooter borderColor='gray.900'>
                                                 <Button bg='red.400' color='gray.800' mr='1em' onClick={() => handleRemoveFriend(friend.id)}>
-                                                    Yes
+                                                    {t('yes')}
                                                 </Button>
                                                 <Button bg='green.400' color='gray.800' onClick={() => setOpenPopoverFriendId(null)}>
-                                                    No
+                                                    {t('no')}
                                                 </Button>
                                             </PopoverFooter>
                                         </PopoverContent>
@@ -305,7 +307,7 @@ export default function FriendsPage(){
                     </div>
                     {query.length > 1 && (
                         <>
-                            <h2 className="mt-8">Suggestions:</h2>
+                            <h2 className="mt-8">{t('suggestions')}:</h2>
                             <div className="flex flex-col gap-4 mt-4">
                                 {suggestions.map((user: any) => {
                                     const alreadySent = sentRequests.includes(user.id);
@@ -318,7 +320,7 @@ export default function FriendsPage(){
                                                 onClick={() => !alreadySent && handleAddFriend(user.id)}
                                                 disabled={alreadySent}
                                             >
-                                                {alreadySent ? "Sent" : "Add"}
+                                                {alreadySent ? t('sent') : t('add')}
                                             </button>
                                         </div>
                                     );

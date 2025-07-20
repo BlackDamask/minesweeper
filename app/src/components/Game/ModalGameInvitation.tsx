@@ -1,10 +1,12 @@
 import { useGameContext } from "../../GameProvider";
 import { Button } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 export default function ModalGameInvitation() {
     const gameContext = useGameContext();
     const navigate = useNavigate();
+    const { t } = useTranslation();
 
     if (!gameContext?.gameInvitation) return null;
 
@@ -26,8 +28,8 @@ export default function ModalGameInvitation() {
                     <b>{gameContext.gameInvitation.name}</b> invites you to play! Elo: {gameContext.gameInvitation.elo}
                 </span>
                 <span className="w-1/4 gap-2 flex flex-col">
-                    <Button className="w-full font-ubuntuFont" colorScheme="green" onClick={handleAccept}>Accept</Button>
-                    <Button className="w-full" colorScheme="red"  onClick={handleDiscard}>Discard</Button>
+                    <Button className="w-full font-ubuntuFont" colorScheme="green" onClick={handleAccept}>{t('game.accept')}</Button>
+                    <Button className="w-full" colorScheme="red"  onClick={handleDiscard}>{t('game.discard')}</Button>
                 </span>
                 
             

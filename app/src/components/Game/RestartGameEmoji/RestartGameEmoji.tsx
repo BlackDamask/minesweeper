@@ -2,8 +2,9 @@ import { useState} from 'react';
 import { ReactComponent as WierdFace} from './mean.svg';
 import { ReactComponent as SmileFace} from './smile.svg';
 import { GameData } from '../data';
-import { Button, Popover, PopoverArrow, PopoverBody, PopoverCloseButton, PopoverContent, PopoverFooter, PopoverHeader, PopoverTrigger, useDisclosure } from '@chakra-ui/react';
+import { Button, ButtonGroup, Popover, PopoverArrow, PopoverBody, PopoverCloseButton, PopoverContent, PopoverFooter, PopoverHeader, PopoverTrigger, useDisclosure } from '@chakra-ui/react';
 import React from 'react';
+import { useTranslation } from "react-i18next";
 
 export default function RestartGameEmoji({
     selectedStyle,
@@ -20,6 +21,7 @@ export default function RestartGameEmoji({
     zoom: number,
     setStartTime: React.Dispatch<React.SetStateAction<number | null>>
 }) {
+    const { t } = useTranslation();
     const [isHovered, setIsHovered] = useState(false);
     const initialFocusRef = React.useRef<HTMLDivElement>(null);
     const { onOpen, onClose, isOpen } = useDisclosure();
@@ -84,16 +86,24 @@ export default function RestartGameEmoji({
                 <PopoverContent bg='gray.800' borderColor='gray.900' color='#ceffff'>
                     <PopoverArrow bg='gray.900' />
                     <PopoverCloseButton />
-                    <PopoverHeader borderColor='gray.900'>Warning</PopoverHeader>
-                    <PopoverBody>Are you sure you want to end the current game and start a new one?</PopoverBody>
-                    <PopoverFooter borderColor='gray.900'>
-                        <Button bg='red.400' color='gray.800' onClick={handleRestartClick} mr='1em'>
-                            Restart
-                        </Button>
-                        <Button bg='#ceffff' color='gray.800' onClick={onClose}>
-                            Continue
-                        </Button>
-                    </PopoverFooter>
+                    <PopoverHeader borderColor='gray.900'>{t('warning')}</PopoverHeader>
+                    <PopoverBody>{t('areYouSure')}</PopoverBody>
+                    <PopoverFooter borderColor='gray.900'
+                            border='0'
+                            display='flex'
+                            alignItems='center'
+                            justifyContent='space-between'
+                            pb={4}
+                        >
+                            <ButtonGroup size='sm'>
+                                <Button colorScheme='green' onClick={handleRestartClick} mr='1em'>
+                                    {t('yes')}
+                                </Button>
+                                <Button colorScheme='red' onClick={onClose}>
+                                    {t('no')}
+                                </Button>
+                            </ButtonGroup>
+                        </PopoverFooter>
                 </PopoverContent>
             </Popover>
         </>

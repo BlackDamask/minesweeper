@@ -3,9 +3,11 @@ import { ReactComponent as UserIcon } from "./user-icon.svg";
 import { ReactComponent as LockIcon } from "./lock-icon.svg";
 import { useContext, useState } from 'react';
 import { AuthContext } from '../../AuthProvider';
+import { useTranslation } from 'react-i18next';
 
 export default function LoginModal({isOpen, onClose} : {isOpen: boolean, onClose: () => void}){
     const auth = useContext(AuthContext);
+    const { t } = useTranslation();
 
     const [formData, setFormData] = useState({ email: '', password: '' });
     const [isLoadingLogIn, setLoadingLogIn] = useState(false);
@@ -22,7 +24,7 @@ export default function LoginModal({isOpen, onClose} : {isOpen: boolean, onClose
         try{
             if (!result.success) {
                 toast({
-                    title: "Login failed",
+                    title: t('loginFailed'),
                     description: `${result.message}`,
                     status: 'error',
                     isClosable: true,
@@ -30,7 +32,7 @@ export default function LoginModal({isOpen, onClose} : {isOpen: boolean, onClose
             }
             else{
                 toast({
-                    title: "Login successed",
+                    title: t('loginSucceeded'),
                     status: 'success',
                     isClosable: true,
                 });
@@ -39,7 +41,7 @@ export default function LoginModal({isOpen, onClose} : {isOpen: boolean, onClose
         }
         catch(error){
             toast({
-                title: "Login failed",
+                title: t('loginFailed'),
                 description: `${result.message}`,
                 status: 'error',
                 isClosable: true,
@@ -56,7 +58,7 @@ export default function LoginModal({isOpen, onClose} : {isOpen: boolean, onClose
         try{
             if (!result.success) {
                 toast({
-                    title: "Login failed",
+                    title: t('loginFailed'),
                     description: `${result.message}`,
                     status: 'error',
                     isClosable: true,
@@ -64,7 +66,7 @@ export default function LoginModal({isOpen, onClose} : {isOpen: boolean, onClose
             }
             else{
                 toast({
-                    title: "Login successed",
+                    title: t('loginSucceeded'),
                     status: 'success',
                     isClosable: true,
                 });
@@ -73,7 +75,7 @@ export default function LoginModal({isOpen, onClose} : {isOpen: boolean, onClose
         }
         catch(error){
             toast({
-                title: "Login failed",
+                title: t('loginFailed'),
                 description: `${result.message}`,
                 status: 'error',
                 isClosable: true,
@@ -89,7 +91,7 @@ export default function LoginModal({isOpen, onClose} : {isOpen: boolean, onClose
             <ModalOverlay />
             <ModalContent bg={'#0A0A0A'} borderWidth={'4px'} borderColor={'#85ECFA'} borderRadius={'2xl'}>
                 <ModalHeader className="text-[#85ECFA] text-center">
-                    Log In
+                    {t('logInTitle')}
                 </ModalHeader>
                 <ModalBody>
                     <Stack spacing={4}>
@@ -101,7 +103,7 @@ export default function LoginModal({isOpen, onClose} : {isOpen: boolean, onClose
                                 name="email"
                                 type='email'
                                 color="white"
-                                placeholder='Email'
+                                placeholder={t('email')}
                                 onChange={handleChange}
                                 value={formData.email}
                                 bg={'black'}
@@ -123,7 +125,7 @@ export default function LoginModal({isOpen, onClose} : {isOpen: boolean, onClose
                                 name='password'
                                 type='password'
                                 color="white"
-                                placeholder='Password'
+                                placeholder={t('password')}
                                 onChange={handleChange}
                                 value={formData.password}
                                 bg={'black'}
@@ -145,11 +147,11 @@ export default function LoginModal({isOpen, onClose} : {isOpen: boolean, onClose
                     onClick={handleSubmit}
                     style={{ cursor: 'pointer', opacity: isLoadingLogIn ? 0.6 : 1 }}
                 >
-                    {isLoadingLogIn ? 'Loading...' : 'Log In'}
+                    {isLoadingLogIn ? t('loading') : t('logIn')}
                 </Box>
                 <p className="text-gray-200 mt-3 underline text-lg cursor-pointer hover:text-white"
                     onClick={handleGuestLogin}>
-                        {isLoadingGuest ? 'Loading...' : 'Or Play As Guest'}
+                        {isLoadingGuest ? t('loading') : t('playAsGuest')}
                 </p>
                 </ModalFooter>
             </ModalContent>

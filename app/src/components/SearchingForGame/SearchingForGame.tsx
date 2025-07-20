@@ -4,6 +4,7 @@ import { AuthContext } from "../../AuthProvider";
 import axios from "../../api/axios";
 import { useGameContext } from "../../GameProvider";
 import { Tile } from "../Game/data";
+import { useTranslation } from "react-i18next";
 
 interface GameStartResponse {
     data: {
@@ -19,6 +20,7 @@ interface GameStartResponse {
 }
 
 export default function SearchingForGame() {
+    const { t } = useTranslation();
     const game = useGameContext();
     const auth = useContext(AuthContext);
     const isMounted = useRef(false); 
@@ -43,8 +45,8 @@ export default function SearchingForGame() {
             const data = response.data.data;
             if (data) {
                 toast({
-                    title: "Game info",
-                    description: "You are already in a game",
+                    title: t('gameInfo'),
+                    description: t('alreadyInGame'),
                 });
                 console.warn(data);
                 game?.setEnemyProgress(data.enemyProgress);
@@ -58,7 +60,7 @@ export default function SearchingForGame() {
             console.error("Error adding to queue:", error);
         }); 
 
-    }, [auth, toast, game]);
+    }, [auth, toast, game, t]);
 
     useEffect(() => {
         const timer = setInterval(() => {
@@ -91,7 +93,7 @@ export default function SearchingForGame() {
             <div className="h-full w-full flex flex-col justify-center bg-black">
                 <main className=" h-2/3 flex flex-col items-center justify-evenly">
                     <h1 className="text-2xl text-white text-center">
-                    Searching for game
+                    {t('searchingForGame')}
                 </h1>
                 <Spinner color="#d1d5db" size="xl" thickness="4px" />
                 <h2 className="text-2xl  text-white">
@@ -105,7 +107,7 @@ export default function SearchingForGame() {
     return (
         <main className="w-full max-w-sm md:max-w-lg lg:max-w-xl aspect-square xl:max-w-2xl mx-auto p-6 bg-gray-950 rounded-2xl border-slate-900 border-4 flex flex-col items-center justify-evenly shadow-lg">
             <h1 className="text-lg sm:text-2xl md:text-3xl lg:text-4xl text-white text-center">
-                Searching for game
+                {t('searchingForGame')}
             </h1>
             <Spinner color="#d1d5db" size="xl" thickness="4px" />
             <h2 className="text-lg sm:text-2xl md:text-3xl text-white">

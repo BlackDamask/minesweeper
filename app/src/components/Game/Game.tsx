@@ -6,6 +6,7 @@ import ModernTile from "./Tiles/ModernTile";
 import DefaultTile from "./Tiles/DefaultTile";
 import { AuthContext } from "../../AuthProvider";
 import axios from '../../api/axios';
+import { useTranslation } from "react-i18next";
 
 
 export default function Game(
@@ -24,6 +25,7 @@ export default function Game(
         }
     ) 
 {
+    const { t } = useTranslation();
     const auth = useContext(AuthContext);
     const game = useGameContext();
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -52,7 +54,7 @@ export default function Game(
     useEffect(() => {
         if (!toastShownRef.current) {
             toast({
-                title: "Game Started",
+                title: t('gameStarted'),
                 status: "success",
                 isClosable: true,
             });
@@ -194,19 +196,19 @@ export default function Game(
         const modeIndex = selectedOption - 1;
         let recordDisplay: string;
         if (!auth?.isLoggedIn) {
-            recordDisplay = "Authorize to save your best time";
+            recordDisplay = t('authorizeToSaveBestTime');
         } else if (auth?.records[modeIndex] === null) {
-            recordDisplay = "No record yet";
+            recordDisplay = t('noRecordYet');
         } else {
-            recordDisplay = `${auth?.records[modeIndex]} seconds`;
+            recordDisplay = `${auth?.records[modeIndex]} ${t('seconds')}`;
         }
         if (isWon) {
             return (
                 <ModalContent bg={'#0A0A0A'} borderWidth={'4px'} borderColor={'#85ECFA'} borderRadius={'2xl'}>
-                    <ModalHeader textAlign="center" fontSize="3xl" textColor={'#85ECFA'}  className="font-audiowideFont">You won</ModalHeader>
+                    <ModalHeader textAlign="center" fontSize="3xl" textColor={'#85ECFA'}  className="font-audiowideFont">{t('youWon')}</ModalHeader>
                     <ModalBody pb={6} fontSize="2xl"   className="font-customFont">
-                        <p className="text-violet-400">{`Your time: ${currentGameData.time} seconds`}</p>
-                        <p className="text-violet-400">Your record: {recordDisplay}</p>
+                        <p className="text-violet-400">{t('yourTime', { time: currentGameData.time })}</p>
+                        <p className="text-violet-400">{t('yourRecord', { record: recordDisplay })}</p>
                     </ModalBody>
                     <ModalFooter>
                         <Button colorScheme="cyan"  mr={5} onClick={
@@ -217,9 +219,9 @@ export default function Game(
                                     setStartTime(null);
                                 onClose(); 
                             }}>
-                            Retry
+                            {t('newGame')}
                         </Button>
-                        <Button colorScheme="white" onClick={onClose}>Show field</Button>
+                        <Button colorScheme="white" onClick={onClose}>{t('showField')}</Button>
                     </ModalFooter>
                 </ModalContent>
             );
@@ -227,10 +229,10 @@ export default function Game(
             return (
                 <ModalContent bg={'#0A0A0A'} borderWidth={'4px'} borderColor={'#f87171'} borderRadius={'2xl'}>
                     <ModalHeader textAlign="center" fontSize="3xl"   className="font-audiowideFont text-red-500">
-                        Game Over
+                        {t('gameOver')}
                     </ModalHeader>
                     <ModalBody pb={6} fontSize="2xl" textColor={'#ceffff'}  className="font-customFont">
-                        {`Your time: ${currentGameData.time} seconds`}
+                        {t('yourTime', { time: currentGameData.time })}
                     </ModalBody>
                     <ModalFooter>
                         <Button colorScheme="cyan" borderColor="#000000" backgroundColor={'#ceffff'} textColor={'#000000'}  mr={5} onClick={
@@ -241,9 +243,9 @@ export default function Game(
                                     setStartTime(null); 
                                 onClose(); 
                             }}>
-                            Retry
+                            {t('newGame')}
                         </Button>
-                        <Button colorScheme="blue" color={'white'} backgroundColor={'#000000'} onClick={onClose}>Show field</Button>
+                        <Button colorScheme="blue" color={'white'} backgroundColor={'#000000'} onClick={onClose}>{t('showField')}</Button>
                     </ModalFooter>
                 </ModalContent>
             );

@@ -3,9 +3,11 @@ import { useContext, useEffect, useState } from "react";
 import {  FaGoogle, FaFacebook, FaUser } from "react-icons/fa";
 import { AuthContext } from "../../AuthProvider";
 import { Link,  useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 
 export default function Register(){
+    const { t } = useTranslation();
     const auth = useContext(AuthContext);
     const navigate = useNavigate();
   
@@ -26,7 +28,7 @@ export default function Register(){
       try{
           if (!result.success) {
               toast({
-                  title: "Login failed",
+                  title: t('loginFailed'),
                   description: `${result.message}`,
                   status: 'error',
                   isClosable: true,
@@ -34,7 +36,7 @@ export default function Register(){
           }
           else{
               toast({
-                  title: "Login successed",
+                  title: t('loginSucceeded'),
                   status: 'success',
                   isClosable: true,
               });
@@ -43,7 +45,7 @@ export default function Register(){
       }
       catch(error){
           toast({
-              title: "Login failed",
+              title: t('loginFailed'),
               description: `${result.message}`,
               status: 'error',
               isClosable: true,
@@ -70,7 +72,7 @@ export default function Register(){
             }
             else{
                 toast({
-                    title: "Registration successed",
+                    title: t('registrationSucceeded'),
                     status: 'success',
                     isClosable: true,
                 });
@@ -79,7 +81,7 @@ export default function Register(){
         }
         catch(error){
             toast({
-                title: "Registration failed",
+                title: t('registrationFailed'),
                 description: `${error}`,
                 status: 'error',
                 isClosable: true,
@@ -106,7 +108,7 @@ export default function Register(){
           <div className="space-y-4">
             <Input
               name="email"
-              placeholder="Email"
+              placeholder={t('email')}
               size="lg"
               variant="filled"
               onChange={handleChange}
@@ -123,7 +125,7 @@ export default function Register(){
             />
             <Input
               name="username"
-              placeholder="Username"
+              placeholder={t('username')}
               size="lg"
               variant="filled"
               onChange={handleChange}
@@ -140,7 +142,7 @@ export default function Register(){
             />
             <Input
               name="password"
-              placeholder="Password"
+              placeholder={t('password')}
               size="lg"
               type="password"
               variant="filled"
@@ -156,34 +158,37 @@ export default function Register(){
                 boxShadow: "0 0 0 3px #06b6d4",
               }}
             />
-
+            
+    
             <Button colorScheme="green" bg={"#22c55e"} size="lg" width="full" onClick={handleSubmit}>
-              {isLoading ? 'Loading...' : 'Sign Up'}
+              {isLoading ? t('loading') : t('signUp')}
             </Button>
           </div>
-
+    
           <div className="my-6 flex items-center">
             <div className="flex-1 border-t border-gray-600"></div>
-            <span className="mx-3 text-gray-400">OR</span>
+            <span className="mx-3 text-gray-400">{t('or')}</span>
             <div className="flex-1 border-t border-gray-600"></div>
           </div>
-
+    
           <div className="space-y-3">
+
             <Button leftIcon={<FaGoogle />} colorScheme="red" variant="solid" width="full">
-              Sign up with Google
+              {t('loginWithGoogle')}
             </Button>
             <Button leftIcon={<FaFacebook />} colorScheme="blue" variant="solid" width="full">
-              Sign up with Facebook
+              {t('loginWithFacebook')}
             </Button>
             <Button leftIcon={<FaUser />} colorScheme="gray" variant="solid" width="full" onClick={handleGuestLogin}>
-              {isLoadingGuest ? 'Loading...' : "Play as Guest"}
+            {isLoadingGuest ? t('loading') : t('playAsGuest')}
             </Button>
           </div>
-
+    
           <p className="text-center text-gray-400 mt-6 text-sm">
-            Already registered? <Link to='/login' className="text-cyan-400 hover:underline">Log in - and continue playing minesweeper!</Link>
+            {t('alreadyHaveAccount')} <Link to='/login'  className="text-cyan-400 hover:underline">{t('logIn')}</Link>
           </p>
         </div>
       </div>
     );
+
 }

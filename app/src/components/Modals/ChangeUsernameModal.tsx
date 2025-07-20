@@ -16,8 +16,10 @@ import {
 
   import { useContext, useState } from 'react';
   import { AuthContext } from '../../AuthProvider';
+  import { useTranslation } from 'react-i18next';
   
 export default function ChangeUsernameModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
+  const { t } = useTranslation();
   const auth = useContext(AuthContext);
   const [formData, setFormData] = useState({ username: ''});
   const [loading, setLoading] = useState(false);
@@ -37,7 +39,7 @@ export default function ChangeUsernameModal({ isOpen, onClose }: { isOpen: boole
           }
           else{
               toast({
-                  title: "Username changed successfully",
+                  title: t('usernameChangeSuccess'),
                   status: 'success',
                   isClosable: true,
               });
@@ -46,7 +48,7 @@ export default function ChangeUsernameModal({ isOpen, onClose }: { isOpen: boole
       }
       catch(error){
           toast({
-              title: "Registration failed",
+              title: t('usernameChangeFailed'),
               description: `${error}`,
               status: 'error',
               isClosable: true,
@@ -61,7 +63,7 @@ export default function ChangeUsernameModal({ isOpen, onClose }: { isOpen: boole
     <Modal isOpen={isOpen} onClose={onClose} isCentered size="lg">
       <ModalOverlay />
       <ModalContent bg={'#0A0A0A'} borderWidth={'4px'} borderColor={'#85ECFA'} borderRadius={'2xl'}>
-        <ModalHeader className="text-[#85ECFA] text-center">Change Username</ModalHeader>
+        <ModalHeader className="text-[#85ECFA] text-center">{t('change_username_full')}</ModalHeader>
         <ModalBody>
           <Stack spacing={4}>
             <InputGroup bg={'#38393c'}>
@@ -71,7 +73,7 @@ export default function ChangeUsernameModal({ isOpen, onClose }: { isOpen: boole
               <Input
                 name="username"
                 type="text"
-                placeholder="New username"
+                placeholder={t('newUsername')}
                 onChange={handleChange}
                 value={formData.username}
                 bg={'black'}
@@ -95,7 +97,7 @@ export default function ChangeUsernameModal({ isOpen, onClose }: { isOpen: boole
             onClick={handleSubmit}
             style={{ cursor: 'pointer', opacity: loading ? 0.6 : 1 }}
           >
-            {loading ? 'Loading...' : 'Change'}
+            {loading ? t('loading') : t('change')}
           </Box>
         </ModalFooter>
       </ModalContent>

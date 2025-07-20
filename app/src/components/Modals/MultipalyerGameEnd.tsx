@@ -5,8 +5,10 @@ import { ReactElement, useContext, useEffect } from "react";
 import { useGameContext } from "../../GameProvider";
 import { AuthContext } from "../../AuthProvider";
 import ModalGameInvitation from "../Game/ModalGameInvitation";
+import { useTranslation } from "react-i18next";
 
 export default function MultiplayerGameEnd({isOpen, onClose} : {isOpen: boolean, onClose: () => void}) {
+    const { t } = useTranslation();
     const game = useGameContext();
     const auth = useContext(AuthContext);
 
@@ -47,13 +49,13 @@ export default function MultiplayerGameEnd({isOpen, onClose} : {isOpen: boolean,
                 {game?.isWon ? (
                     <>
                         <Trophy className="font-xl h-[1.5em] w-[1.5em] mr-2 text-green-400"/> 
-                        <p className="self-center">You won</p>
+                        <p className="self-center">{t('youWon')}</p>
                         <span className="h-[1.5em] w-[1.5em]"></span>
                     </>
                 ) : (
                     <>
                         <XCircle className="font-xl h-[1.5em] w-[1.5em] mr-2 text-red-400"/>
-                        <p className="self-center">You lost</p>
+                        <p className="self-center">{t('youLost')}</p>
                         <span className="h-[1.5em] w-[1.5em]"></span>
                     </>
                 )}
@@ -64,7 +66,7 @@ export default function MultiplayerGameEnd({isOpen, onClose} : {isOpen: boolean,
                         <Avatar boxShadow={game?.isWon ? "0 0 15px #00FF00" : "0 0 15px #FF0000"} name={auth?.user?.playerName}></Avatar>
                         <p className="w-full text-ellipsis overflow-hidden  text-base text-gray-200 font-ubuntuFont text-center mt-2">{auth?.user?.playerName}</p>
                     </div>
-                    <p className = "mx-4">vs</p>
+                    <p className = "mx-4">{t('vs')}</p>
                     <div className="w-20 flex-col flex items-center ">
                         <Avatar boxShadow={game?.isWon ? "0 0 15px #FF0000" : "0 0 15px #00FF00"} name={game?.enemyName}></Avatar>
                         <p className=" w-full text-ellipsis overflow-hidden text-base text-gray-200 font-ubuntuFont text-center mt-2">{game?.enemyName}</p>
@@ -72,19 +74,19 @@ export default function MultiplayerGameEnd({isOpen, onClose} : {isOpen: boolean,
                 </section>
                 <section className="font-ubuntuFont w-full ">
                     <div className="flex flex-col my-4 justify-center w-full items-center">
-                        <h2 className="text-xl text-white">Your Rating:</h2>
+                        <h2 className="text-xl text-white">{t('yourRating')}</h2>
                         <span className="flex"><h1 className="text-2xl">{game?.currentElo}</h1>{showEloChange()}</span>
                     </div>
                 </section>
                 {game?.isWon && (
                 <section>
-                    <p className="text-white">{`Your time: ${game?.currentGameData?.time} seconds`}</p>
+                    <p className="text-white">{t('yourTime', { time: game?.currentGameData?.time })}</p>
                     <p className="text-white">
-                        Your record: {(() => {
+                        {(() => {
                             const modeIndex = 0;
-                            if (!auth?.isLoggedIn) return "Authorize to save your best time";
-                            if (!auth?.records || auth.records[modeIndex] == null) return "No record yet";
-                            return `${auth.records[modeIndex]} seconds`;
+                            if (!auth?.isLoggedIn) return t('authorizeToSave');
+                            if (!auth?.records || auth.records[modeIndex] == null) return t('noRecordYet');
+                            return t('yourRecord', { record: auth.records[modeIndex] });
                         })()}
                     </p>
                 </section>
@@ -94,9 +96,9 @@ export default function MultiplayerGameEnd({isOpen, onClose} : {isOpen: boolean,
             <ModalFooter>
                 
                 <Button colorScheme="green" mr={5} onClick={() => { game?.resetMultiplayerGame(); }}>
-                    New Game
+                    {t('newGame')}
                 </Button>
-                <Button colorScheme="white" onClick={onClose}>Show field</Button>
+                <Button colorScheme="white" onClick={onClose}>{t('showField')}</Button>
             </ModalFooter>
         </ModalContent>
     </Modal>

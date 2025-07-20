@@ -16,8 +16,10 @@ import {
   import { ReactComponent as LockIcon } from "./lock-icon.svg";
   import { useContext, useState } from 'react';
   import { AuthContext } from '../../AuthProvider';
+  import { useTranslation } from 'react-i18next';
   
   export default function RegisterModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
+    const { t } = useTranslation();
     const auth = useContext(AuthContext);
     const [formData, setFormData] = useState({ username: '', email: '', password: '' });
     const [loading, setLoading] = useState(false);
@@ -31,7 +33,7 @@ import {
       try{
           if (!result.success) {
               toast({
-                  title: "Login failed",
+                  title: t('loginFailed'),
                   description: `${result.message}`,
                   status: 'error',
                   isClosable: true,
@@ -39,7 +41,7 @@ import {
           }
           else{
               toast({
-                  title: "Login successed",
+                  title: t('loginSucceeded'),
                   status: 'success',
                   isClosable: true,
               });
@@ -48,7 +50,7 @@ import {
       }
       catch(error){
           toast({
-              title: "Login failed",
+              title: t('loginFailed'),
               description: `${result.message}`,
               status: 'error',
               isClosable: true,
@@ -74,7 +76,7 @@ import {
             }
             else{
                 toast({
-                    title: "Registration successed",
+                    title: t('registrationSucceeded'),
                     status: 'success',
                     isClosable: true,
                 });
@@ -83,7 +85,7 @@ import {
         }
         catch(error){
             toast({
-                title: "Registration failed",
+                title: t('registrationFailed'),
                 description: `${error}`,
                 status: 'error',
                 isClosable: true,
@@ -98,7 +100,7 @@ import {
       <Modal isOpen={isOpen} onClose={onClose} isCentered size="lg">
         <ModalOverlay />
         <ModalContent bg={'#0A0A0A'} borderWidth={'4px'} borderColor={'#85ECFA'} borderRadius={'2xl'}>
-          <ModalHeader className="text-[#85ECFA] text-center">Register</ModalHeader>
+          <ModalHeader className="text-[#85ECFA] text-center">{t('register')}</ModalHeader>
           <ModalBody>
             <Stack spacing={4}>
               <InputGroup bg={'#38393c'}>
@@ -109,7 +111,7 @@ import {
                   name="username"
                   type="text"
                   color="white"
-                  placeholder="User name"
+                  placeholder={t('username')}
                   onChange={handleChange}
                   value={formData.username}
                   bg={'black'}
@@ -131,7 +133,7 @@ import {
                   name="email"
                   type="email"
                   color="white"
-                  placeholder="Email"
+                  placeholder={t('email')}
                   onChange={handleChange}
                   value={formData.email}
                   bg={'black'}
@@ -153,7 +155,7 @@ import {
                   name="password"
                   type="password"
                   color="white"
-                  placeholder="Password"
+                  placeholder={t('password')}
                   onChange={handleChange}
                   value={formData.password}
                   bg={'black'}
@@ -175,11 +177,11 @@ import {
               onClick={handleSubmit}
               style={{ cursor: 'pointer', opacity: loading ? 0.6 : 1 }}
             >
-              {loading ? 'Loading...' : 'Sign Up'}
+              {loading ? t('loading') : t('signUp')}
             </Box>
             <p className="text-gray-200 mt-3 underline text-lg cursor-pointer hover:text-white"
                 onClick={handleGuestLogin}>
-                    {isLoadingGuest ? 'Loading...' : 'Or Play As Guest'}
+                    {isLoadingGuest ? t('loading') : t('orPlayAsGuest')}
             </p>
           </ModalFooter>
         </ModalContent>

@@ -31,9 +31,12 @@ import LoginModal from '../Modals/LoginModal';
 import RegisterModal from "../Modals/RegisterModal";
 import { AuthContext } from "../../AuthProvider";
 import { Link, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import ChangeUsernameModal from "../Modals/ChangeUsernameModal";
+import SettingsModal from '../Modals/SettingsModal';
 
 export default function Nav() {
+    const { t } = useTranslation();
     const auth = useContext(AuthContext);
     const hoverTimeout = useRef<NodeJS.Timeout | null>(null); 
     const [isSmallScreen, setIsSmallScreen] = useState(false);
@@ -66,6 +69,13 @@ export default function Nav() {
         onOpen: onChangeUsernameOpen,
         onClose: onChangeUsernameClose,
     } = useDisclosure();
+
+    const {
+        isOpen: isSettingsOpen,
+        onOpen: onSettingsOpen,
+        onClose: onSettingsClose,
+    } = useDisclosure();
+
 
     useEffect(() => {
         const checkScreenSize = () => {
@@ -108,29 +118,24 @@ export default function Nav() {
         {
             routePath: "/single",
             imagePath: "./bomb-shape.png",
-            alt: "Single Player",
+            alt: t("single_player"),
         },
         {
             routePath: "/multiplayer",
             imagePath: "./shovel-pvp.svg",
-            alt: "PvP",
+            alt: t("pvp"),
         },
         {
             routePath: "/",
             options: null,
             imagePath: "./achievements.png",
-            alt: "Achievements",
+            alt: t("achievements"),
         },
-        {
-            routePath: "/",
-            options: null,
-            imagePath: "./spectaculate2.png",
-            alt: "Spectate",
-        },
+
         ...(auth?.isLoggedIn ? [{
             routePath: "/friends",
             options: null,
-            alt: "Friends",
+            alt: t("friends"),
             imagePath: "./friends-icon.png",
         }] : [])
     ];
@@ -158,7 +163,7 @@ export default function Nav() {
             <Image
                 className="self-left w-14 fixed left-2 top-5"
                 src="./menu.svg"
-                alt="Menu"
+                alt={t('menu')}
                 borderRadius="lg"
                 cursor='pointer'
                 ref={btnRef}
@@ -184,13 +189,13 @@ export default function Nav() {
                                 <h1
                                     className="text-2xl font-bold uppercase text-transparent bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 bg-clip-text drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)] tracking-widest font-orbitronFont"
                                 >
-                                Minesweeper
+                                {t('minesweeper')}
                                 </h1>
 
                                 <h2
                                     className="text-xl mt-4 uppercase text-[#85ECFA] tracking-widest font-audiowideFont"
                                 >
-                                    Battle
+                                    {t('battle')}
                                 </h2>
                             </Box>
                         </Link>
@@ -248,13 +253,13 @@ export default function Nav() {
                                             className="h-[2.5em] text-xl flex text-gray-100 items-center pl-3 filter brightness-100 hover:brightness-75 bg-slate-900"
                                             onClick={onChangeUsernameOpen}
                                         >
-                                            Change Username
+                                            {t('change_username')}
                                         </Box>
                                         <Box
                                             className="h-[2.5em] text-xl flex text-gray-100 items-center pl-3 filter brightness-100 hover:brightness-75 bg-slate-900"
                                             onClick={onLogoutOpen}
                                         >
-                                            Log out
+                                            {t('log_out')}
                                         </Box>
                                     </PopoverBody>
                                 </PopoverContent>
@@ -268,7 +273,7 @@ export default function Nav() {
                                     onClick={onLoginOpen}
                                 >
                                     <div className="flex justify-center items-center text-center w-full bg-slate-700 hover:bg-slate-800 rounded-lg border-b-[3px] border-slate-900">
-                                        <p className="flex justify-center items-center text-2xl text-center fill-slate-300 hover:fill-white h-[2.5em]">Login</p>
+                                        <p className="flex justify-center items-center text-2xl text-center fill-slate-300 hover:fill-white h-[2.5em]">{t('login')}</p>
                                     </div>
                                 </Box>
                                 <Box
@@ -278,7 +283,7 @@ export default function Nav() {
                                     onClick={onRegisterOpen}
                                 >
                                     <div className="flex justify-center w-full bg-green-700 hover:bg-green-800 rounded-lg border-b-[3px] border-green-900">
-                                        <p className="flex justify-center items-center text-2xl text-center fill-slate-300 hover:fill-white h-[2.5em] ">Register</p>
+                                        <p className="flex justify-center items-center text-2xl text-center fill-slate-300 hover:fill-white h-[2.5em] ">{t('register')}</p>
                                     </div>
                                 </Box>
                             </div>
@@ -303,7 +308,7 @@ export default function Nav() {
                             <Image
                                 className="self-left w-[3.3em]"
                                 src="./logo-shape.png"
-                                alt="Return"
+                                alt={t('return')}
                                 borderRadius="lg"
                             />
                         </Box>
@@ -319,7 +324,6 @@ export default function Nav() {
                                 onMouseLeave={handleMouseLeaveButton}
                                 onClick={() => handleClickButton(index)}
                             >
-                                
                                 <Image
                                     className="self-left w-[3.3em] m-2"
                                     src={button.imagePath}
@@ -328,6 +332,19 @@ export default function Nav() {
                                 />
                             </Box>
                         ))}
+                        <Box
+                                width="100%"
+                                height="6em"
+                                className="flex py-[0.5em] justify-center items-center hover:bg-gray-950"
+                                onClick={onSettingsOpen}
+                            >
+                                <Image
+                                    className="self-left w-[3.3em] m-2"
+                                    src={'./settings-icon.svg'}
+                                    alt={t('settings')}
+                                    borderRadius="lg"
+                                />
+                            </Box>
                     </div>
                     <div className="flex flex-col space-y-4 mb-10 items-center">
                         {auth?.isLoggedIn ? (
@@ -347,13 +364,13 @@ export default function Nav() {
                                             className="h-[2.5em] text-xl flex text-gray-100 items-center pl-3 filter brightness-100 hover:brightness-75 bg-slate-900"
                                             onClick={onChangeUsernameOpen}
                                         >
-                                            Change Username
+                                            {t('change_username')}
                                         </Box>
                                         <Box
                                             className="h-[2.5em] text-xl flex text-gray-100 items-center pl-3 filter brightness-100 hover:brightness-75 bg-slate-900"
                                             onClick={onLogoutOpen}
                                         >
-                                            Log out
+                                            {t('log_out')}
                                         </Box>
                                     </PopoverBody>
                                 </PopoverContent>
@@ -398,13 +415,13 @@ export default function Nav() {
                             <h1
                                 className="text-sm font-bold uppercase text-transparent bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 bg-clip-text drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)] tracking-widest font-orbitronFont"
                             >
-                            Minesweeper
+                            MINESWEEPER
                             </h1>
 
                             <h2
                                 className="text-sm mt-4 uppercase text-[#85ECFA] tracking-widest font-audiowideFont"
                             >
-                                Battle
+                                BATTTLE
                             </h2>
                         </Box>
                     </Link>
@@ -452,13 +469,13 @@ export default function Nav() {
                                             className="h-[2.5em] text-xl flex text-gray-100 items-center pl-3 filter brightness-100 hover:brightness-75 bg-slate-900"
                                             onClick={onChangeUsernameOpen}
                                         >
-                                            Change Username
+                                            {t('change_username')}
                                         </Box>
                                         <Box
                                             className="h-[2.5em] text-xl flex text-gray-100 items-center pl-3 filter brightness-100 hover:brightness-75 bg-slate-900"
                                             onClick={onLogoutOpen}
                                         >
-                                            Log out
+                                            {t('log_out')}
                                         </Box>
                                     </PopoverBody>
                                 </PopoverContent>
@@ -467,24 +484,25 @@ export default function Nav() {
                             <div className="flex flex-col w-full gap-2">
                                 <Box
                                     width="100%"
-                                
-                                    className="flex w-full h-16  bg-slate-800 fill-slate-300 hover:fill-white justify-center rounded-lg items-center hover:bg-gray-950 text-gray-200"
-                                    onClick={onLoginOpen}
+                                    height="5em"
+                                    className="flex py-[0.5em] text-white fill-slate-300 hover:fill-white justify-center items-center hover:bg-gray-950 "
+                                    onClick={onRegisterOpen}
                                 >
-                                    <div className="flex justify-center items-center text-center w-full bg-slate-700 hover:bg-slate-800 rounded-lg border-b-[3px] border-slate-900">
-                                        <p className="flex justify-center items-center text-2xl text-center fill-slate-300 hover:fill-white h-[2.5em]">Login</p>
+                                    <div className="flex justify-center w-full bg-green-700 hover:bg-green-800 rounded-lg border-b-[3px] border-green-900">
+                                        <p className="flex justify-center items-center text-2xl text-center fill-slate-300 hover:fill-white h-[2.5em] ">{t('register')}</p>
                                     </div>
                                 </Box>
                                 <Box
                                     width="100%"
-                                    height="5em"
-                                    className="flex py-[0.5em] fill-slate-300 hover:fill-white justify-center items-center hover:bg-gray-950 "
-                                    onClick={onRegisterOpen}
+                                
+                                    className="flex w-full h-16  bg-slate-800 fill-slate-300 hover:fill-white justify-center rounded-lg items-center hover:bg-gray-950 text-gray-300"
+                                    onClick={onLoginOpen}
                                 >
-                                    <div className="flex justify-center w-full bg-green-700 hover:bg-green-800 rounded-lg border-b-[3px] border-green-900">
-                                        <p className="flex justify-center items-center text-2xl text-center fill-slate-300 hover:fill-white h-[2.5em] ">Register</p>
+                                    <div className="flex justify-center items-center text-center w-full bg-slate-700 hover:bg-slate-800 rounded-lg border-b-[3px] border-slate-900">
+                                        <p className="flex justify-center items-center text-2xl text-center fill-slate-300 hover:fill-white h-[2.5em]">{t('login')}</p>
                                     </div>
                                 </Box>
+                                
                             </div>
                         )}
                     </div>
@@ -508,17 +526,18 @@ export default function Nav() {
             <LoginModal isOpen={isLoginOpen} onClose={onLoginClose} />
             <RegisterModal isOpen={isRegisterOpen} onClose={onRegisterClose} />
             <ChangeUsernameModal isOpen={isChangeUsernameOpen} onClose={onChangeUsernameClose} />
+            <SettingsModal isOpen={isSettingsOpen} onClose={onSettingsClose} />
             <Modal isCentered isOpen={isLogoutOpen} onClose={onLoginClose}>
                 <ModalOverlay />
                 <ModalContent>
-                    <ModalHeader>Log out</ModalHeader>
+                    <ModalHeader>{t('log_out')}</ModalHeader>
                     <ModalCloseButton onClick={onLogoutClose} />
                     <ModalBody>
-                        <p>Do you want to log out?</p>
+                        <p>{t('logout_confirmation')}</p>
                     </ModalBody>
                     <ModalFooter>
-                        <Button onClick={auth?.logout} marginRight={4}>Logout</Button>
-                        <Button onClick={onLogoutClose}>Close</Button>
+                        <Button onClick={auth?.logout} marginRight={4}>{t('logout')}</Button>
+                        <Button onClick={onLogoutClose}>{t('close')}</Button>
                     </ModalFooter>
                 </ModalContent>
             </Modal>
