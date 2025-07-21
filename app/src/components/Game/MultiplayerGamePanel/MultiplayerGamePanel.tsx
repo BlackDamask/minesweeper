@@ -2,9 +2,12 @@ import { useGameContext } from '../../../GameProvider';
 import Game from '../Game';
 import { GameData, Tile } from '../data';
 import { Select, useDisclosure} from '@chakra-ui/react';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import MultiplayerGameEnd from '../../Modals/MultipalyerGameEnd';
 import './MultiplayerGamePanel.css';
+import { AuthContext } from '../../../AuthProvider';
+import axios from '../../../api/axios';
+import { useTranslation } from 'react-i18next';
 
 
 const generateResizeValues = () =>{
@@ -15,13 +18,25 @@ const generateResizeValues = () =>{
     return(resizeValues);
 }
 
+const getDefaultZoom = () => {
+    if (typeof window !== 'undefined') {
+        if (window.innerWidth < 640) return 26; // mobile
+        if (window.innerWidth < 1024) return 36; // tablet
+        return 46; // desktop
+    }
+    return 26;
+};
+
+
 export default function MultiplayerGamePanel({gameField, colIndex, rowIndex, selectedOption} 
     : 
     {gameField : Tile[][], colIndex: number, rowIndex: number, selectedOption: number}) 
 {
+    const { t } = useTranslation();
     const game = useGameContext();
+    const auth = useContext(AuthContext);
 
-    const [selectedZoom, setSelectedZoom] = useState(26);
+    const [selectedZoom, setSelectedZoom] = useState(() => getDefaultZoom());
     const [currentGameData, setCurrentGameData] = useState<GameData>(
         new GameData({ gameField: gameField, colStartIndex: colIndex, rowStartIndex: rowIndex })
     );
@@ -29,32 +44,46 @@ export default function MultiplayerGamePanel({gameField, colIndex, rowIndex, sel
     const { isOpen, onOpen, onClose } = useDisclosure();
 
     const [timer, setTimer] = useState("00:00");
-
-    
+    const [minutes, setMinutes] = useState(0);
+    const [seconds, setSeconds] = useState(0);
 
     useEffect(() => {
+        let interval: NodeJS.Timeout | null = null;
+
         const getTime = () => {
-            if(game?.startTime){
-                const time = Date.now() - game?.startTime - 52*60000 - 3000;
-                let minutes = String(Math.floor((time / 1000 / 60) % 60));
-                let seconds = String(Math.floor((time / 1000) % 60));
-                if(minutes.length === 1){
-                    minutes = "0"+minutes
+            if (game?.startTime) {
+                const time = Date.now() - game?.startTime - 57*60000 - 36000;
+                let minutes = Math.floor((time / 1000 / 60) % 60);
+                let seconds = Math.floor((time / 1000) % 60);
+                setMinutes(minutes);
+                setSeconds(seconds);
+                let minutesString = minutes.toString();
+                let secondsString = seconds.toString();
+                if (minutesString.length === 1) {
+                    minutesString = "0" + minutesString;
                 }
-                if(seconds.length === 1){
-                    seconds = "0"+seconds
+                if (secondsString.length === 1) {
+                    secondsString = "0" + secondsString;
                 }
-                setTimer(minutes+":"+ seconds);
-            }
-            else{
+                setTimer(minutesString + ":" + secondsString);
+            } else {
                 setTimer("00:00");
+                setMinutes(0);
+                setSeconds(0);
             }
-            
-          };
-        const interval = setInterval(() => getTime(), 1000);
-        
-        return () => clearInterval(interval);
-      }, [game]);
+        };
+
+        if (!game?.isGameEnded) {
+            interval = setInterval(getTime, 1000);
+        } else {
+            // Optionally set timer to final value here
+            getTime();
+        }
+
+        return () => {
+            if (interval) clearInterval(interval);
+        };
+    }, [game?.startTime, game?.isGameEnded]);
 
     const handleSelectMode = (event: any) => {
         const selectedMode = Number(event.target.value); 
@@ -72,18 +101,45 @@ export default function MultiplayerGamePanel({gameField, colIndex, rowIndex, sel
         const onGameFieldChange = () => {
             game?.setCurrentGameData(currentGameData);
         };
-        
-        const onIsGameEndedChange = () => {
-            console.log("Game Ended:", game?.isGameEnded);
-            console.log("Game Won:", game?.isWon);
-            if (game?.isGameEnded ) {
-                onOpen();
-            }
-        };
-    
         onGameFieldChange();
-        onIsGameEndedChange();
-    }, [currentGameData, game, onOpen]);
+    }, [currentGameData, game]);
+
+    useEffect(() => {
+        if (game?.isGameEnded) {
+            console.log(currentGameData.isWin);
+            console.log(auth?.isLoggedIn);
+            console.log(auth?.accessToken);
+            console.log(currentGameData.time);
+            let time = minutes * 60 + seconds;
+            currentGameData.time = time;
+            if (
+                currentGameData.isWin &&
+                auth?.isLoggedIn &&
+                auth?.accessToken &&
+                currentGameData.time !== null
+            ) {
+                const modeIndex = selectedOption - 1;
+                const currentRecord = auth?.records[modeIndex];
+                const newTime = currentGameData.time;
+                if (currentRecord === null || newTime < currentRecord) {
+                    const newRecords: (number | null)[] = [null, null, null];
+                    newRecords[modeIndex] = newTime;
+                    axios.put("/player/records", newRecords, {
+                        headers: {
+                            Authorization: `Bearer ${auth.accessToken}`,
+                            "Content-Type": "application/json"
+                        }
+                    })
+                    .then(res => {
+                        if (res.data?.data && Array.isArray(res.data.data)) {
+                            auth?.setRecords(res.data.data);
+                        }
+                    });
+                }
+            }
+            onOpen();
+        }
+    }, [game?.isGameEnded, currentGameData, auth, minutes, seconds, selectedOption, onOpen]);
     
     
     return(
@@ -103,7 +159,7 @@ export default function MultiplayerGamePanel({gameField, colIndex, rowIndex, sel
                         defaultValue={26}
                         >
                         {resizeValues.map((value) => (
-                            <option key={value} value={value} >🔍 {value}</option>
+                            <option className='text-black' key={value} value={value} >🔍 {value}</option>
                         ))}
                     </Select>
                     <Select
@@ -124,7 +180,7 @@ export default function MultiplayerGamePanel({gameField, colIndex, rowIndex, sel
             <div className='h-fit w-fit'>
                 
             <div className={`flex mt-5 ${game?.isExploaded ? 'text-white' : 'text-transparent'} text-xl `}>
-                <p>You Exploaded</p>
+                <p>{t('youExploded')}</p>
             </div>
                 
                 <div className="h-full w-full pt-3 rounded-xl ">

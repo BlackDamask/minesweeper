@@ -1,6 +1,7 @@
 import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalCloseButton, Button, useDisclosure, Image, Select } from '@chakra-ui/react';
 import Controls from './Controls';
 import './GameControls.css';
+import { useTranslation } from 'react-i18next';
 
 export default function GameControls(props: {
     selectedZoom: number;
@@ -18,6 +19,7 @@ export default function GameControls(props: {
     }
     ) {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { t } = useTranslation();
 
   const handleSelectZoom = (event: any) => {
     const selectedValue = Number(event.target.value);
@@ -33,12 +35,12 @@ export default function GameControls(props: {
 
   return (
     <>
-      <div className='flex items-center mb-4 w-10'>
+      <div className='flex items-center mb-4 w-10 ml-0 sm:ml-5 md:ml-7 lg:ml-10 xl:ml-12'>
         <Image
           className="self-left"
           
           src="./settings-icon.svg"
-          alt="Return"
+          alt={t('settings')}
           borderRadius="lg"
           onClick= {onOpen}
           cursor='pointer'
@@ -46,7 +48,8 @@ export default function GameControls(props: {
         <div className='flex gap-4 ml-4'>
           <Select
             className='content'
-            width={'7rem'}
+            width={['6rem', '7rem', '7rem']}
+            fontSize={['0.7rem','1rem']}
             textAlign={'center'}
             color={'white'}
             size='md' 
@@ -58,12 +61,13 @@ export default function GameControls(props: {
             defaultValue={26}
           >
             {props.resizeValues.map((value) => (
-              <option  key={value}  value={value}>🔍 {value}</option>
+              <option className='text-black' key={value}  value={value}>🔍 {value}</option>
             ))}
           </Select>
           <Select
             className='content'
-            width={'10rem'}
+            width={['8rem', '10rem', '11rem']}
+            fontSize={['0.7rem','1rem']}
             color={'white'}
             borderColor={'#93c5fd'}
             borderWidth={'4px'}
@@ -71,7 +75,7 @@ export default function GameControls(props: {
             onChange={handleSelectChange}
             value={props.selectedOption}>
             <option className='text-black' value={1}>Beginner</option>
-            <option className='text-black' value={2}>Indermediate</option>
+            <option className='text-black' value={2}>Intermediate</option>
             <option className='text-black' value={3}>Expert</option>
           </Select>
         </div>
@@ -82,7 +86,7 @@ export default function GameControls(props: {
         <ModalContent
           backgroundColor={'#18181b'}>
           <ModalHeader 
-          className='text-blue-300'> Game Controls</ModalHeader>
+          className='text-blue-300'>{t('game_controls')}</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <Controls {...props} />

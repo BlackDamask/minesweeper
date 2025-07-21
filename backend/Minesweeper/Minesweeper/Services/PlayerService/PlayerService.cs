@@ -98,7 +98,7 @@ namespace Minesweeper.Services.PlayerService
                 if (existingQueueEntry != null)
                 {
                     Console.ForegroundColor = ConsoleColor.Magenta;
-                    Console.WriteLine("existingQueueEntry != null");
+                    Console.WriteLine("player is already in queue");
                     Console.ResetColor();
 
                     context.MatchmakingQueue.Remove(existingQueueEntry);
@@ -137,6 +137,11 @@ namespace Minesweeper.Services.PlayerService
             {
                 var position = await context.MatchmakingQueue.FirstOrDefaultAsync(p => p.PlayerId == playerId) ?? throw new Exception("Player not found");
                 context.MatchmakingQueue.Remove(position);
+                var player = await context.Users.FirstOrDefaultAsync(p => p.Id == playerId) ?? throw new Exception("Player not found");
+                string playerName = player.UserName;
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine("removed from queue "+ player.UserName);
+                Console.ResetColor();
                 await context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -167,6 +172,158 @@ namespace Minesweeper.Services.PlayerService
             }
             return serviceResponse;
         }   
+
+        public async Task<ServiceResponse<List<GetPlayerDTO>>> GetAllPlayers()
+        {
+            var serviceResponse = new ServiceResponse<List<GetPlayerDTO>>();
+            try
+            {
+                var players = await context.Users.ToListAsync();
+                serviceResponse.Data = players.Select(p => mapper.Map<GetPlayerDTO>(p)).ToList();
+                serviceResponse.Success = true;
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = ex.Message;
+            }
+            return serviceResponse;
+        }
+
+        public async Task<ServiceResponse<List<GetPlayerDTO>>> SearchPlayersByName(string namePart, string currentPlayerId)
+        {
+            var serviceResponse = new ServiceResponse<List<GetPlayerDTO>>();
+            try
+            {
+                var currentPlayer = await context.Users.FindAsync(currentPlayerId);
+                var friends = currentPlayer?.FriendsId ?? new List<string>();
+
+                var players = await context.Users
+                    .Where(p => p.PlayerName != null
+                                && p.PlayerName.ToLower().Contains(namePart.ToLower())
+                                && p.Id != currentPlayerId
+                                && !friends.Contains(p.Id))
+                    .OrderBy(p => p.PlayerName)
+                    .Take(5)
+                    .ToListAsync();
+
+                serviceResponse.Data = players.Select(p => mapper.Map<GetPlayerDTO>(p)).ToList();
+                serviceResponse.Success = true;
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = ex.Message;
+            }
+            return serviceResponse;
+        }
+
+        public async Task<ServiceResponse<List<GetPlayerDTO>>> GetFriends(string playerId)
+        {
+            var serviceResponse = new ServiceResponse<List<GetPlayerDTO>>();
+            try
+            {
+                var player = await context.Users.FindAsync(playerId);
+                if (player == null)
+                    throw new Exception("Player not found");
+
+                var friendsIds = player.FriendsId ?? new List<string>();
+                var friends = await context.Users
+                    .Where(u => friendsIds.Contains(u.Id))
+                    .ToListAsync();
+
+                serviceResponse.Data = friends.Select(f => mapper.Map<GetPlayerDTO>(f)).ToList();
+                serviceResponse.Success = true;
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = ex.Message;
+            }
+            return serviceResponse;
+        }
+
+        public async Task<ServiceResponse<bool>> RemoveFriend(string playerId, string friendId)
+        {
+            var serviceResponse = new ServiceResponse<bool>();
+            try
+            {
+                var player = await context.Users.FindAsync(playerId);
+                var friend = await context.Users.FindAsync(friendId);
+
+                if (player == null || friend == null)
+                    throw new Exception("Player or friend not found.");
+
+                player.FriendsId ??= new List<string>();
+                friend.FriendsId ??= new List<string>();
+
+                bool removedFromPlayer = player.FriendsId.Remove(friendId);
+                bool removedFromFriend = friend.FriendsId.Remove(playerId);
+
+                await context.SaveChangesAsync();
+
+                serviceResponse.Data = removedFromPlayer && removedFromFriend;
+                serviceResponse.Success = true;
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.Data = false;
+                serviceResponse.Success = false;
+                serviceResponse.Message = ex.Message;
+            }
+            return serviceResponse;
+        }
+
+        public async Task<ServiceResponse<int?[]>> GetRecords(string playerId)
+        {
+            var serviceResponse = new ServiceResponse<int?[]>();
+            try
+            {
+                var player = await context.Users.FindAsync(playerId);
+                if (player == null)
+                    throw new Exception("Player not found");
+
+                serviceResponse.Data = player.Records;
+                serviceResponse.Success = true;
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = ex.Message;
+            }
+            return serviceResponse;
+        }
+
+        public async Task<ServiceResponse<int?[]>> SetRecords(string playerId, int?[] newRecords)
+        {
+            var serviceResponse = new ServiceResponse<int?[]>();
+            try
+            {
+                var player = await context.Users.FindAsync(playerId);
+                if (player == null)
+                    throw new Exception("Player not found");
+
+                for (int i = 0; i < player.Records.Length && i < newRecords.Length; i++)
+                {
+                    if (newRecords[i] != null)
+                    {
+                        player.Records[i] = newRecords[i];
+                    }
+                }
+
+                await context.SaveChangesAsync();
+                serviceResponse.Data = player.Records;
+                serviceResponse.Success = true;
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = ex.Message;
+            }
+            return serviceResponse;
+        }
+        
+        
     }
 
 }

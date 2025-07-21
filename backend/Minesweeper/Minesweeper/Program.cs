@@ -13,6 +13,7 @@ using Minesweeper.Services;
 using Minesweeper.Services.AuthenticationService;
 using Minesweeper.Services.GameService;
 using Minesweeper.Services.EmailService;
+using Minesweeper.Services.RequestService;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -40,6 +41,8 @@ builder.Services.AddScoped<IPlayerService, PlayerService>();
 builder.Services.AddScoped<IMatchmakingService, MatchmakingService>();
 builder.Services.AddScoped<IGameService, GameService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IRequestService, RequestService>();
+
 builder.Services.AddHostedService<MatchmakingBackgroundService>();
 builder.Services.AddAuthorization();
 
@@ -85,7 +88,6 @@ string[] allowedOrigins = new[]
     "https://127.0.0.1"
 };
 
-// Add the CORS policy.
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend",

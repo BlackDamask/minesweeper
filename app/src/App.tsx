@@ -1,12 +1,14 @@
 import './App.css';
 import { BrowserRouter, Routes, Route } from "react-router-dom"
 import Layout from './pages/Layout/Layout';
-import { ChakraProvider, extendTheme } from '@chakra-ui/react'
-import SinglePlayer from './pages/SinglePlayer/SinglePlayer';
+import { ChakraProvider} from '@chakra-ui/react'
+import { SinglePlayer } from './pages/SinglePlayer/SinglePlayer';
 import Multiplayer from './pages/Multiplayer/Multiplayer';
 import Login from './pages/Login/Login';
+import i18n from './i18n';
 import ProtectedRoute from './ProtectedRoute';
 import Register from './pages/Register/Register';
+import FriendsPage from './pages/Friends/FriendsPage';
 
 
 
@@ -27,8 +29,14 @@ function App() {
               <Multiplayer></Multiplayer>
             </ProtectedRoute>
           }/>
+          <Route path="/friends" element={
+            <ProtectedRoute>
+              <FriendsPage></FriendsPage>
+            </ProtectedRoute>
+          }/>
           <Route path='/login' element={<Login></Login>}></Route>
           <Route path='/register' element={<Register></Register>}></Route>
+
         </Routes>
       </BrowserRouter>
     </ChakraProvider> 

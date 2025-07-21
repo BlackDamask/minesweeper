@@ -1,5 +1,6 @@
 import { Select } from '@chakra-ui/react';  
 import './GameControls.css';
+import { useTranslation } from 'react-i18next';
 
 interface ControlsProps {
   selectedZoom: number;
@@ -16,16 +17,13 @@ interface ControlsProps {
 }
 
 export default function Controls({
-  setSelectedZoom,
   selectedMode,
   setSelectedMode,
-  setSelectedOption,
-  setCurrentGameData,
-  setStartTime,
   selectedStyle,
   setSelectedStyle,
 }: ControlsProps) {
   
+  const { t } = useTranslation();
 
   const handleSelectMode = (event: any) => {
     const selectedMode = Number(event.target.value);
@@ -52,8 +50,8 @@ export default function Controls({
           onChange={handleStyleChange}
           value={selectedStyle}
         >
-          <option value={'modern'}>⬜️ Modern tiles</option>
-          <option value={'default'}> ⬜️ Classic tiles</option>
+          <option className='text-black' value={'modern'}>{t('modern_tiles')}</option>
+          <option className='text-black' value={'default'}>{t('classic_tiles')}</option>
         </Select>
       </div>
       <Select
@@ -67,8 +65,8 @@ export default function Controls({
         onChange={handleSelectMode}
         value={selectedMode}
       >
-        <option value={1}>👆 💣</option>
-        <option value={2}>👆 🚩</option>
+        <option className='text-black' value={1}>{t('reveal_mode')}</option>
+        <option className='text-black' value={2}>{t('flag_mode')}</option>
       </Select>
     </div>
   );

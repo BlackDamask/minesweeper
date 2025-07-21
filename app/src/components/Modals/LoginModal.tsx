@@ -3,9 +3,11 @@ import { ReactComponent as UserIcon } from "./user-icon.svg";
 import { ReactComponent as LockIcon } from "./lock-icon.svg";
 import { useContext, useState } from 'react';
 import { AuthContext } from '../../AuthProvider';
+import { useTranslation } from 'react-i18next';
 
 export default function LoginModal({isOpen, onClose} : {isOpen: boolean, onClose: () => void}){
     const auth = useContext(AuthContext);
+    const { t } = useTranslation();
 
     const [formData, setFormData] = useState({ email: '', password: '' });
     const [isLoadingLogIn, setLoadingLogIn] = useState(false);
@@ -22,7 +24,7 @@ export default function LoginModal({isOpen, onClose} : {isOpen: boolean, onClose
         try{
             if (!result.success) {
                 toast({
-                    title: "Login failed",
+                    title: t('loginFailed'),
                     description: `${result.message}`,
                     status: 'error',
                     isClosable: true,
@@ -30,7 +32,7 @@ export default function LoginModal({isOpen, onClose} : {isOpen: boolean, onClose
             }
             else{
                 toast({
-                    title: "Login successed",
+                    title: t('loginSucceeded'),
                     status: 'success',
                     isClosable: true,
                 });
@@ -39,7 +41,7 @@ export default function LoginModal({isOpen, onClose} : {isOpen: boolean, onClose
         }
         catch(error){
             toast({
-                title: "Login failed",
+                title: t('loginFailed'),
                 description: `${result.message}`,
                 status: 'error',
                 isClosable: true,
@@ -56,7 +58,7 @@ export default function LoginModal({isOpen, onClose} : {isOpen: boolean, onClose
         try{
             if (!result.success) {
                 toast({
-                    title: "Login failed",
+                    title: t('loginFailed'),
                     description: `${result.message}`,
                     status: 'error',
                     isClosable: true,
@@ -64,7 +66,7 @@ export default function LoginModal({isOpen, onClose} : {isOpen: boolean, onClose
             }
             else{
                 toast({
-                    title: "Login successed",
+                    title: t('loginSucceeded'),
                     status: 'success',
                     isClosable: true,
                 });
@@ -73,7 +75,7 @@ export default function LoginModal({isOpen, onClose} : {isOpen: boolean, onClose
         }
         catch(error){
             toast({
-                title: "Login failed",
+                title: t('loginFailed'),
                 description: `${result.message}`,
                 status: 'error',
                 isClosable: true,
@@ -86,11 +88,10 @@ export default function LoginModal({isOpen, onClose} : {isOpen: boolean, onClose
     }
     return(
         <Modal isOpen={isOpen} onClose={onClose} isCentered size="lg">
-            <ModalOverlay
-            />
-            <ModalContent bg={'#212226'} >
-                <ModalHeader className="text-gray-200 text-center">
-                    Log In
+            <ModalOverlay />
+            <ModalContent bg={'#0A0A0A'} borderWidth={'4px'} borderColor={'#85ECFA'} borderRadius={'2xl'}>
+                <ModalHeader className="text-[#85ECFA] text-center">
+                    {t('logInTitle')}
                 </ModalHeader>
                 <ModalBody>
                     <Stack spacing={4}>
@@ -98,41 +99,59 @@ export default function LoginModal({isOpen, onClose} : {isOpen: boolean, onClose
                             <InputLeftElement pointerEvents='none' className="text-gray-400" fontSize='1.2em'>
                                 <UserIcon className="w-5 fill-gray-400"/>
                             </InputLeftElement>
-                            <Input name="email"
+                            <Input
+                                name="email"
                                 type='email'
-                                color = "white"
+                                color="white"
+                                placeholder={t('email')}
                                 onChange={handleChange}
                                 value={formData.email}
-                                placeholder='Email' 
-                            />
+                                bg={'black'}
+                                border={'none'}
+                                boxShadow={'0 0 0 1px #a855f7'}
+                                _hover={{
+                                    boxShadow: '0 0 0 4px #a855f7',
+                            }}
+                            _focus={{
+                                boxShadow: '0 0 0 4px #a855f7',
+                            }}
+                        />
                         </InputGroup>
                         <InputGroup bg={'#38393c'}>
                             <InputLeftElement pointerEvents='none' className="text-gray-400" fontSize='1.2em'>
                                 <LockIcon className="w-5 fill-gray-400"/>
                             </InputLeftElement>
-                            <Input 
+                            <Input
                                 name='password'
-                                type='password' 
-                                color = "white"
-                                placeholder='Password' 
-                                onChange={handleChange} 
+                                type='password'
+                                color="white"
+                                placeholder={t('password')}
+                                onChange={handleChange}
                                 value={formData.password}
-                            />
+                                bg={'black'}
+                                border={'none'}
+                                boxShadow={'0 0 0 1px #a855f7'}
+                                _hover={{
+                                    boxShadow: '0 0 0 4px #a855f7',
+                            }}
+                            _focus={{
+                                boxShadow: '0 0 0 4px #a855f7',
+                            }}
+                        />
                         </InputGroup>
                     </Stack>
-                    
                 </ModalBody>
                 <ModalFooter className="flex flex-col">
-                <Box 
-                    className="flex items-center justify-center w-2/6 m-auto text-white text-xl font-bold h-14 bg-green-700 hover:bg-green-800 rounded-lg border-b-[3px] border-green-900" 
+                <Box
+                    className="flex items-center justify-center w-2/6 m-auto text-white text-xl font-bold h-14 bg-green-500 hover:bg-green-600 rounded-lg border-b-[3px] border-green-900"
                     onClick={handleSubmit}
-                    style={{ cursor: 'pointer' }}
+                    style={{ cursor: 'pointer', opacity: isLoadingLogIn ? 0.6 : 1 }}
                 >
-                    {isLoadingLogIn ? 'Loading...' : 'Log In'}
+                    {isLoadingLogIn ? t('loading') : t('logIn')}
                 </Box>
                 <p className="text-gray-200 mt-3 underline text-lg cursor-pointer hover:text-white"
                     onClick={handleGuestLogin}>
-                        {isLoadingGuest ? 'Loading...' : 'Or Play As Guest'}
+                        {isLoadingGuest ? t('loading') : t('playAsGuest')}
                 </p>
                 </ModalFooter>
             </ModalContent>

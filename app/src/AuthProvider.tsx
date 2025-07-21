@@ -6,6 +6,7 @@ interface ApiResponse<T> {
 }
 
 interface User {
+  id: string;
   playerName: string;
   points: number;
   isGuest:boolean;
@@ -19,6 +20,8 @@ interface AuthContextType {
   changeUsername: (username: string) => Promise<{ success: boolean; message?: string }>
   accessToken: string | null;
   isLoggedIn: boolean;
+  records: (number|null)[];
+  setRecords: React.Dispatch<React.SetStateAction<(number|null)[]>>;
 }
 
 interface AuthProviderProps {
@@ -33,6 +36,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [accessToken, setAccessToken] = useState<string | null>(localStorage.getItem("accessToken"));
   const [refreshToken, setRefreshToken] = useState<string | null>(localStorage.getItem("refreshToken"));
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const [records, setRecords] = useState<(number|null)[]>([null, null, null]);
 
   // Login function
   const login = async (email: string | null, password: string | null, isGuest: boolean): Promise<{ success: boolean; message?: string }> => {
@@ -67,7 +71,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const changeUsername = async (userName: string): Promise<{ success: boolean; message?: string }> => {
     try {
       await axios.put(
-        `https://213.176.114.172:5000/api/player/change-username`,
+        `https://localhost:5150/api/player/change-username`,
         null, // No body needed, as userName is sent as a query parameter
         {
           params: { userName: userName }, // Add userName as a query parameter
@@ -75,8 +79,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         }
       );
       
-      const userProfile = await axios.get<ApiResponse<User>>("/player/profile", {
-        headers: { Authorization: `Bearer ${accessToken}` },
+        const userProfile = await axios.get<ApiResponse<User>>("/player/profile", {
+          headers: { Authorization: `Bearer ${accessToken}` },
       });
       
       setUser(userProfile.data.data);
@@ -158,7 +162,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, [accessToken, refreshToken]);
 
   return (
-    <AuthContext.Provider value={{ user, login, register, logout, changeUsername, accessToken, isLoggedIn }}>
+    <AuthContext.Provider value={{ user, login, register, logout, changeUsername, accessToken, isLoggedIn, records, setRecords }}>
       {children}
     </AuthContext.Provider>
   );

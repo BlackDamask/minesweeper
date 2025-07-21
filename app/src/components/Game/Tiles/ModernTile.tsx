@@ -20,12 +20,12 @@ const tileColorMap: { [key in TileColor]: { default: string; clicked: string; wi
     'light-tile': {
         default: '#25313f',
         clicked: '#25313f88',
-        withBomb: '#bb8c44',
+        withBomb: '#25313f88',
     },
     'dark-tile': {
         default: '#25313f',
         clicked: '#25313f88',
-        withBomb: '#bb8c44',
+        withBomb: '#25313f88',
     },
     };
 
@@ -101,14 +101,15 @@ export default function ModernTile({ tile,rowIndex, colIndex, selectedZoom, hand
 
         {tile.isFlagged && !tile.isRevealed && (
             <Image
-                          className="self-center w-3/4"
-                          onContextMenuCapture={(e) => e.preventDefault()}
-                          src="./flag.png"
-                          alt="Return"
-                          borderRadius="lg"
-                          cursor='pointer'
-                        /> 
+                className="self-center w-3/4"
+                onContextMenuCapture={(e) => e.preventDefault()}
+                src="./flag.png"
+                alt="Return"
+                borderRadius="lg"
+                cursor='pointer'
+            /> 
         )}
+        {/* without cheats */ }
         {tile.hasBomb && tile.isRevealed && (
             <img
                 className="h-3/4 m-2"
@@ -116,6 +117,14 @@ export default function ModernTile({ tile,rowIndex, colIndex, selectedZoom, hand
                 src="./logo192.png"
             />
         )}
+        {/* cheats */ }
+        {/* {tile.hasBomb && (
+            <img
+                className="h-3/4 m-2"
+                alt=""
+                src="./logo192.png"
+            />
+        )} */}
     </div>
   );
 }

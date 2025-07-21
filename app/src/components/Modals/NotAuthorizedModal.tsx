@@ -2,8 +2,10 @@ import { Modal, ModalOverlay, ModalHeader, ModalBody,  ModalFooter, Box, ModalCo
 import { useContext, useState } from 'react';
 import { AuthContext } from '../../AuthProvider';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 export default function NotAuthorizedModal({isOpen, onClose} : {isOpen: boolean, onClose: () => void}){
+    const { t } = useTranslation();
     const auth = useContext(AuthContext);
 
     const [isLoading, setLoading] = useState(false);
@@ -24,7 +26,7 @@ export default function NotAuthorizedModal({isOpen, onClose} : {isOpen: boolean,
         try{
             if (!result.success) {
                 toast({
-                    title: "Login failed",
+                    title: t('loginFailed'),
                     description: `${result.message}`,
                     status: 'error',
                     isClosable: true,
@@ -32,7 +34,7 @@ export default function NotAuthorizedModal({isOpen, onClose} : {isOpen: boolean,
             }
             else{
                 toast({
-                    title: "Login successed",
+                    title: t('loginSucceeded'),
                     status: 'success',
                     isClosable: true,
                 });
@@ -41,7 +43,7 @@ export default function NotAuthorizedModal({isOpen, onClose} : {isOpen: boolean,
         }
         catch(error){
             toast({
-                title: "Login failed",
+                title: t('loginFailed'),
                 description: `${result.message}`,
                 status: 'error',
                 isClosable: true,
@@ -59,30 +61,30 @@ export default function NotAuthorizedModal({isOpen, onClose} : {isOpen: boolean,
             />
             <ModalContent bg={'#0A0A0A'} borderWidth={'4px'} borderColor={'#85ECFA'} borderRadius={'2xl'}>
                 <ModalHeader className="text-[#85ECFA] text-center" fontSize={'2xl'}>
-                    <p>Play <span className='text-purple-500'>Minesweeper</span> online</p>
+                    <p dangerouslySetInnerHTML={{ __html: t('playMinesweeperOnlineModal') }} />
                 </ModalHeader>
                 <ModalBody>
-                    
                 <Box 
-                    className="flex items-center justify-center w-4/6 m-auto mt-6 text-gray-50 text-xl font-bold h-14 bg-green-500 hover:bg-green-600 rounded-lg border-b-[3px] border-green-700" 
-                    onClick={handleLogin}
-                    style={{ cursor: 'pointer' }}
-                >
-                    Log In
-                </Box>
-                <Box 
-                    className="flex items-center justify-center w-4/6 m-auto mt-6 text-white text-xl font-bold h-14 bg-zinc-700 hover:bg-zinc-800 rounded-lg border-b-[3px] border-zinc-800" 
+                    className="flex items-center justify-center w-4/6 m-auto mt-6 text-white text-xl font-bold h-14 bg-green-500 hover:bg-green-700 rounded-lg border-b-[3px] border-green-800" 
                     onClick={handleRegister}
                     style={{ cursor: 'pointer' }}
                 >
-                    Register
+                    {t('register')}
                 </Box>
+                <Box 
+                    className="flex items-center justify-center w-4/6 m-auto mt-6 text-gray-50 text-xl font-bold h-14 bg-zinc-500 hover:bg-zinc-600 rounded-lg border-b-[3px] border-zinc-700" 
+                    onClick={handleLogin}
+                    style={{ cursor: 'pointer' }}
+                >
+                    {t('logIn')}
+                </Box>
+                
                     
                 </ModalBody>
                 <ModalFooter display={'flex'} justifyContent={'center'}>
                 <p className="text-white mt-3 underline text-lg cursor-pointer hover:text-white"
                     onClick={handleGuestLogin}>
-                        {isLoading ? 'Loading...' : 'Or Play As Guest'}
+                        {isLoading ? t('loading') : t('orPlayAsGuest')}
                 </p>
                 </ModalFooter>
             </ModalContent>

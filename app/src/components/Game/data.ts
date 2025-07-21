@@ -1,3 +1,5 @@
+import { start } from "repl";
+
 export interface Tile {
     color: string;
     hasBomb: boolean;
@@ -42,8 +44,8 @@ export class GameData {
 
     private startTime: number | null = null;
     private endTime: number | null = null;
-    public time: string | null = null;
-
+    public time: number | null = null;
+    public elapsedEndTime: number | null = null;
     constructor(config: { difficulty?: number; gameField?: Tile[][]; colStartIndex?: number; rowStartIndex?: number; isExploaded?: boolean }) {
         
         if (config.difficulty !== undefined && this.isExploaded !==undefined) {
@@ -183,24 +185,27 @@ export class GameData {
     }
 
     private GameOver(isWin: boolean): void {
-        console.error(this.numberOfRevealedTiles);
+        this.endTime = Date.now();
+        console.log("Game Over");
+        console.log("Start Time: " + this.startTime);
+        console.log("End Time: " + this.endTime);
+        if(this.endTime !== null && this.startTime !== null){
+            console.log("Total Time: " + (this.endTime - this.startTime));
+        }
         this.isGameOver = true;
         this.isWin = isWin;
-        this.endTime = Date.now();
+        
         this.time = this.getElapsedTime();
     }
 
-    private getElapsedTime(): string {
-        if (this.startTime === null) return "0s";
+    private getElapsedTime(): number {
+        if (this.startTime === null) return 0;
         
         const end = this.endTime || Date.now();
         const elapsedMilliseconds = end - this.startTime;
-        const elapsedSeconds = Math.floor(elapsedMilliseconds / 1000);
-        
-        const minutes = Math.floor(elapsedSeconds / 60);
-        const seconds = elapsedSeconds % 60;
-
-        return `${minutes}m ${seconds}s`;
+        const seconds = Math.floor(elapsedMilliseconds / 1000);
+        console.log("Elapsed Time in seconds: " + seconds);
+        return seconds;
     }
 
     private RevealTile(colIndex: number, rowIndex: number): void {

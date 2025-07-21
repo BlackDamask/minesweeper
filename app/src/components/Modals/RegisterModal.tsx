@@ -16,8 +16,10 @@ import {
   import { ReactComponent as LockIcon } from "./lock-icon.svg";
   import { useContext, useState } from 'react';
   import { AuthContext } from '../../AuthProvider';
+  import { useTranslation } from 'react-i18next';
   
   export default function RegisterModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
+    const { t } = useTranslation();
     const auth = useContext(AuthContext);
     const [formData, setFormData] = useState({ username: '', email: '', password: '' });
     const [loading, setLoading] = useState(false);
@@ -31,7 +33,7 @@ import {
       try{
           if (!result.success) {
               toast({
-                  title: "Login failed",
+                  title: t('loginFailed'),
                   description: `${result.message}`,
                   status: 'error',
                   isClosable: true,
@@ -39,7 +41,7 @@ import {
           }
           else{
               toast({
-                  title: "Login successed",
+                  title: t('loginSucceeded'),
                   status: 'success',
                   isClosable: true,
               });
@@ -48,7 +50,7 @@ import {
       }
       catch(error){
           toast({
-              title: "Login failed",
+              title: t('loginFailed'),
               description: `${result.message}`,
               status: 'error',
               isClosable: true,
@@ -74,7 +76,7 @@ import {
             }
             else{
                 toast({
-                    title: "Registration successed",
+                    title: t('registrationSucceeded'),
                     status: 'success',
                     isClosable: true,
                 });
@@ -83,7 +85,7 @@ import {
         }
         catch(error){
             toast({
-                title: "Registration failed",
+                title: t('registrationFailed'),
                 description: `${error}`,
                 status: 'error',
                 isClosable: true,
@@ -97,8 +99,8 @@ import {
     return (
       <Modal isOpen={isOpen} onClose={onClose} isCentered size="lg">
         <ModalOverlay />
-        <ModalContent bg={'#212226'}>
-          <ModalHeader className="text-gray-200 text-center">Register</ModalHeader>
+        <ModalContent bg={'#0A0A0A'} borderWidth={'4px'} borderColor={'#85ECFA'} borderRadius={'2xl'}>
+          <ModalHeader className="text-[#85ECFA] text-center">{t('register')}</ModalHeader>
           <ModalBody>
             <Stack spacing={4}>
               <InputGroup bg={'#38393c'}>
@@ -108,10 +110,19 @@ import {
                 <Input
                   name="username"
                   type="text"
-                  color = "white"
-                  placeholder="User name"
+                  color="white"
+                  placeholder={t('username')}
                   onChange={handleChange}
                   value={formData.username}
+                  bg={'black'}
+                  border={'none'}
+                  boxShadow={'0 0 0 1px #a855f7'}
+                  _hover={{
+                    boxShadow: '0 0 0 4px #a855f7',
+                  }}
+                  _focus={{
+                    boxShadow: '0 0 0 4px #a855f7',
+                  }}
                 />
               </InputGroup>
               <InputGroup bg={'#38393c'}>
@@ -121,10 +132,19 @@ import {
                 <Input
                   name="email"
                   type="email"
-                  color = "white"
-                  placeholder="Email"
+                  color="white"
+                  placeholder={t('email')}
                   onChange={handleChange}
                   value={formData.email}
+                  bg={'black'}
+                  border={'none'}
+                  boxShadow={'0 0 0 1px #a855f7'}
+                  _hover={{
+                    boxShadow: '0 0 0 4px #a855f7',
+                  }}
+                  _focus={{
+                    boxShadow: '0 0 0 4px #a855f7',
+                  }}
                 />
               </InputGroup>
               <InputGroup bg={'#38393c'}>
@@ -134,29 +154,37 @@ import {
                 <Input
                   name="password"
                   type="password"
-                  color = "white"
-                  placeholder="Password"
+                  color="white"
+                  placeholder={t('password')}
                   onChange={handleChange}
                   value={formData.password}
+                  bg={'black'}
+                  border={'none'}
+                  boxShadow={'0 0 0 1px #a855f7'}
+                  _hover={{
+                    boxShadow: '0 0 0 4px #a855f7',
+                  }}
+                  _focus={{
+                    boxShadow: '0 0 0 4px #a855f7',
+                  }}
                 />
               </InputGroup>
             </Stack>
           </ModalBody>
           <ModalFooter className="flex flex-col">
             <Box
-              className="flex items-center justify-center w-2/6 m-auto text-white text-xl font-bold h-14 bg-green-700 hover:bg-green-800 rounded-lg border-b-[3px] border-green-900"
+              className="flex items-center justify-center w-2/6 m-auto text-white text-xl font-bold h-14 bg-green-500 hover:bg-green-700 rounded-lg border-b-[3px] border-green-900"
               onClick={handleSubmit}
               style={{ cursor: 'pointer', opacity: loading ? 0.6 : 1 }}
             >
-              {loading ? 'Loading...' : 'Sign Up'}
+              {loading ? t('loading') : t('signUp')}
             </Box>
             <p className="text-gray-200 mt-3 underline text-lg cursor-pointer hover:text-white"
                 onClick={handleGuestLogin}>
-                    {isLoadingGuest ? 'Loading...' : 'Or Play As Guest'}
+                    {isLoadingGuest ? t('loading') : t('orPlayAsGuest')}
             </p>
           </ModalFooter>
         </ModalContent>
       </Modal>
     );
   }
-  
