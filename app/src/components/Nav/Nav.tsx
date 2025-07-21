@@ -445,7 +445,22 @@ export default function Nav() {
                                 />
                                 <p className="text-cyan-300 text-lg">{button.alt}</p>
                             </Box>
+                            
                         ))}
+                        <Box
+                                width="100%"
+                                height="6em"
+                                className="flex py-[0.5em]  items-center hover:bg-gray-950 w-full"
+                                onClick={onSettingsOpen}
+                            >
+                                <Image
+                                    className="self-left w-[3.3em] m-2"
+                                    src={'./settings-icon.svg'}
+                                    alt={t('settings')}
+                                    borderRadius="lg"
+                                /><p className="text-cyan-300 text-lg">{t('settings')}</p>
+                            </Box>
+                            
                     </div>
                     <div className="flex flex-col space-y-4 mb-10 items-center w-[80%]">
                         {auth?.isLoggedIn ? (
