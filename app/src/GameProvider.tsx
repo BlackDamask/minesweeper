@@ -123,7 +123,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Create SignalR connection only once on mount
   useEffect(() => {
     const connection = new signalR.HubConnectionBuilder()
-      .withUrl("http://localhost:5150/game", {
+      .withUrl("http://51.20.132.10:5000/game", {
         accessTokenFactory: () => accessToken ?? "",
       })
       .withAutomaticReconnect()

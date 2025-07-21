@@ -71,7 +71,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const changeUsername = async (userName: string): Promise<{ success: boolean; message?: string }> => {
     try {
       await axios.put(
-        `https://localhost:5150/api/player/change-username`,
+        `http://51.20.132.10:5000/api/player/change-username`,
         null, // No body needed, as userName is sent as a query parameter
         {
           params: { userName: userName }, // Add userName as a query parameter
