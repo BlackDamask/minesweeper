@@ -197,7 +197,7 @@ export default function FriendsPage(){
                     isClosable: true,
                 });
                 setFriends(prev => prev.filter((friend: any) => friend.id !== friendId));
-                // onClose(); // onClose is not defined in this scope
+                
             }
         } catch (err: any) {
             console.error("Error removing friend:", err);
