@@ -8,6 +8,7 @@ namespace Minesweeper.DTOs.GameDTO
         public required int ColBeginIndex { get; set; }
         public required int RowBeginIndex { get; set; }
         public required string EnemyName { get; set; }
+        public required string EnemyId { get; set; }
         public int? EnemyProgress { get; set; }
         public int StartTime { get; set; }
     }

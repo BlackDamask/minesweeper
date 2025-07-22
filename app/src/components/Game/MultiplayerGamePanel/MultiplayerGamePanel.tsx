@@ -121,7 +121,7 @@ export default function MultiplayerGamePanel({gameField, colIndex, rowIndex, sel
                 const modeIndex = selectedOption - 1;
                 const currentRecord = auth?.records[modeIndex];
                 const newTime = currentGameData.time;
-                if (currentRecord === null || newTime < currentRecord) {
+                if ((currentRecord === null || newTime < currentRecord) && game?.isWon) {
                     const newRecords: (number | null)[] = [null, null, null];
                     newRecords[modeIndex] = newTime;
                     axios.put("/player/records", newRecords, {
@@ -139,7 +139,7 @@ export default function MultiplayerGamePanel({gameField, colIndex, rowIndex, sel
             }
             onOpen();
         }
-    }, [game?.isGameEnded, currentGameData, auth, minutes, seconds, selectedOption, onOpen]);
+    }, [game?.isGameEnded, currentGameData, auth, minutes, seconds, selectedOption, onOpen, game?.isWon]);
     
     
     return(

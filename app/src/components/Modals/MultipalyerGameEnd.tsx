@@ -94,6 +94,9 @@ export default function MultiplayerGameEnd({isOpen, onClose} : {isOpen: boolean,
                 <ModalGameInvitation />
             </ModalBody>
             <ModalFooter>
+                {/* <Button colorScheme="cyan" mr={5} onClick={() => { game?.sendPvpGameInvitation(game?.enemyId); }}>
+                    {t('rematch')}
+                </Button> */}
                 
                 <Button colorScheme="green" mr={5} onClick={() => { game?.resetMultiplayerGame(); }}>
                     {t('newGame')}

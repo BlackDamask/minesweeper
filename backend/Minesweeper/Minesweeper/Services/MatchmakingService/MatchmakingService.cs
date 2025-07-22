@@ -119,6 +119,7 @@ namespace Minesweeper.Services.MatchmakingService
                     ColBeginIndex = minesweeperGame.colStartIndex,
                     RowBeginIndex = minesweeperGame.rowStartIndex,
                     EnemyName = enemyName,
+                    EnemyId = matchedPlayers[1].PlayerId,
                     EnemyProgress = minesweeperGame.CountProgress(),
                     StartTime = newGame.StartTimeNumeric
                 };
@@ -132,6 +133,7 @@ namespace Minesweeper.Services.MatchmakingService
                     .Select(u => u.PlayerName)
                     .FirstOrDefault() ?? throw new Exception("Player not found");
                 response.EnemyName = enemyName;
+                response.EnemyId = matchedPlayers[0].PlayerId;
 
                 await hubContext.Clients.User(matchedPlayers[1].PlayerId).SendAsync("GameStarted", response);
             }

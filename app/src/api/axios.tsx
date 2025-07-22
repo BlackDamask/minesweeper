@@ -1,7 +1,6 @@
+import { API_BASE_URL } from "./config";
 import axios from "axios";
 
-export default axios.create(
-    {      
-        baseURL: 'http://51.20.207.233:5000/api'
-    }
-);
+export default axios.create({
+    baseURL: API_BASE_URL
+});

@@ -1,5 +1,7 @@
 import React, { createContext, useState, useEffect, ReactNode } from "react";
 import axios from "./api/axios";
+import { API_BASE_URL } from "./api/config";
+import { useGameContext } from "./GameProvider";
 
 interface ApiResponse<T> {
   data: T;
@@ -71,7 +73,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const changeUsername = async (userName: string): Promise<{ success: boolean; message?: string }> => {
     try {
       await axios.put(
-        `http://51.20.207.233:5000/api/player/change-username`,
+        `${API_BASE_URL}/player/change-username`,
         null, // No body needed, as userName is sent as a query parameter
         {
           params: { userName: userName }, // Add userName as a query parameter
@@ -116,9 +118,19 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setAccessToken(null);
     setRefreshToken(null);
     setIsLoggedIn(false);
-
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
+    try {
+      const gameCtx = require("./GameProvider");
+      if (gameCtx && gameCtx.useGameContext) {
+        const ctx = gameCtx.useGameContext();
+        if (ctx && ctx.resetMultiplayerGame) {
+          ctx.resetMultiplayerGame();
+        }
+      }
+    } catch (e) {
+      // ignore if not available
+    }
   };
 
   useEffect(() => {

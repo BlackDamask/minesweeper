@@ -83,6 +83,7 @@ namespace Minesweeper.Services.PlayerService
                         RowBeginIndex = game.RowBeginIndex,
                         GameField = game.GameField,
                         EnemyName = enemyName,
+                        EnemyId = enemy.PlayerId,
                         EnemyProgress = enemy.Progress,
                         StartTime = game.StartTimeNumeric
                     };

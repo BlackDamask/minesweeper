@@ -165,6 +165,7 @@ namespace Minesweeper.Services
                     ColBeginIndex = minesweeperGame.colStartIndex,
                     RowBeginIndex = minesweeperGame.rowStartIndex,
                     EnemyName = accepter.PlayerName,
+                    EnemyId = accepterPlayerId,
                     EnemyProgress = minesweeperGame.CountProgress(),
                     StartTime = newGame.StartTimeNumeric
                 };
@@ -175,6 +176,7 @@ namespace Minesweeper.Services
                     ColBeginIndex = minesweeperGame.colStartIndex,
                     RowBeginIndex = minesweeperGame.rowStartIndex,
                     EnemyName = inviter.PlayerName,
+                    EnemyId = inviterPlayerId,
                     EnemyProgress = minesweeperGame.CountProgress(),
                     StartTime = newGame.StartTimeNumeric
                 };

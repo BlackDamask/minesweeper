@@ -108,7 +108,8 @@ const resources = {
         discard: "Discard"
       },
       singlePlayer: "Single Player",
-      multiplayer: "Multiplayer"
+      multiplayer: "Multiplayer",
+      rematch: "Rematch"
     }
   },
   pl: {
@@ -216,7 +217,8 @@ const resources = {
         discard: "Odrzuć"
       },
       singlePlayer: "Jeden Gracz",
-      multiplayer: "Wieloosobowy"
+      multiplayer: "Wieloosobowy",
+      rematch: "Rewanż"
     }
   },
   ru:{
@@ -324,7 +326,8 @@ const resources = {
         discard: "Отклонить"
       },
       singlePlayer: "Одиночная игра",
-      multiplayer: "Мультиплеер"
+      multiplayer: "Мультиплеер",
+      rematch: "Реванш"
     }
   },
   es: {
@@ -432,7 +435,8 @@ const resources = {
         discard: "Rechazar"
       },
       singlePlayer: "Un jugador",
-      multiplayer: "Multijugador"
+      multiplayer: "Multijugador",
+      rematch: "Revancha"
     }
   }
 };
