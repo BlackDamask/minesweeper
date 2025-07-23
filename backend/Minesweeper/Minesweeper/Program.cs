@@ -76,7 +76,15 @@ options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")
 
 string[] allowedOrigins = new[]
 {
+    
+    "http://51.20.207.233",
+    "https://51.20.207.233",
+    "http://51.20.207.233/",
+    "https://51.20.207.233/",
+    "http://51.20.207.233:3000/",
+    "http://minesweeper.xyz/",
     "http://localhost:3000",
+    "https://minesweeper.xyz/",
     "https://127.0.0.1:3000",
     "http://213.176.114.172:5000",
     "https://213.176.114.172:5000",

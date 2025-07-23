@@ -127,7 +127,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Create SignalR connection only once on mount
   useEffect(() => {
     const connection = new signalR.HubConnectionBuilder()
-      .withUrl("http://localhost:5150/game", {
+      .withUrl("http://51.20.207.233:5000/game", {
         accessTokenFactory: () => accessToken ?? "",
       })
       .withAutomaticReconnect()
@@ -138,14 +138,14 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Attach event handlers
     connection.on("GameStarted", (response: GameStartResponse) => {
       setShallRedirectToMultiplayerPage(true);
-      setEnemyName(response.enemyName);
-      setEnemyId(response.enemyId);
-      setGameField(response.gameField);
       setStartCoordinates({ colIndex: response.colBeginIndex, rowIndex: response.rowBeginIndex });
       setEnemyProgress(response.enemyProgress);
-      setStartTime(response.startTime);
       setIsGameStarted(true);
       setIsGameEnded(false);
+      setStartTime(response.startTime);
+      setGameField(response.gameField);
+      setEnemyName(response.enemyName);
+      setEnemyId(response.enemyId);
       console.log(response);
     });
 
