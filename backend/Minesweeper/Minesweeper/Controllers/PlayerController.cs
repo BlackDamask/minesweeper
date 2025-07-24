@@ -71,7 +71,7 @@ namespace Minesweeper.Controllers
         [HttpGet("app-version")]
         public IActionResult AppVersion()
         {
-            return Ok("1.3.0");
+            return Ok("1.3.1");
         }
 
         [Authorize]
